@@ -17,9 +17,9 @@ export function CustomerTimelinePage() {
         </Button>
       }
     >
-      <Card className="border-border/60 shadow-sm">
+      <Card>
         <CardHeader>
-          <CardTitle>{t('customerPages.timeline.cardTitle')}</CardTitle>
+          <CardTitle className="text-lg">{t('customerPages.timeline.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <TimelineList

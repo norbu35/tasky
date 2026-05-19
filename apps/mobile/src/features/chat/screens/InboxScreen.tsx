@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
 import { useConversations } from '@/features/chat/hooks/useConversations';
+import { formatDate, formatTime } from '@/utils/formatDate';
 
 import { ConversationRow } from './Inbox.ConversationRow';
 import { InboxHeader, type InboxFilter } from './Inbox.Header';
@@ -37,10 +38,10 @@ export default function InboxScreen() {
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (diff < oneDay) {
-      return timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      return formatTime(timestamp);
     }
 
-    return timestamp.toLocaleDateString();
+    return formatDate(timestamp);
   }, []);
 
   const listHeader = <InboxHeader activeFilter={activeFilter} onSelectFilter={setActiveFilter} />;

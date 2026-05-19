@@ -1,3 +1,5 @@
+import { formatTime } from '@/utils/formatDate';
+
 export interface MessageItem {
   id: string;
   content: string;
@@ -19,7 +21,5 @@ export function orderMessagesChronologically<T extends MessageItem>(messages: T[
 
 export function formatMessageTimestamp(sentAt: string): string {
   const date = new Date(sentAt);
-  return isNaN(date.getTime())
-    ? ''
-    : date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return isNaN(date.getTime()) ? '' : formatTime(date);
 }

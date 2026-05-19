@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Skeleton } from '../../components/ui/skeleton';
@@ -94,12 +95,16 @@ export function AdminConciergePage() {
 
   if (pageState === 'error') {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.concierge.title')}
+        </h1>
         <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">{t('admin.concierge.loadError')}</p>
-            <Button onClick={loadTasks}>{t('common.retry')}</Button>
+          <CardContent className="flex flex-col items-center gap-4 py-8">
+            <p className="text-body-sm text-destructive">{t('admin.concierge.loadError')}</p>
+            <Button variant="outline" size="sm" onClick={loadTasks}>
+              {t('common.retry')}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -108,19 +113,31 @@ export function AdminConciergePage() {
 
   if (pageState === 'success' && booking) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
+      <div className="space-y-6" data-testid="assignment-success">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.concierge.title')}
+        </h1>
         <Card>
-          <CardContent className="p-6 space-y-2" data-testid="assignment-success">
-            <h2 className="text-lg font-semibold font-display">
+          <CardHeader>
+            <CardTitle className="text-section-heading">
               {t('admin.concierge.assignmentSuccess')}
-            </h2>
-            <p>
-              {t('admin.concierge.bookingId')}: {booking.id}
-            </p>
-            <p>
-              {t('admin.concierge.status')}: {booking.status}
-            </p>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                {t('admin.concierge.bookingId')}:
+              </span>
+              <span className="text-body-sm font-semibold">{booking.id}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                {t('admin.concierge.status')}:
+              </span>
+              <Badge variant="statusAssigned" className="uppercase tracking-caps">
+                {booking.status}
+              </Badge>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -129,12 +146,14 @@ export function AdminConciergePage() {
 
   if (pageState === 'loading' || pageState === 'idle') {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.concierge.title')}
+        </h1>
         <div data-testid="concierge-loading" className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
-              <CardContent className="p-4">
+              <CardContent className="p-6">
                 <Skeleton className="h-12 w-full" />
               </CardContent>
             </Card>
@@ -145,26 +164,29 @@ export function AdminConciergePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
+    <div className="space-y-8">
+      <h1 className="font-display text-2xl font-semibold tracking-tight">
+        {t('admin.concierge.title')}
+      </h1>
 
-      {/* Section 1: Open Tasks */}
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-lg font-semibold font-display">{t('admin.concierge.selectTask')}</h2>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {tasks.map((task) => (
             <Card
               key={task.id}
               data-testid={`task-row-${task.id}`}
               data-selected={selectedTaskId === task.id ? 'true' : 'false'}
-              className={`cursor-pointer transition-colors ${
-                selectedTaskId === task.id ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'
+              className={`cursor-pointer transition-all duration-200 ${
+                selectedTaskId === task.id
+                  ? 'ring-2 ring-inset ring-primary shadow-deep'
+                  : 'hover:shadow-elevated'
               }`}
               onClick={() => setSelectedTaskId(task.id)}
             >
-              <CardContent className="p-3">
-                <p className="font-medium">{task.description}</p>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4">
+                <p className="text-body-sm font-medium">{task.description}</p>
+                <p className="text-badge-text text-muted-foreground mt-1">
                   {task.category.name} &middot; {(task.budget ?? 0).toLocaleString()}
                   {t('common.currency')}
                 </p>
@@ -174,8 +196,7 @@ export function AdminConciergePage() {
         </div>
       </section>
 
-      {/* Section 2: Find a Tasker */}
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-lg font-semibold font-display">{t('admin.concierge.findTasker')}</h2>
         <div className="flex gap-2">
           <Input
@@ -188,24 +209,27 @@ export function AdminConciergePage() {
           </Button>
         </div>
         {taskerResults.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {taskerResults.map((user) => (
               <Card
                 key={user.id}
                 data-testid={`user-row-${user.id}`}
                 data-selected={selectedTaskerId === user.id ? 'true' : 'false'}
-                className={`cursor-pointer transition-colors ${
+                className={`cursor-pointer transition-all duration-200 ${
                   selectedTaskerId === user.id
-                    ? 'border-primary bg-primary/10'
-                    : 'hover:bg-muted/50'
+                    ? 'ring-2 ring-inset ring-primary shadow-deep'
+                    : 'hover:shadow-elevated'
                 }`}
                 onClick={() => setSelectedTaskerId(user.id)}
               >
-                <CardContent className="p-3">
-                  <p className="font-medium">{user.phone ?? user.id}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {user.role} &middot; {user.status}
-                  </p>
+                <CardContent className="p-4">
+                  <p className="text-body-sm font-medium">{user.phone ?? user.id}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-badge-text uppercase tracking-caps">
+                      {user.role}
+                    </Badge>
+                    <span className="text-badge-text text-muted-foreground">{user.status}</span>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -213,35 +237,44 @@ export function AdminConciergePage() {
         )}
       </section>
 
-      {/* Section 3: Assignment Form */}
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-lg font-semibold font-display">
           {t('admin.concierge.assignmentForm')}
         </h2>
-        <Input
-          placeholder={t('admin.concierge.reasonPlaceholder')}
-          value={overrideReason}
-          onChange={(e) => setOverrideReason(e.target.value)}
-        />
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="concierge-disclaimer"
-            checked={disclaimerChecked}
-            onChange={(e) => setDisclaimerChecked(e.target.checked)}
-          />
-          <Label htmlFor="concierge-disclaimer">{t('admin.concierge.disclaimerLabel')}</Label>
-        </div>
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            <Input
+              placeholder={t('admin.concierge.reasonPlaceholder')}
+              value={overrideReason}
+              onChange={(e) => setOverrideReason(e.target.value)}
+            />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="concierge-disclaimer"
+                checked={disclaimerChecked}
+                onChange={(e) => setDisclaimerChecked(e.target.checked)}
+                className="h-4 w-4 rounded border-border"
+              />
+              <Label htmlFor="concierge-disclaimer" className="text-body-sm">
+                {t('admin.concierge.disclaimerLabel')}
+              </Label>
+            </div>
 
-        {pageState === 'assign-error' && assignError && (
-          <div data-testid="assignment-error" className="text-destructive text-sm">
-            <p>{assignError}</p>
-          </div>
-        )}
+            {pageState === 'assign-error' && assignError && (
+              <div
+                data-testid="assignment-error"
+                className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3"
+              >
+                <p className="text-body-sm text-destructive">{assignError}</p>
+              </div>
+            )}
 
-        <Button onClick={handleAssign} disabled={!canAssign || pageState === 'assigning'}>
-          {pageState === 'assigning' ? t('common.loading') : t('admin.concierge.assign')}
-        </Button>
+            <Button onClick={handleAssign} disabled={!canAssign || pageState === 'assigning'}>
+              {pageState === 'assigning' ? t('common.loading') : t('admin.concierge.assign')}
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );

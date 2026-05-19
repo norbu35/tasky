@@ -26,7 +26,7 @@ export function ScreenFrame({
       <div className="flex flex-1 flex-col min-w-0">
         <Header />
 
-        <main className="flex-1 px-4 sm:px-6 md:px-8 pb-28 md:pb-8 pt-16 md:pt-8">
+        <main className="flex-1 px-4 pb-32 pt-20 md:px-8 md:pb-10 md:pt-8 lg:px-10">
           <div className={`mx-auto w-full ${maxWidthClass[maxWidth]}`}>{children}</div>
         </main>
 

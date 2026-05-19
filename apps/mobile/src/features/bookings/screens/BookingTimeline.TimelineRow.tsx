@@ -3,8 +3,9 @@ import { Text, View } from 'react-native';
 
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { formatDateTime } from '@/utils/formatDate';
 
-import { formatTimestamp, getEventLabel, type TimelineEvent } from './BookingTimeline.model';
+import { getEventLabel, type TimelineEvent } from './BookingTimeline.model';
 
 const { colors } = mobileTheme;
 const { bookingTimeline } = mobileSurfaces;
@@ -63,7 +64,7 @@ export function TimelineEventRow({
         <Text
           className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-text-secondary'}`}
         >
-          {formatTimestamp(event.timestamp)}
+          {formatDateTime(event.timestamp)}
         </Text>
         <Text
           className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primary-deep'}`}

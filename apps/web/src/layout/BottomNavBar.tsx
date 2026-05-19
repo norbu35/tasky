@@ -28,33 +28,46 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-sticky border-t border-border bg-background md:hidden shadow-nav"
+      className="fixed bottom-0 left-0 right-0 z-sticky md:hidden shadow-nav"
       aria-label={t('nav.bottomNavigation')}
     >
-      <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">
-        {tabs.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              [
-                'flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors min-w-0',
-                isActive ? 'text-foreground' : 'text-nav-inactive hover:text-foreground',
-              ].join(' ')
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <Icon className="w-icon-sm h-icon-sm" />
-                <span
-                  className={`text-nav tracking-normal truncate font-sans ${isActive ? 'font-semibold' : 'font-medium'}`}
-                >
-                  {t(label)}
-                </span>
-              </>
-            )}
-          </NavLink>
-        ))}
+      <div className="bg-background/95 border-t border-border/50">
+        <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 pt-2 pb-2">
+          {tabs.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                [
+                  'flex flex-col items-center gap-1 px-4 py-2 rounded-2xl min-w-0 min-h-touch-target-min justify-center',
+                  'transition-all duration-200 ease-out',
+                  isActive
+                    ? 'bg-primary/10 text-foreground'
+                    : 'text-nav-inactive hover:text-foreground active:scale-95',
+                ].join(' ')
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <div className="relative flex items-center justify-center">
+                    <Icon
+                      className={`transition-transform duration-200 ${isActive ? 'w-icon-md h-icon-md scale-105' : 'w-icon-sm h-icon-sm'}`}
+                    />
+                    {isActive && (
+                      <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-nav tracking-normal truncate font-sans leading-none transition-all duration-200 ${isActive ? 'font-semibold text-foreground' : 'font-medium'}`}
+                  >
+                    {t(label)}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+        <div className="h-[env(safe-area-inset-bottom)]" />
       </div>
     </nav>
   );

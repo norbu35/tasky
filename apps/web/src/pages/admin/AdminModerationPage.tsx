@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Skeleton } from '../../components/ui/skeleton';
@@ -12,6 +12,7 @@ import { Switch } from '../../components/ui/switch';
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { StrikePolicy, StrikePolicyUpdateRequest } from '../../lib/apiClient';
+import { formatDateTime } from '../../lib/formatDate';
 
 export function AdminModerationPage() {
   const { t } = useTranslation();
@@ -81,15 +82,15 @@ export function AdminModerationPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
-          <Scale className="h-6 w-6" />
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-3">
+          <Scale className="h-6 w-6 text-muted-foreground" />
           {t('admin.moderation.title')}
         </h1>
         <Card data-testid="moderation-loading">
           <CardContent className="p-6 space-y-4">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className="h-8 w-full" />
+              <Skeleton key={i} className="h-10 w-full" />
             ))}
           </CardContent>
         </Card>
@@ -99,15 +100,17 @@ export function AdminModerationPage() {
 
   if (error || !policy) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
-          <Scale className="h-6 w-6" />
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-3">
+          <Scale className="h-6 w-6 text-muted-foreground" />
           {t('admin.moderation.title')}
         </h1>
         <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">{t('admin.moderation.loadError')}</p>
-            <Button onClick={fetchPolicy}>{t('common.retry')}</Button>
+          <CardContent className="flex flex-col items-center gap-4 py-8">
+            <p className="text-body-sm text-destructive">{t('admin.moderation.loadError')}</p>
+            <Button variant="outline" size="sm" onClick={fetchPolicy}>
+              {t('common.retry')}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -164,24 +167,30 @@ export function AdminModerationPage() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
-          <Scale className="h-6 w-6" />
+        <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-3">
+          <Scale className="h-6 w-6 text-muted-foreground" />
           {t('admin.moderation.title')}
         </h1>
         {!editing && (
-          <Button variant="outline" onClick={handleEdit}>
+          <Button variant="outline" size="sm" onClick={handleEdit}>
             {t('common.edit')}
           </Button>
         )}
       </div>
 
       <Card>
-        <CardContent className="p-6 space-y-4">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-section-heading">{t('admin.moderation.title')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1">
           {fields.map(({ key, label, type, min, max }) => (
-            <div key={key} className="flex items-center justify-between gap-4">
-              <Label className="text-sm font-medium min-w-0 flex-1">{label}</Label>
+            <div
+              key={key}
+              className="flex items-center justify-between gap-4 rounded-lg px-4 py-3 hover:bg-muted/20 transition-colors"
+            >
+              <Label className="text-body-sm font-medium min-w-0 flex-1">{label}</Label>
               {editing && draft ? (
                 type === 'boolean' ? (
                   <Switch
@@ -193,7 +202,7 @@ export function AdminModerationPage() {
                 ) : (
                   <Input
                     type="number"
-                    className="w-28 text-right"
+                    className="w-28 text-right text-body-sm"
                     min={min}
                     max={max}
                     value={draft[key] as number}
@@ -205,7 +214,7 @@ export function AdminModerationPage() {
                   />
                 )
               ) : (
-                <span className="text-sm font-mono">
+                <span className="text-body-sm font-semibold text-foreground tabular-nums">
                   {type === 'boolean'
                     ? policy[key as keyof StrikePolicy]
                       ? 'Yes'
@@ -215,23 +224,26 @@ export function AdminModerationPage() {
               )}
             </div>
           ))}
-
-          {editing && (
-            <div className="flex gap-3 pt-2">
-              <Button onClick={handleSave} disabled={saving}>
-                {t('common.save')}
-              </Button>
-              <Button variant="secondary" onClick={handleCancel} disabled={saving}>
-                {t('common.cancel')}
-              </Button>
-            </div>
-          )}
-
-          <p className="text-xs text-muted-foreground pt-2">
-            {t('admin.moderation.updatedAt')}:{' '}
-            {policy.updatedAt ? new Date(policy.updatedAt).toLocaleString() : '—'}
-          </p>
         </CardContent>
+        {(editing || policy.updatedAt) && (
+          <CardFooter className="flex items-center justify-between">
+            {policy.updatedAt && (
+              <p className="text-badge-text text-muted-foreground">
+                {t('admin.moderation.updatedAt')}: {formatDateTime(policy.updatedAt)}
+              </p>
+            )}
+            {editing && (
+              <div className="flex gap-2 ml-auto">
+                <Button variant="secondary" size="sm" onClick={handleCancel} disabled={saving}>
+                  {t('common.cancel')}
+                </Button>
+                <Button size="sm" onClick={handleSave} disabled={saving}>
+                  {t('common.save')}
+                </Button>
+              </div>
+            )}
+          </CardFooter>
+        )}
       </Card>
     </div>
   );

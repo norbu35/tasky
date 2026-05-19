@@ -134,9 +134,9 @@ export function CustomerApplicantsPage() {
           />
         ) : (
           <div className="grid gap-4">
-            <Card className="border-border/60 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle>{task.description}</CardTitle>
+                <CardTitle className="text-lg">{task.description}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 {t('customerPages.applicants.summary', {
@@ -146,33 +146,34 @@ export function CustomerApplicantsPage() {
             </Card>
 
             {applicationsPage.data.map((application) => (
-              <Card key={application.id} className="border-border/60 shadow-sm">
+              <Card key={application.id}>
                 <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-12 w-12 border">
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-12 w-12 ring-2 ring-background shadow-card">
                       {application.tasker.avatar_url ? (
                         <AvatarImage src={application.tasker.avatar_url} />
                       ) : null}
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                         {application.tasker.full_name?.charAt(0) ?? 'T'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <CardTitle className="text-xl">{application.tasker.full_name}</CardTitle>
                       <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-primary text-primary" />
+                        <span className="flex items-center gap-1 font-medium">
+                          <Star className="h-4 w-4 fill-sun-light text-sun-light" />
                           {application.tasker.rating_avg.toFixed(1)}
                         </span>
+                        <span className="text-muted-foreground/60">·</span>
                         <span>
                           {t('customerPages.applicants.completedTasks', {
                             count: application.tasker.completed_tasks,
                           })}
                         </span>
-                        <Badge variant="secondary">
+                        <Badge variant="verified" className="text-[10px]">
                           {t('customerPages.applicants.idVerifiedTasker')}
                         </Badge>
-                        <Badge variant="outline">
+                        <Badge variant="outline" className="font-mono">
                           {task.pricing_mode === 'QUOTE'
                             ? application.quote_price != null
                               ? t('customerPages.applicants.quotePrice', {

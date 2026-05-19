@@ -163,7 +163,7 @@ describe('Tasker phase 1 parity', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Applicants')).not.toBeInTheDocument();
 
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Window cleaning/i }));
     await waitFor(() => {
       expect(apiClient.getTask).toHaveBeenCalledWith('access-token', 'public-task-1');
     });

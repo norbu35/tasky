@@ -25,8 +25,8 @@ export function ResponsiveFeedShell({
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className={cn('grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]', className)}>
-        <section aria-labelledby={titleId} className="space-y-5">
+      <div className={cn('grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem]', className)}>
+        <section aria-labelledby={titleId} className="min-w-0 space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1.5">
               <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
@@ -44,7 +44,7 @@ export function ResponsiveFeedShell({
           <div className="flex flex-col gap-3">{children}</div>
         </section>
 
-        {sideRail ? <aside className="space-y-3">{sideRail}</aside> : null}
+        {sideRail ? <aside className="hidden lg:block space-y-3">{sideRail}</aside> : null}
       </div>
     </ScreenFrame>
   );

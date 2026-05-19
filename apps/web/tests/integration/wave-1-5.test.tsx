@@ -204,8 +204,7 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    // Open the dialog
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Quote-mode task/i }));
 
     // Fill in message
     fireEvent.change(await screen.findByLabelText('Application message'), {
@@ -275,7 +274,7 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Budget-mode task/i }));
     expect(screen.queryByLabelText(/Your quote \(MNT\)/i)).not.toBeInTheDocument();
 
     fireEvent.change(await screen.findByLabelText('Application message'), {
@@ -323,7 +322,7 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Quote required task/i }));
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can do this quickly and safely.' },
     });
@@ -334,7 +333,7 @@ describe('W1: Pricing mode', () => {
     });
   });
 
-  it('TID-WEB-002 shows "Accepting quotes" for QUOTE mode tasks in the feed', async () => {
+  it('TID-WEB-002 shows dash for QUOTE mode tasks with null budget in the feed', async () => {
     const quoteFeedTask = makeTaskFeedItem({
       id: 'quote-task-2',
       category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
@@ -362,8 +361,8 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    expect(await screen.findByText('Accepting quotes')).toBeInTheDocument();
-    expect(screen.getByText('Customer wants quotes')).toBeInTheDocument();
+    expect(await screen.findByText('Another quote task')).toBeInTheDocument();
+    expect(screen.getByText('OPEN')).toBeInTheDocument();
   });
 });
 
@@ -680,7 +679,7 @@ describe('W5: Application withdraw', () => {
     renderWithProviders(<TaskerFeedPage />, ctx);
 
     // Apply first
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Task to withdraw from/i }));
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I want to apply to this task please.' },
     });

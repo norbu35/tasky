@@ -1,16 +1,16 @@
 /**
- * Mobile date/time formatting wrapper.
+ * Web date formatting wrapper.
  *
- * Delegates all formatting to @tasky/core/formatDate (locale-parametric)
- * and resolves the current locale from i18next at call time.
- *
- * Re-export everything consumers need from a single import path:
- *   import { formatDate, formatTime, … } from '@/utils/formatDate';
+ * Re-exports all formatters from `@tasky/core/formatDate` with the locale
+ * resolved lazily from the current i18n language so the module is safe to
+ * import before i18n has initialised.
  */
 
-import i18n from 'i18next';
+import i18next from 'i18next';
+import type { TFunction } from 'i18next';
+
 import {
-  resolveLocale as coreResolveLocale,
+  resolveLocale,
   formatDate as coreFormatDate,
   formatTime as coreFormatTime,
   formatDateTime as coreFormatDateTime,
@@ -20,21 +20,16 @@ import {
   formatNumericDate as coreFormatNumericDate,
   formatNumericTime as coreFormatNumericTime,
   getRelativeTimeParts,
-  type RelativeTimeParts,
 } from '@tasky/core/formatDate';
 
 // ---------------------------------------------------------------------------
-// Locale helpers
+// Lazy locale helper
 // ---------------------------------------------------------------------------
 
-/** Resolve BCP-47 locale from the current i18n language. */
-export function resolveLocale(lang?: string): string {
-  return coreResolveLocale(lang ?? i18n.language);
-}
-
-/** Get the current locale (lazy, always up-to-date). */
 function locale(): string {
-  return resolveLocale(i18n.language);
+  const lang = i18next.language;
+  const loc = resolveLocale(lang);
+  return loc;
 }
 
 // ---------------------------------------------------------------------------
@@ -83,26 +78,10 @@ export function formatNumericTime(value: Date | null | undefined): string {
 }
 
 // ---------------------------------------------------------------------------
-// Relative time
+// Relative time (i18n-aware)
 // ---------------------------------------------------------------------------
 
-export type { RelativeTimeParts };
-export { getRelativeTimeParts };
-
-/**
- * Format a relative-time string using i18n keys.
- *
- * Maps the discriminated-union parts from core to locale-aware strings:
- *   - common.time.justNow
- *   - common.time.minutesAgo  ({{count}})
- *   - common.time.hoursAgo    ({{count}})
- *   - common.time.daysAgo     ({{count}})
- *   - Falls back to formatDate() for absolute dates.
- */
-export function formatRelativeTime(
-  value: string | Date | null | undefined,
-  t: (key: string, options?: Record<string, unknown>) => string,
-): string {
+export function formatRelativeTime(value: string | Date | null | undefined, t: TFunction): string {
   const parts = getRelativeTimeParts(value);
 
   switch (parts.type) {
@@ -115,6 +94,6 @@ export function formatRelativeTime(
     case 'days':
       return t('common.time.daysAgo', { count: parts.count });
     case 'absolute':
-      return formatDate(parts.date);
+      return coreFormatDateTime(parts.date, locale());
   }
 }

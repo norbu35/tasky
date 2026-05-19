@@ -21,6 +21,9 @@ import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
 import type { TaskFeedItem } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
+import { resolveLocale } from '@/utils/formatDate';
+
+import i18n from 'i18next';
 
 import { isWithinScheduleWindow } from './HomeScreen.utils';
 
@@ -132,8 +135,14 @@ function TaskerBrowseScreen() {
       items.push({ id: `pricing:${pricingMode}`, label });
     }
     if (budgetRange.min != null || budgetRange.max != null) {
-      const min = budgetRange.min != null ? `₮${budgetRange.min.toLocaleString('en-US')}` : '';
-      const max = budgetRange.max != null ? `₮${budgetRange.max.toLocaleString('en-US')}` : '';
+      const min =
+        budgetRange.min != null
+          ? `₮${budgetRange.min.toLocaleString(resolveLocale(i18n.language))}`
+          : '';
+      const max =
+        budgetRange.max != null
+          ? `₮${budgetRange.max.toLocaleString(resolveLocale(i18n.language))}`
+          : '';
       items.push({ id: 'budget', label: min && max ? `${min}–${max}` : min || max });
     }
     return items;

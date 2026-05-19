@@ -1,3 +1,4 @@
+import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '../../components/ui/button';
@@ -17,11 +18,14 @@ export function CustomerBookingConfirmedPage() {
         </Button>
       }
     >
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader>
+      <Card>
+        <CardHeader className="text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-status-completed/10 mb-2">
+            <CheckCircle2 className="h-7 w-7 text-status-completed" />
+          </div>
           <CardTitle>{t('customerPages.bookingConfirmed.summaryTitle')}</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
+        <CardContent className="text-sm text-muted-foreground text-center">
           {t('customerPages.bookingConfirmed.summaryDesc')}
         </CardContent>
       </Card>

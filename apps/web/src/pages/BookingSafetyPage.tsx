@@ -38,6 +38,7 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { Booking } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
+import { formatDate } from '../lib/formatDate';
 import { createIdempotencyKey } from '../lib/idempotency';
 
 export function BookingSafetyPage() {
@@ -235,7 +236,7 @@ export function BookingSafetyPage() {
     <ScreenFrame>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold font-display tracking-tight">
+          <h1 className="font-display text-3xl font-semibold tracking-tight">
             {t('bookingSafety.bookingManagement')}
           </h1>
           <p className="text-muted-foreground mt-1">{t('bookingSafety.manageBookings')}</p>
@@ -310,7 +311,7 @@ export function BookingSafetyPage() {
                         </div>
                         <div className="flex justify-between">
                           <span>{t('bookingSafety.created')}</span>
-                          <span>{new Date(booking.created_at).toLocaleDateString()}</span>
+                          <span>{formatDate(booking.created_at)}</span>
                         </div>
                       </div>
                     </CardContent>

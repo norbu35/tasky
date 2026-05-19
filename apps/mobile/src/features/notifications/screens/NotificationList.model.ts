@@ -4,27 +4,6 @@ export type Row =
   | { type: 'section'; id: string; label: string }
   | { type: 'notification'; id: string; notification: Notification };
 
-export function formatRelativeTimestamp(timestamp: string, t: (key: string) => string): string {
-  const date = new Date(timestamp);
-  const diffMs = Date.now() - date.getTime();
-  const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-  const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
-
-  if (diffMinutes < 1) {
-    return t('NotificationCenterScreen.copy1');
-  }
-
-  if (diffMinutes < 60) {
-    return `${diffMinutes} мин өмнө`;
-  }
-
-  if (diffHours < 24) {
-    return `${diffHours} цагийн өмнө`;
-  }
-
-  return date.toLocaleDateString('en-CA');
-}
-
 function isSameDay(left: Date, right: Date): boolean {
   return (
     left.getFullYear() === right.getFullYear() &&

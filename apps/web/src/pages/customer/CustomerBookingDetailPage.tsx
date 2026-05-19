@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
+import { formatDateTime } from '../../lib/formatDate';
 
 export function CustomerBookingDetailPage() {
   const { apiClient, session } = useAppContext();
@@ -86,40 +87,57 @@ export function CustomerBookingDetailPage() {
       }
     >
       {data ? (
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <div>
-              <CardTitle>{data.id}</CardTitle>
-              <p className="text-sm text-muted-foreground">
+              <CardTitle className="font-mono">{data.id}</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
                 {t('customerPages.bookingDetail.taskLabel', { id: data.task_id })}
               </p>
             </div>
-            <MessageSquareText className="h-5 w-5 text-primary" />
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <div>
-              {t('customerPages.bookingDetail.statusLabel')} {data.status}
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <MessageSquareText className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              {t('customerPages.bookingDetail.taskerLabel')} {data.tasker_id}
+          </CardHeader>
+          <CardContent className="grid gap-3 text-sm">
+            <div className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
+              <span className="text-muted-foreground">
+                {t('customerPages.bookingDetail.statusLabel')}
+              </span>
+              <Badge variant="outline" className="font-medium">
+                {data.status}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
+              <span className="text-muted-foreground">
+                {t('customerPages.bookingDetail.taskerLabel')}
+              </span>
+              <span className="font-mono text-xs">{data.tasker_id}</span>
             </div>
             {scheduleEvents?.data && scheduleEvents.data.length > 0 && (
-              <div className="mt-3 border-t pt-3 space-y-2">
-                <div className="font-medium text-foreground flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
+              <div className="mt-2 space-y-2">
+                <div className="font-medium text-foreground flex items-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-primary" />
                   {t('customerPages.bookingDetail.timelineTitle')}
                 </div>
-                {scheduleEvents.data.map((event) => (
-                  <div key={event.id} className="flex items-center gap-2 text-xs">
-                    <span className="font-mono text-muted-foreground">
-                      {new Date(event.created_at).toLocaleString()}
-                    </span>
-                    <Badge variant="outline">{event.event_type}</Badge>
-                    {event.reason && (
-                      <span className="text-muted-foreground">— {event.reason}</span>
-                    )}
-                  </div>
-                ))}
+                <div className="space-y-1.5">
+                  {scheduleEvents.data.map((event) => (
+                    <div
+                      key={event.id}
+                      className="flex items-center gap-2 text-xs rounded-md px-2 py-1.5 bg-muted/20"
+                    >
+                      <span className="font-mono text-muted-foreground shrink-0">
+                        {formatDateTime(event.created_at)}
+                      </span>
+                      <Badge variant="outline" className="text-[10px]">
+                        {event.event_type}
+                      </Badge>
+                      {event.reason && (
+                        <span className="text-muted-foreground truncate">— {event.reason}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>

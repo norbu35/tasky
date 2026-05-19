@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { TFunction } from 'i18next';
 import { Calendar, ChevronLeft, Clock, MapPin, Star, Trash2, UserCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,27 +19,15 @@ import { Skeleton } from '../components/ui/skeleton';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { TaskApplication } from '../lib/apiClient';
+import { formatDate, formatTime, formatRelativeTime } from '../lib/formatDate';
 
-function formatTimeAgo(value: string, t: TFunction): string {
-  const timestamp = new Date(value).getTime();
-  const diffMs = Math.max(0, Date.now() - timestamp);
-  const diffMinutes = Math.floor(diffMs / 60000);
-
-  if (diffMinutes < 1) {
-    return t('customerTaskDetails.justNow');
-  }
-  if (diffMinutes < 60) {
-    return t('customerTaskDetails.m_ago', { count: diffMinutes });
-  }
-
-  const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) {
-    return t('customerTaskDetails.h_ago', { count: diffHours });
-  }
-
-  const diffDays = Math.floor(diffHours / 24);
-  return t('customerTaskDetails.d_ago', { count: diffDays });
-}
+const STATUS_BADGE_VARIANT: Record<string, React.ComponentProps<typeof Badge>['variant']> = {
+  OPEN: 'statusOpen',
+  ASSIGNED: 'statusAssigned',
+  COMPLETED: 'statusCompleted',
+  CANCELLED: 'statusCancelled',
+  NO_SHOW: 'noShow',
+};
 
 export function CustomerTaskDetailsPage() {
   const { taskId } = useParams<{ taskId: string }>();
@@ -93,8 +80,31 @@ export function CustomerTaskDetailsPage() {
     return (
       <ScreenFrame>
         <div className="space-y-6">
-          <Skeleton className="h-8 w-1/4" />
-          <Skeleton className="h-[200px] w-full" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-9 w-9 rounded-lg" />
+            <Skeleton className="h-7 w-1/3" />
+          </div>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-2/5" />
+              <Skeleton className="h-4 w-3/5" />
+            </CardHeader>
+            <CardContent className="grid sm:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <div className="space-y-3">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-8 w-28" />
+              </div>
+            </CardContent>
+          </Card>
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+          </div>
         </div>
       </ScreenFrame>
     );
@@ -103,51 +113,58 @@ export function CustomerTaskDetailsPage() {
   if (!task) {
     return (
       <ScreenFrame>
-        <Alert variant="destructive">
-          <AlertTitle>{t('customerTaskDetails.notFoundTitle')}</AlertTitle>
-          <AlertDescription>{t('customerTaskDetails.notFoundDesc')}</AlertDescription>
-        </Alert>
-        <Button variant="ghost" onClick={() => navigate('/customer/tasks')} className="mt-4">
-          {t('customerTaskDetails.backToMyTasks')}
-        </Button>
+        <div className="flex flex-col gap-4">
+          <Alert variant="destructive">
+            <AlertTitle>{t('customerTaskDetails.notFoundTitle')}</AlertTitle>
+            <AlertDescription>{t('customerTaskDetails.notFoundDesc')}</AlertDescription>
+          </Alert>
+          <Button variant="ghost" onClick={() => navigate('/customer/tasks')}>
+            <ChevronLeft className="w-icon-sm h-icon-sm mr-1" />
+            {t('customerTaskDetails.backToMyTasks')}
+          </Button>
+        </div>
       </ScreenFrame>
     );
   }
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={() => navigate('/customer/tasks')}>
-            <ChevronLeft className="w-5 h-5" />
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/customer/tasks')}
+            className="h-9 w-9 p-0 rounded-lg"
+          >
+            <ChevronLeft className="w-icon-sm h-icon-sm" />
           </Button>
-          <h1 className="text-2xl font-bold font-display tracking-tight text-foreground truncate">
+          <h1 className="font-display text-3xl font-semibold tracking-tight truncate">
             {task.description}
           </h1>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:gap-8">
           <div className="lg:w-3/5">
-            <Card className="shadow-sm">
-              <CardHeader className="pb-4">
+            <Card>
+              <CardHeader>
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <CardTitle className="text-xl">
+                  <div className="space-y-1.5">
+                    <CardTitle className="text-section-heading">
                       {task.category
                         ? i18n.language === 'mn'
                           ? task.category.name_mn
                           : task.category.name
                         : t('common.unknown')}
                     </CardTitle>
-                    <CardDescription className="mt-1 flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                    <CardDescription className="flex items-center gap-1.5">
+                      <MapPin className="w-icon-sm h-icon-sm" />
                       {task.location_text}
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge
-                      className="text-sm px-3 py-1"
-                      variant={task.status === 'OPEN' ? 'default' : 'secondary'}
+                      variant={STATUS_BADGE_VARIANT[task.status] ?? 'default'}
+                      className="text-badge-text"
                     >
                       {task.status}
                     </Badge>
@@ -155,11 +172,11 @@ export function CustomerTaskDetailsPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-destructive"
+                        className="text-destructive hover:text-destructive"
                         onClick={() => cancelTaskMutation.mutate()}
                         disabled={cancelTaskMutation.isPending}
                       >
-                        <Trash2 className="mr-1 h-3 w-3" />
+                        <Trash2 className="mr-1 w-icon-xs h-icon-xs" />
                         {cancelTaskMutation.isPending
                           ? t('customerTaskDetails.cancelling')
                           : t('customerTaskDetails.cancelTask')}
@@ -168,42 +185,46 @@ export function CustomerTaskDetailsPage() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4 pb-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span>{new Date(task.scheduled_at).toLocaleDateString()}</span>
+              <CardContent>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2.5 text-body text-foreground">
+                      <Calendar className="w-icon-sm h-icon-sm text-muted-foreground" />
+                      <span>{formatDate(task.scheduled_at)}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-body text-foreground">
+                      <Clock className="w-icon-sm h-icon-sm text-muted-foreground" />
+                      <span>{formatTime(task.scheduled_at)}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span>{new Date(task.scheduled_at).toLocaleTimeString()}</span>
-                  </div>
-                </div>
-                <div className="space-y-3 sm:text-right">
-                  <div className="text-sm text-muted-foreground uppercase tracking-caps font-semibold">
-                    {t('customerTaskDetails.budgetLabel')}
-                  </div>
-                  <div className="text-2xl font-bold font-display text-foreground">
-                    ₮{(task.budget ?? 0).toLocaleString()}
+                  <div className="space-y-2 sm:text-right">
+                    <div className="text-caption font-sans font-medium uppercase tracking-caps text-muted-foreground">
+                      {t('customerTaskDetails.budgetLabel')}
+                    </div>
+                    <div className="text-price-display font-display text-foreground">
+                      ₮{(task.budget ?? 0).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
           <div className="lg:w-2/5">
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold font-display mt-4 lg:mt-0">
+            <div className="space-y-5 mt-6 lg:mt-0">
+              <h2 className="text-xl font-semibold font-display text-foreground">
                 {t('customerTaskDetails.applicantsTitle')}
               </h2>
 
               {isAssigned ? (
-                <Card className="border-primary bg-primary/5">
-                  <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                    <UserCheck className="w-6 h-6 text-primary mb-4" />
-                    <CardTitle className="mb-2">
+                <Card className="border-primary/30 bg-primary/5">
+                  <CardContent className="flex flex-col items-center justify-center p-10 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-4">
+                      <UserCheck className="w-icon-sm h-icon-sm text-primary" />
+                    </div>
+                    <CardTitle className="text-card-title mb-2">
                       {t('customerTaskDetails.taskAssignedTitle')}
                     </CardTitle>
-                    <CardDescription className="mb-4">
+                    <CardDescription className="mb-6 max-w-xs">
                       {t('customerTaskDetails.taskAssignedDesc')}
                     </CardDescription>
                     <Button onClick={() => navigate('/booking/safety')}>
@@ -220,12 +241,28 @@ export function CustomerTaskDetailsPage() {
               ) : applicationsLoading ? (
                 <div className="space-y-4">
                   {Array.from({ length: 2 }).map((_, i) => (
-                    <Skeleton key={i} className="h-32 w-full" />
+                    <Card key={i}>
+                      <CardHeader className="p-4">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-10 w-10 rounded-full" />
+                          <div className="space-y-2 flex-1">
+                            <Skeleton className="h-4 w-28" />
+                            <Skeleton className="h-3 w-20" />
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4 mt-2" />
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               ) : !applicationsPage?.data || applicationsPage.data.length === 0 ? (
-                <Card className="border-dashed p-8 text-center text-muted-foreground">
-                  {t('customerTaskDetails.waitingForTaskers')}
+                <Card className="border-dashed bg-muted/20 p-10 text-center">
+                  <p className="text-body text-muted-foreground">
+                    {t('customerTaskDetails.waitingForTaskers')}
+                  </p>
                 </Card>
               ) : (
                 <div className="grid gap-4">
@@ -253,29 +290,33 @@ function ApplicationCard({
   const { t } = useTranslation();
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
-      <CardHeader className="p-4 sm:p-6 bg-muted/20 border-b">
-        <div className="flex justify-between items-start gap-4">
+    <Card className="group overflow-hidden">
+      <CardHeader className="p-4 sm:p-5">
+        <div className="flex justify-between items-start gap-3">
           <div className="flex items-center gap-3">
-            <Avatar className="w-12 h-12 border">
+            <Avatar className="h-10 w-10 ring-1 ring-inset ring-border/40">
               {application.tasker.avatar_url ? (
                 <AvatarImage src={application.tasker.avatar_url} />
               ) : null}
-              <AvatarFallback>{application.tasker.full_name?.charAt(0) ?? 'T'}</AvatarFallback>
+              <AvatarFallback className="bg-muted/30 text-label font-display font-semibold">
+                {application.tasker.full_name?.charAt(0) ?? 'T'}
+              </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-semibold font-display text-lg flex items-center gap-2">
-                {application.tasker.full_name}
-                <Badge variant="secondary" className="px-1.5 py-0 text-badge-text">
+              <div className="flex items-center gap-2">
+                <span className="font-display font-semibold text-label text-foreground">
+                  {application.tasker.full_name}
+                </span>
+                <Badge variant="verified" className="px-1.5 py-0 text-badge-text">
                   {t('customerTaskDetails.idVerifiedTasker')}
                 </Badge>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
-                <span className="flex items-center gap-1 font-medium text-foreground">
-                  <Star className="w-4 h-4 fill-primary text-primary" />
+              <div className="flex items-center gap-1.5 text-body-sm text-muted-foreground mt-0.5">
+                <span className="flex items-center gap-0.5 font-medium text-foreground">
+                  <Star className="w-icon-xs h-icon-xs fill-primary text-primary" />
                   {application.tasker.rating_avg.toFixed(1)}
                 </span>
-                <span>•</span>
+                <span className="text-muted-foreground/40">•</span>
                 <span>
                   {t('customerTaskDetails.tasksDone', {
                     count: application.tasker.completed_tasks,
@@ -285,22 +326,24 @@ function ApplicationCard({
             </div>
           </div>
           <Button
+            size="sm"
             onClick={() =>
               navigate(
                 `/customer/booking-confirmation?taskId=${taskId}&applicationId=${application.id}`,
               )
             }
+            className="flex-shrink-0"
           >
             {t('customerTaskDetails.reviewAndAccept')}
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 text-sm text-foreground/90 whitespace-pre-wrap">
-        "{application.message}"
+      <CardContent className="px-4 sm:px-5 pb-3 text-body-sm text-foreground/80 italic leading-relaxed">
+        &ldquo;{application.message}&rdquo;
       </CardContent>
-      <CardFooter className="px-4 py-3 bg-muted/10 text-xs text-muted-foreground border-t">
+      <CardFooter className="px-4 sm:px-5 py-3 text-caption text-muted-foreground">
         {t('customerTaskDetails.appliedAgo', {
-          timeAgo: formatTimeAgo(application.created_at, t),
+          timeAgo: formatRelativeTime(application.created_at, t),
         })}
       </CardFooter>
     </Card>

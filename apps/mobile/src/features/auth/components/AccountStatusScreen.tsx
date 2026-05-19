@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { formatNumericDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
@@ -16,13 +17,6 @@ type Variant = 'suspended' | 'banned';
 
 interface AccountStatusScreenProps {
   variant: Variant;
-}
-
-function formatDate(value?: string) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toISOString().slice(0, 10).replace(/-/g, '.');
 }
 
 const CONFIG: Record<
@@ -79,7 +73,7 @@ export default function AccountStatusScreen({ variant }: AccountStatusScreenProp
         </Text>
         {variant === 'suspended' && expiryDate && (
           <Text className="text-body font-semibold text-danger text-center mt-md">
-            {t('shared.account.suspendedExpiry', { date: formatDate(expiryDate) })}
+            {t('shared.account.suspendedExpiry', { date: formatNumericDate(new Date(expiryDate)) })}
           </Text>
         )}
         <Button

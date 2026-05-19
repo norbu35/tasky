@@ -1,7 +1,14 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
+import { Text as MockText } from 'react-native';
+import mockReanimated from 'react-native-reanimated/mock';
 
 import DisputeStatusScreen from '../../../../src/app/(customer)/disputes/[disputeId]';
+import {
+  createReactI18nextMock as mockCreateReactI18nextMock,
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 
@@ -11,23 +18,28 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
+  /* eslint-disable-next-line @typescript-eslint/no-require-imports */
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 jest.mock('lucide-react-native', () => {
+  /* eslint-disable-next-line @typescript-eslint/no-require-imports */
   const { Text } = require('react-native');
   return new Proxy(
     {},
     {
-      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+      get: (_, name) => (props: Record<string, unknown>) => (
+        <Text testID={`icon-${String(name)}`} {...props} />
+      ),
     },
   );
 });
 
-let mockDisputeData: any = null;
+let mockDisputeData: Record<string, unknown> | null = null;
 let mockIsLoading = false;
 let mockIsError = false;
 const mockRefetch = jest.fn();
@@ -42,7 +54,6 @@ jest.mock('../../../../src/features/disputes/hooks/useDisputeDetail', () => ({
 }));
 
 beforeEach(() => {
-  const { resetTestI18n, setTestLanguage } = require('../../../test-utils/mockI18n');
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
@@ -74,7 +85,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
     expect(
-      screen.getByText('Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.'),
+      screen.getByText('Таны маргааныг админ шалгаж байна. Шийдвэр гарахад мэдэгдэл авна.'),
     ).toBeTruthy();
   });
 

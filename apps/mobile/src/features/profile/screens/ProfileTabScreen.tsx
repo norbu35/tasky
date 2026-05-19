@@ -20,6 +20,7 @@ import { useTaskerProfile } from '@/features/profile/hooks/useTaskerProfile';
 import { canShowPublicRating, formatPublicRating } from '@/features/profile/model';
 import { useRole } from '@/providers/RoleProvider';
 import { useAuthStore } from '@/store/authStore';
+import { formatDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
@@ -136,7 +137,7 @@ function AuthenticatedProfile() {
                 {t('shared.profile.memberSince')}
               </Text>
               <Text className="text-body text-foreground font-sans-medium">
-                {new Date(profile.created_at).toLocaleDateString()}
+                {formatDate(profile.created_at)}
               </Text>
             </View>
             <View className="pt-sm border-t border-border">

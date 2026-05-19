@@ -139,7 +139,7 @@ describe('Tasks Integration', () => {
     await screen.findByText('Баянзүрх дүүрэг');
     expect(screen.queryByText('SHOULD NOT RENDER')).not.toBeInTheDocument();
 
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Move furniture/i }));
     await waitFor(() => {
       expect(taskerApi.getTask).toHaveBeenCalledWith('access-token', 'public-task-privacy-1');
     });

@@ -15,6 +15,7 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { Booking, BookingIntent } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
+import { formatDateTime } from '../lib/formatDate';
 import { createIdempotencyKey } from '../lib/idempotency';
 
 export function BookingConfirmationPage() {
@@ -125,7 +126,7 @@ export function BookingConfirmationPage() {
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
             <ClipboardList className="w-6 h-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
+          <h1 className="font-display text-3xl font-semibold tracking-tight mb-2">
             {t('bookingConfirmation.selectionRequestedTitle')}
           </h1>
           <p className="text-muted-foreground mb-8">
@@ -155,7 +156,7 @@ export function BookingConfirmationPage() {
                     {t('bookingConfirmation.respondBy')}
                   </span>
                   <span className="font-medium text-right">
-                    {new Date(pendingSelection.expires_at).toLocaleString()}
+                    {formatDateTime(pendingSelection.expires_at)}
                   </span>
                 </div>
               )}
@@ -181,7 +182,7 @@ export function BookingConfirmationPage() {
           <div className="w-20 h-20 bg-verified/10 rounded-full flex items-center justify-center mb-6">
             <CheckCircle2 className="w-6 h-6 text-verified" />
           </div>
-          <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
+          <h1 className="font-display text-3xl font-semibold tracking-tight mb-2">
             {t('bookingConfirmation.bookingConfirmedTitle')}
           </h1>
           <p className="text-muted-foreground mb-8">
@@ -243,7 +244,7 @@ export function BookingConfirmationPage() {
           {t('bookingConfirmation.back')}
         </Button>
 
-        <h1 className="text-3xl font-bold font-display tracking-tight mb-8">
+        <h1 className="font-display text-3xl font-semibold tracking-tight mb-8">
           {t('bookingConfirmation.confirmBookingTitle')}
         </h1>
 
@@ -264,7 +265,7 @@ export function BookingConfirmationPage() {
                     <p className="text-muted-foreground text-sm">{task.location_text}</p>
                     <div className="mt-3 text-sm font-medium">
                       {t('bookingConfirmation.scheduledFor', {
-                        date: new Date(task.scheduled_at).toLocaleString(),
+                        date: formatDateTime(task.scheduled_at),
                       })}
                     </div>
                   </CardContent>

@@ -33,19 +33,19 @@ export function Header() {
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-sticky rounded-b-xl border-b border-border bg-background md:hidden shadow-nav"
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className="fixed top-0 left-0 right-0 z-sticky border-b border-border/30 bg-background/95 md:hidden shadow-nav"
     >
       <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
-        {/* Logo */}
         <div
-          className="flex cursor-pointer items-center"
+          className="flex cursor-pointer items-center gap-2"
           onClick={() => navigate('/')}
           aria-label={t('nav.home')}
         >
-          <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl shadow-card" />
+          <img src="/logo.png" alt="" className="h-9 w-9 rounded-lg shadow-card" />
+          <span className="text-heading-3 font-display font-semibold text-foreground">Tasky</span>
         </div>
 
-        {/* Desktop nav links */}
         {navLinks && (
           <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
             {navLinks.map(({ to, label }) => (
@@ -55,7 +55,7 @@ export function Header() {
                 className={({ isActive }) =>
                   isActive
                     ? 'text-primary font-semibold text-sm'
-                    : 'text-muted-foreground hover:text-foreground text-sm'
+                    : 'text-muted-foreground hover:text-foreground text-sm transition-colors duration-200'
                 }
               >
                 {t(label)}
@@ -64,26 +64,25 @@ export function Header() {
           </nav>
         )}
 
-        {/* Actions */}
         <div className="flex items-center gap-2 md:gap-3">
           <div className="hidden md:block">
             <LanguageSwitcher />
           </div>
 
-          <div className="w-[1px] h-6 bg-border/50 hidden md:block mx-1"></div>
+          <div className="w-px h-5 bg-border/40 hidden md:block" />
 
           {profile ? (
             <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
-              className="text-sm font-semibold h-9 px-4 rounded-xl"
+              className="text-sm font-semibold h-9 px-3 rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-200"
               onClick={signOut}
             >
               {t('nav.logout')}
             </Button>
           ) : (
             <Button
-              className="text-sm font-bold h-9 px-4 rounded-xl"
+              className="text-sm font-bold h-9 px-4 rounded-lg"
               onClick={() => navigate('/auth')}
             >
               {t('auth.login')}

@@ -14,22 +14,39 @@ export function EmptyState({ icon, title, description, ctaLabel, onCtaClick }: E
   return (
     <div
       className={cn(
-        'flex flex-col items-center rounded-xl border-2 border-dashed border-border bg-card p-12 text-center',
+        'flex flex-col items-center rounded-xl',
+        'border border-border/40 bg-card shadow-card',
+        'px-8 py-14 text-center',
       )}
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <div
+        className={cn(
+          'mb-5 flex h-14 w-14 items-center justify-center',
+          'rounded-2xl bg-primary/10',
+          'text-primary',
+          'shadow-card',
+        )}
+      >
         {icon}
       </div>
 
-      <p className="mb-2 text-sm font-semibold text-foreground">{title}</p>
+      <p className="mb-2 text-body font-semibold font-display text-foreground">{title}</p>
 
-      <p className="mb-5 max-w-xs text-sm text-muted-foreground">{description}</p>
+      <p className="mb-7 max-w-xs text-body-sm leading-relaxed text-muted-foreground">
+        {description}
+      </p>
 
       {ctaLabel && (
         <button
           type="button"
           onClick={onCtaClick}
-          className="h-10 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground"
+          className={cn(
+            'h-11 rounded-xl bg-primary px-6',
+            'text-button-label font-semibold text-primary-foreground',
+            'shadow-fab',
+            'transition-all duration-200',
+            'hover:opacity-hover active:scale-pressed active:opacity-pressed',
+          )}
         >
           {ctaLabel}
         </button>

@@ -19,7 +19,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-12 w-full items-center justify-between rounded-md border-[1.5px] border-border bg-background px-4 py-3 text-body font-sans text-foreground transition-colors duration-sheet-close ease-sheet-close',
+      'flex h-12 w-full items-center justify-between rounded-lg border-[1.5px] border-border bg-background px-4 py-3 text-body font-sans text-foreground',
+      'transition-colors duration-sheet-close ease-sheet-close',
       'placeholder:text-text-tertiary focus-visible:outline-none focus-visible:border-foreground',
       'disabled:cursor-not-allowed disabled:opacity-disabled',
       '[&>span]:line-clamp-1',
@@ -29,7 +30,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-icon-sm w-icon-sm text-text-tertiary" />
+      <ChevronDown className="h-icon-sm w-icon-sm text-text-tertiary transition-transform duration-sheet-close ease-sheet-close" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -43,8 +44,10 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-dropdown max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-card text-foreground shadow-deep',
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+        'relative z-dropdown max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-border/60 bg-card text-foreground shadow-deep',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out',
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
@@ -55,7 +58,7 @@ const SelectContent = React.forwardRef<
     >
       <SelectPrimitive.Viewport
         className={cn(
-          'p-1',
+          'p-1.5',
           position === 'popper' &&
             'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]',
         )}
@@ -74,16 +77,17 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-8 pr-2 text-label font-sans outline-none',
-      'focus:bg-primary-10 focus:text-foreground',
+      'relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-8 pr-3 text-body font-sans outline-none',
+      'transition-colors duration-sheet-close ease-sheet-close',
+      'focus:bg-primary/10 focus:text-foreground',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-disabled',
       className,
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-icon-xs w-icon-xs items-center justify-center">
+    <span className="absolute left-2.5 flex h-icon-xs w-icon-xs items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-icon-xs w-icon-xs" />
+        <Check className="h-icon-xs w-icon-xs text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -97,7 +101,7 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-border', className)}
+    className={cn('-mx-1 my-1 h-px bg-border/60', className)}
     {...props}
   />
 ));
@@ -110,7 +114,7 @@ const SelectLabel = React.forwardRef<
   <SelectPrimitive.Label
     ref={ref}
     className={cn(
-      'py-1.5 pl-8 pr-2 text-badge-text font-semibold text-muted-foreground uppercase tracking-caps',
+      'py-1.5 pl-8 pr-2 text-badge-text font-sans font-semibold text-muted-foreground uppercase tracking-caps',
       className,
     )}
     {...props}

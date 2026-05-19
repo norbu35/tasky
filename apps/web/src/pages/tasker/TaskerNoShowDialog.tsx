@@ -38,7 +38,7 @@ export function TaskerNoShowDialog() {
     <ScreenFrame maxWidth="narrow">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-2">
             <UserX className="w-6 h-6 text-destructive" />
             {t('taskerPages.noShow.title')}
           </h1>
@@ -47,9 +47,9 @@ export function TaskerNoShowDialog() {
           </p>
         </div>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Clock className="w-5 h-5 text-secondary" />
               {t('taskerPages.noShow.timingTitle')}
             </CardTitle>
@@ -66,10 +66,12 @@ export function TaskerNoShowDialog() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/30 bg-secondary/5">
+        <Card className="bg-muted/30">
           <CardContent className="pt-6">
             <div className="flex gap-3">
-              <AlertTriangle className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary/10">
+                <AlertTriangle className="w-4 h-4 text-secondary" />
+              </div>
               <div className="text-sm">
                 <p className="font-medium">{t('taskerPages.noShow.warningTitle')}</p>
                 <ul className="mt-2 space-y-1 text-muted-foreground list-disc list-inside">
@@ -82,9 +84,9 @@ export function TaskerNoShowDialog() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>{t('taskerPages.noShow.confirmTitle')}</CardTitle>
+            <CardTitle className="text-lg">{t('taskerPages.noShow.confirmTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">

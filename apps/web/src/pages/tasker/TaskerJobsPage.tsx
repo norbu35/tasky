@@ -8,11 +8,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
 import { ResponsiveDetailShell } from '../../layout/parity/ResponsiveDetailShell';
+import { formatDate } from '../../lib/formatDate';
 
 export function TaskerJobsPage() {
   const { t } = useTranslation();
@@ -35,13 +37,15 @@ export function TaskerJobsPage() {
     >
       {isLoading ? (
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6 text-center">
+            <Clock className="h-6 w-6 mx-auto mb-2 animate-pulse text-muted-foreground" />
             <p className="text-sm text-muted-foreground">{t('taskerPages.jobs.loading')}</p>
           </CardContent>
         </Card>
       ) : bookings.length === 0 ? (
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6 text-center">
+            <Briefcase className="h-8 w-8 mx-auto mb-3 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">{t('taskerPages.jobs.empty')}</p>
           </CardContent>
         </Card>
@@ -51,37 +55,36 @@ export function TaskerJobsPage() {
             <Card key={booking.id}>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">
+                  <CardTitle className="text-sm font-mono tracking-tight">
                     {t('taskerPages.jobs.bookingId')} {booking.id.substring(0, 8)}...
                   </CardTitle>
                   <StatusBadge status={booking.status} />
                 </div>
                 <CardDescription className="text-xs">
-                  {booking.confirmed_scheduled_at &&
-                    new Date(booking.confirmed_scheduled_at).toLocaleDateString()}
+                  {booking.confirmed_scheduled_at && formatDate(booking.confirmed_scheduled_at)}
                   {booking.price != null && ` · ₮${booking.price.toLocaleString()}`}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                {booking.status === 'ASSIGNED' && (
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive"
-                      onClick={() => {
-                        /* Opens cancel dialog — uses cancelBooking */
-                      }}
-                    >
-                      <XCircle className="mr-1 h-3 w-3" />
-                      {t('taskerPages.jobs.declineBtn')}
-                    </Button>
-                  </div>
-                )}
-                {booking.status === 'COMPLETED' && (
+              {booking.status === 'ASSIGNED' && (
+                <CardFooter className="pt-0">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive"
+                    onClick={() => {
+                      /* Opens cancel dialog — uses cancelBooking */
+                    }}
+                  >
+                    <XCircle className="mr-1 h-3 w-3" />
+                    {t('taskerPages.jobs.declineBtn')}
+                  </Button>
+                </CardFooter>
+              )}
+              {booking.status === 'COMPLETED' && (
+                <CardContent className="pt-0">
                   <p className="text-xs text-muted-foreground">{t('taskerPages.jobs.completed')}</p>
-                )}
-              </CardContent>
+                </CardContent>
+              )}
             </Card>
           ))}
         </div>
@@ -95,28 +98,28 @@ function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case 'ASSIGNED':
       return (
-        <Badge variant="outline" className="gap-1">
+        <Badge variant="statusAssigned" className="gap-1">
           <Clock className="h-3 w-3" />
           {t('taskerPages.jobs.statusAssigned')}
         </Badge>
       );
     case 'COMPLETED':
       return (
-        <Badge variant="outline" className="gap-1 text-verified">
+        <Badge variant="statusCompleted" className="gap-1">
           <CheckCircle className="h-3 w-3" />
           {t('taskerPages.jobs.statusCompleted')}
         </Badge>
       );
     case 'CANCELLED':
       return (
-        <Badge variant="outline" className="gap-1 text-destructive">
+        <Badge variant="statusCancelled" className="gap-1">
           <XCircle className="h-3 w-3" />
           {t('taskerPages.jobs.statusCancelled')}
         </Badge>
       );
     case 'NO_SHOW':
       return (
-        <Badge variant="outline" className="gap-1 text-destructive">
+        <Badge variant="noShow" className="gap-1">
           <Briefcase className="h-3 w-3" />
           {t('taskerPages.jobs.statusNoShow')}
         </Badge>

@@ -10,15 +10,7 @@ import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { useCreateBookingIntent } from '@/features/bookings/hooks/useCreateBookingIntent';
 import { useCreateTask } from '@/features/tasks';
-
-function formatDateTime(value: Date): string {
-  const y = value.getFullYear();
-  const m = String(value.getMonth() + 1).padStart(2, '0');
-  const d = String(value.getDate()).padStart(2, '0');
-  const h = String(value.getHours()).padStart(2, '0');
-  const min = String(value.getMinutes()).padStart(2, '0');
-  return `${y}.${m}.${d} ${h}:${min}`;
-}
+import { formatDateTime } from '@/utils/formatDate';
 
 export default function RebookScreen() {
   const { t } = useTranslation();

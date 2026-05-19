@@ -35,25 +35,27 @@ export function CustomerNoApplicantRescuePage() {
           tone="muted"
         />
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>{t('customerPages.noApplicantRescue.rescueTitle')}</CardTitle>
+            <CardTitle className="text-lg">
+              {t('customerPages.noApplicantRescue.rescueTitle')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-start gap-3">
-              <Pencil className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+              <Pencil className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
                 {t('customerPages.noApplicantRescue.tipEdit')}
               </p>
             </div>
-            <div className="flex items-start gap-3">
-              <Clock className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+              <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
                 {t('customerPages.noApplicantRescue.tipExtend')}
               </p>
             </div>
-            <div className="flex items-start gap-3">
-              <Share2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+              <Share2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
                 {t('customerPages.noApplicantRescue.tipShare')}
               </p>

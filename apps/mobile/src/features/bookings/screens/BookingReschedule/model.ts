@@ -53,30 +53,6 @@ export function createRescheduleTimeOptions(referenceDate = createDefaultResched
   return options;
 }
 
-export function formatDateTime(value: string | Date): string {
-  const date = typeof value === 'string' ? new Date(value) : value;
-  if (Number.isNaN(date.getTime())) return '';
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  const h = String(date.getHours()).padStart(2, '0');
-  const min = String(date.getMinutes()).padStart(2, '0');
-  return `${y}.${m}.${d} ${h}:${min}`;
-}
-
-export function formatDateValue(value: Date): string {
-  const year = value.getFullYear();
-  const month = String(value.getMonth() + 1).padStart(2, '0');
-  const day = String(value.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
-
-export function formatTimeValue(value: Date): string {
-  const hours = String(value.getHours()).padStart(2, '0');
-  const minutes = String(value.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
-}
-
 export function combineDateAndTime(dateValue: Date, timeValue: Date): Date {
   const combined = new Date(dateValue);
   combined.setHours(timeValue.getHours(), timeValue.getMinutes(), 0, 0);

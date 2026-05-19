@@ -4,12 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Skeleton } from '../../components/ui/skeleton';
 import { Textarea } from '../../components/ui/textarea';
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { AdminDisputeDetail, Dispute } from '../../lib/apiClient';
+import { formatDateTime } from '../../lib/formatDate';
 
 function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
   switch (status) {
@@ -105,7 +106,10 @@ export function AdminDisputeDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-64" />
+        </div>
         <p className="sr-only">{t('common.loading')}</p>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -123,10 +127,17 @@ export function AdminDisputeDetailPage() {
   if (error && !detail) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" onClick={() => navigate('/admin/disputes')}>
+            {t('common.back')}
+          </Button>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">
+            {t('admin.disputeDetail.title')}
+          </h1>
+        </div>
         <Card>
-          <CardContent className="p-6 text-center space-y-4">
-            <p className="text-destructive">
+          <CardContent className="py-8 text-center">
+            <p className="text-body-sm text-destructive">
               {t('common.error')}: {error}
             </p>
           </CardContent>
@@ -155,103 +166,135 @@ export function AdminDisputeDetailPage() {
         <Button variant="outline" size="sm" onClick={() => navigate('/admin/disputes')}>
           {t('common.back')}
         </Button>
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.disputeDetail.title')}
+        </h1>
       </div>
 
-      {/* Dispute Info */}
       <Card>
-        <CardContent className="space-y-2 p-6">
-          <h2 className="text-lg font-semibold font-display">
+        <CardHeader>
+          <CardTitle className="text-section-heading">
             {t('admin.disputeDetail.disputeInfo')}
-          </h2>
-          <p>
-            <strong>{t('admin.disputeDetail.reason')}:</strong> {dispute.reason}
-          </p>
-          <div className="flex items-center gap-2">
-            <strong>{t('admin.disputeDetail.status')}:</strong>
-            <Badge variant={disputeStatusVariant(dispute.status)}>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-col gap-1">
+            <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+              {t('admin.disputeDetail.reason')}
+            </span>
+            <p className="text-body-sm">{dispute.reason}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+              {t('admin.disputeDetail.status')}
+            </span>
+            <Badge
+              variant={disputeStatusVariant(dispute.status)}
+              className="uppercase tracking-caps"
+            >
               {t(getDisputeStatusLabelKey(dispute.status))}
             </Badge>
           </div>
-          <p>
-            <strong>{t('admin.disputeDetail.createdAt')}:</strong>{' '}
-            {new Date(dispute.created_at).toLocaleString()}
-          </p>
+          <div className="flex flex-col gap-1">
+            <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+              {t('admin.disputeDetail.createdAt')}
+            </span>
+            <p className="text-body-sm">{formatDateTime(dispute.created_at)}</p>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Booking Context */}
       <Card>
-        <CardContent className="space-y-2 p-6">
-          <h2 className="text-lg font-semibold font-display">
+        <CardHeader>
+          <CardTitle className="text-section-heading">
             {t('admin.disputeDetail.bookingContext')}
-          </h2>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
           {task && (
             <>
-              <p>
-                <strong>{t('admin.disputeDetail.taskDescription')}:</strong>{' '}
-                {String(task['description'] ?? '')}
-              </p>
-              <p>
-                <strong>{t('admin.disputeDetail.budget')}:</strong>{' '}
-                {Number(task['budget'] ?? booking['price'] ?? 0).toLocaleString()}
-              </p>
-              {task['scheduled_at'] && (
-                <p>
-                  <strong>{t('admin.disputeDetail.schedule')}:</strong>{' '}
-                  {new Date(String(task['scheduled_at'])).toLocaleString()}
+              <div className="flex flex-col gap-1">
+                <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                  {t('admin.disputeDetail.taskDescription')}
+                </span>
+                <p className="text-body-sm">{String(task['description'] ?? '')}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                  {t('admin.disputeDetail.budget')}
+                </span>
+                <p className="text-body-sm font-semibold">
+                  {Number(task['budget'] ?? booking['price'] ?? 0).toLocaleString()}
                 </p>
+              </div>
+              {task['scheduled_at'] && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                    {t('admin.disputeDetail.schedule')}
+                  </span>
+                  <p className="text-body-sm">{formatDateTime(String(task['scheduled_at']))}</p>
+                </div>
               )}
             </>
           )}
           {!task && booking['price'] !== undefined && (
-            <p>
-              <strong>{t('admin.disputeDetail.budget')}:</strong>{' '}
-              {Number(booking['price']).toLocaleString()}
-            </p>
+            <div className="flex flex-col gap-1">
+              <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                {t('admin.disputeDetail.budget')}
+              </span>
+              <p className="text-body-sm font-semibold">
+                {Number(booking['price']).toLocaleString()}
+              </p>
+            </div>
           )}
           {customer && (
-            <p>
-              <strong>{t('admin.disputeDetail.customer')}:</strong>{' '}
-              {String(customer['full_name'] ?? t('common.unknown'))}
-            </p>
+            <div className="flex flex-col gap-1">
+              <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                {t('admin.disputeDetail.customer')}
+              </span>
+              <p className="text-body-sm">{String(customer['full_name'] ?? t('common.unknown'))}</p>
+            </div>
           )}
           {tasker && (
-            <p>
-              <strong>{t('admin.disputeDetail.tasker')}:</strong>{' '}
-              {String(tasker['full_name'] ?? t('common.unknown'))}
-            </p>
+            <div className="flex flex-col gap-1">
+              <span className="text-badge-text font-medium uppercase tracking-caps text-muted-foreground">
+                {t('admin.disputeDetail.tasker')}
+              </span>
+              <p className="text-body-sm">{String(tasker['full_name'] ?? t('common.unknown'))}</p>
+            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Evidence Messages */}
       {evidenceMessages.length > 0 && (
         <Card>
-          <CardContent className="space-y-3 p-6">
-            <h2 className="text-lg font-semibold font-display">
+          <CardHeader>
+            <CardTitle className="text-section-heading">
               {t('admin.disputeDetail.evidence')}
-            </h2>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
             {evidenceMessages.map((msg) => (
-              <div key={msg.id} className="border-l-2 border-border pl-3 py-1">
-                <p className="text-xs text-muted-foreground">
-                  {new Date(msg.sent_at).toLocaleString()}
+              <div key={msg.id} className="border-l-2 border-border pl-4 py-2">
+                <p className="text-badge-text text-muted-foreground">
+                  {formatDateTime(msg.sent_at)}
                 </p>
-                <p className="text-sm">{msg.content}</p>
+                <p className="text-body-sm mt-1">{msg.content}</p>
               </div>
             ))}
           </CardContent>
         </Card>
       )}
 
-      {/* Resolution */}
       <Card>
-        <CardContent className="space-y-4 p-6">
-          <h2 className="text-lg font-semibold font-display">
+        <CardHeader>
+          <CardTitle className="text-section-heading">
             {t('admin.disputeDetail.resolution')}
-          </h2>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div>
-            <label htmlFor="resolution-notes" className="block text-sm font-medium mb-1">
+            <label htmlFor="resolution-notes" className="block text-label font-medium mb-2">
               {t('admin.disputeDetail.notesLabel')}
             </label>
             <Textarea
@@ -264,22 +307,28 @@ export function AdminDisputeDetailPage() {
                 if (validationError) setValidationError(null);
               }}
             />
-            {validationError && <p className="text-destructive text-sm mt-1">{validationError}</p>}
+            {validationError && (
+              <p className="text-body-sm text-destructive mt-1.5">{validationError}</p>
+            )}
           </div>
           {error && detail && (
-            <p className="text-destructive text-sm">
+            <p className="text-body-sm text-destructive">
               {t('common.error')}: {error}
             </p>
           )}
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_CUSTOMER')}>
               {t('admin.disputeDetail.resolveCustomer')}
             </Button>
-            <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_TASKER')}>
+            <Button
+              variant="secondary"
+              disabled={resolving}
+              onClick={() => handleResolve('RESOLVE_TASKER')}
+            >
               {t('admin.disputeDetail.resolveTasker')}
             </Button>
             <Button
-              variant="secondary"
+              variant="outline"
               disabled={resolving}
               onClick={() => handleResolve('ESCALATE')}
             >

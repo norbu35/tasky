@@ -11,6 +11,7 @@ import { ReviewThresholdSummary } from '@/features/profile/components/ReviewThre
 import { formatPublicRating } from '@/features/profile/model';
 import type { Review } from '@/lib/api/types';
 import { cn } from '@/lib/cn';
+import { formatDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
@@ -187,7 +188,7 @@ export function TaskerProfileReviewsSection({
                       {review.quality_rating}
                     </Text>
                     <Text className="text-caption text-text-secondary">
-                      {new Date(review.created_at).toLocaleDateString()}
+                      {formatDate(review.created_at)}
                     </Text>
                   </View>
                 </View>

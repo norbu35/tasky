@@ -130,17 +130,17 @@ export function ProfilePage() {
       title={t('profile.yourProfile')}
       description={t('profile.manageInfo')}
       detailRail={
-        <Card className="border-border/60 shadow-sm">
-          <CardHeader className="space-y-1.5 border-b border-border/50 bg-muted/20 pb-4">
+        <Card>
+          <CardHeader className="pb-4">
             <CardTitle className="text-xl font-display">
               {t('profile.accountVerification')}
             </CardTitle>
             <CardDescription>{t('profile.addPhoto')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-5">
-            <div className="flex items-start gap-4 rounded-2xl border border-border/60 bg-muted/30 p-4">
+            <div className="flex items-center gap-4 rounded-xl bg-muted/20 p-4 ring-1 ring-inset ring-border/30">
               <div
-                className={`mt-1 rounded-xl p-2 ${statusVerified ? 'bg-verified/20 text-verified' : 'bg-accent/20 text-accent-foreground'}`}
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${statusVerified ? 'bg-verified/15 text-verified' : 'bg-sun-wash/60 text-sun-warm'}`}
               >
                 {statusVerified ? (
                   <ShieldCheck className="h-6 w-6" />
@@ -149,29 +149,33 @@ export function ProfilePage() {
                 )}
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold">{t('profile.status')}</p>
-                <p className="text-lg font-display capitalize tracking-tight text-foreground">
+                <p className="text-label text-muted-foreground">{t('profile.status')}</p>
+                <p className="text-section-heading font-display capitalize tracking-tight text-foreground">
                   {profile?.status?.toLowerCase() ?? 'Unknown'}
                 </p>
               </div>
             </div>
 
             {isCustomer ? (
-              <div className="space-y-3 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+              <div className="space-y-4 rounded-xl bg-sun-wash/30 p-5 ring-1 ring-inset ring-sun-light/30">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-accent" />
-                    <h2 className="text-base font-semibold font-display text-foreground">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sun-light/30">
+                      <Sparkles className="h-4 w-4 text-sun-warm" />
+                    </div>
+                    <h2 className="text-lg font-semibold font-display text-foreground">
                       {t('profile.earnWithTasky')}
                     </h2>
                   </div>
-                  <p className="text-sm text-foreground/70">{t('profile.activateTaskerDesc')}</p>
+                  <p className="text-body-sm text-muted-foreground pl-[2.625rem]">
+                    {t('profile.activateTaskerDesc')}
+                  </p>
                 </div>
                 <Button
                   onClick={activateTaskerRole}
                   disabled={working}
                   variant="secondary"
-                  className="w-full rounded-xl shadow-sm sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   {working ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   {t('profile.activateTaskerBtn')}
@@ -182,19 +186,19 @@ export function ProfilePage() {
         </Card>
       }
     >
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader className="space-y-1.5 border-b border-border/50 bg-muted/20 pb-5">
+      <Card>
+        <CardHeader className="pb-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
               <CardTitle className="text-xl font-display">{t('profile.identityAvatar')}</CardTitle>
               <CardDescription>{t('profile.addPhoto')}</CardDescription>
             </div>
-            <div className="flex flex-col items-start gap-1 sm:items-end">
-              <span className="text-xs font-semibold uppercase tracking-caps text-muted-foreground">
+            <div className="flex flex-col items-start gap-1.5 sm:items-end">
+              <span className="text-badge-text font-semibold uppercase tracking-caps text-muted-foreground">
                 {t('profile.networkRole')}
               </span>
               <div
-                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-caps ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
+                className={`rounded-full px-3.5 py-1 text-badge-text font-bold uppercase tracking-caps ring-1 ring-inset ${isCustomer ? 'bg-secondary/60 text-secondary-foreground ring-border/40' : 'bg-sun-wash/50 text-sun-warm ring-sun-light/40'}`}
               >
                 {profile?.role ?? 'UNKNOWN'}
               </div>
@@ -202,10 +206,10 @@ export function ProfilePage() {
           </div>
         </CardHeader>
 
-        <CardContent className="grid gap-8 pt-6 md:grid-cols-[140px_1fr]">
+        <CardContent className="grid gap-8 pt-6 md:grid-cols-[160px_1fr]">
           <div className="flex flex-col items-center space-y-4">
             <div
-              className="group relative flex h-32 w-32 cursor-pointer items-center justify-center overflow-hidden rounded-full border-4 border-background bg-secondary/30 shadow-sm transition-transform hover:scale-105"
+              className="group relative flex h-36 w-36 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-muted/20 shadow-elevated ring-4 ring-background transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:shadow-deep hover:ring-primary/20"
               onClick={() => !working && fileInputRef.current?.click()}
             >
               {avatarUrl ? (
@@ -219,14 +223,19 @@ export function ProfilePage() {
                   }}
                 />
               ) : (
-                <User className="h-6 w-6 text-primary/40" />
+                <div className="flex h-full w-full items-center justify-center bg-muted/30">
+                  <User className="h-8 w-8 text-muted-foreground/40" />
+                </div>
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-primary-deep/40 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-primary/50 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
                 <Camera className="h-6 w-6 text-primary-foreground" />
+                <span className="text-badge-text font-semibold text-primary-foreground">
+                  {t('profile.profilePhoto')}
+                </span>
               </div>
               {working ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+                  <Loader2 className="h-7 w-7 animate-spin text-primary" />
                 </div>
               ) : null}
             </div>
@@ -239,9 +248,11 @@ export function ProfilePage() {
               disabled={working}
             />
             <div className="space-y-1 text-center">
-              <p className="text-sm font-medium">{t('profile.profilePhoto')}</p>
-              <p className="text-xs text-muted-foreground">{t('profile.photoFormats')}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm font-medium text-foreground">
+                {t('profile.profilePhoto')}
+              </p>
+              <p className="text-badge-text text-muted-foreground">{t('profile.photoFormats')}</p>
+              <p className="text-badge-text text-muted-foreground">
                 Your browser may prompt you to choose a photo when you update your avatar.
               </p>
             </div>
@@ -251,7 +262,7 @@ export function ProfilePage() {
             <div className="space-y-2">
               <Label
                 htmlFor="full-name"
-                className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
+                className="text-badge-text font-semibold uppercase tracking-caps text-muted-foreground"
               >
                 {t('profile.displayName')}
               </Label>
@@ -261,14 +272,14 @@ export function ProfilePage() {
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 placeholder={t('profile.displayNamePlaceholder')}
-                className="h-12 rounded-xl border-transparent bg-muted/50 text-lg transition-colors focus:border-primary focus:bg-background"
+                className="text-lg"
                 disabled={working}
               />
             </div>
 
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
               <Button
-                className="h-12 w-full rounded-xl px-8 text-base font-semibold shadow-sm sm:w-auto"
+                className="w-full px-8 text-base font-semibold sm:w-auto"
                 disabled={working || !fullName.trim()}
                 onClick={saveProfile}
               >
@@ -285,7 +296,9 @@ export function ProfilePage() {
       </Card>
 
       <div className="sr-only" aria-hidden="false">
-        <h1>Profile setup and updates</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          Profile setup and updates
+        </h1>
         <Button
           aria-label="Generate avatar upload URL"
           onClick={async () => {

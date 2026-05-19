@@ -1248,7 +1248,13 @@
     "addPhoto": "Add Photo",
     "continue": "Continue",
     "tryAgain": "Try again",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}} hours ago",
+      "daysAgo": "{{count}} days ago"
+    }
   },
   "customer": {
     "taskList": {

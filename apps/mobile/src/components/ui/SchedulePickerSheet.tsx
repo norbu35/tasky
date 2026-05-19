@@ -6,6 +6,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+import { formatNumericTime } from '@/utils/formatDate';
 
 import { Button } from './Button';
 import { Touchable } from './Touchable';
@@ -42,12 +43,6 @@ function isSameTime(a: Date, b: Date): boolean {
 
 function formatMonth(value: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(value);
-}
-
-function formatTime(value: Date): string {
-  const hours = String(value.getHours()).padStart(2, '0');
-  const minutes = String(value.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
 }
 
 function buildCalendarRows(dateOptions: Date[]): Array<Array<Date | null>> {
@@ -250,7 +245,7 @@ export function SchedulePickerSheet({
                       selected ? 'text-background' : 'text-foreground',
                     )}
                   >
-                    {formatTime(time)}
+                    {formatNumericTime(time)}
                   </Text>
                 </Touchable>
               );

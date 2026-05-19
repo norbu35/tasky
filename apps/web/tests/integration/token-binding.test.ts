@@ -146,7 +146,7 @@ describe('Token Binding', () => {
     );
     const appSources = [
       'src/components/ui/card.tsx',
-      'src/components/feature/FeedCard.tsx',
+      'src/components/feature/TaskCard.tsx',
       'src/components/feature/FilterChip.tsx',
       'src/components/feature/task-creation/PhotoUploadManager.tsx',
       'src/pages/AuthPage.tsx',
@@ -162,7 +162,7 @@ describe('Token Binding', () => {
 
   it('TID-TASK-115-WEB-RUNTIME-TYPOGRAPHY uses promoted typography utilities on cleaned surfaces', () => {
     const sourceFiles = [
-      'src/components/feature/FeedCard.tsx',
+      'src/components/feature/TaskCard.tsx',
       'src/components/feature/task-creation/PhotoUploadManager.tsx',
       'src/components/ui/label.tsx',
       'src/pages/AuthPage.tsx',

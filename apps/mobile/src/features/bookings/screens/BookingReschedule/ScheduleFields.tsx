@@ -14,10 +14,9 @@ import {
   type ActivePickerState,
   createRescheduleDateOptions,
   createRescheduleTimeOptions,
-  formatDateValue,
-  formatTimeValue,
   type PickerMode,
 } from './model';
+import { formatNumericDate, formatNumericTime } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
@@ -77,7 +76,7 @@ export function ScheduleFields({
                 className="text-body font-sans-bold"
                 style={{ color: colors.primaryForeground }}
               >
-                {formatDateValue(selectedDate)}
+                {formatNumericDate(selectedDate)}
               </Text>
             </Touchable>
 
@@ -98,7 +97,7 @@ export function ScheduleFields({
                 className="text-body font-sans-bold"
                 style={{ color: colors.primaryForeground }}
               >
-                {formatTimeValue(selectedTime)}
+                {formatNumericTime(selectedTime)}
               </Text>
             </Touchable>
           </View>

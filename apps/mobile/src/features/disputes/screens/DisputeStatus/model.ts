@@ -1,3 +1,5 @@
+import { formatDateTime, formatFullDate } from '@/utils/formatDate';
+
 export type DisputeStatus =
   | 'EVIDENCE_NEEDED'
   | 'OPEN'
@@ -99,38 +101,15 @@ export function buildStatusMeta(t: (key: string) => string): Record<
   };
 }
 
-function getDisputeMonths(t: (key: string) => string) {
-  return [
-    t('customer.disputes.months.january'),
-    t('customer.disputes.months.february'),
-    t('customer.disputes.months.march'),
-    t('customer.disputes.months.april'),
-    t('customer.disputes.months.may'),
-    t('customer.disputes.months.june'),
-    t('customer.disputes.months.july'),
-    t('customer.disputes.months.august'),
-    t('customer.disputes.months.september'),
-    t('customer.disputes.months.october'),
-    t('customer.disputes.months.november'),
-    t('customer.disputes.months.december'),
-  ];
-}
-
 export function formatMongolianDate(
   date: Date,
-  t: (key: string) => string,
+  _t: (key: string) => string,
   options?: { includeTime?: boolean },
 ): string {
-  const months = getDisputeMonths(t);
-  const year = date.getFullYear();
-  const month = months[date.getMonth()];
-  const day = date.getDate();
   if (options?.includeTime) {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(day).padStart(2, '0')} ${hours}:${minutes}`;
+    return formatDateTime(date);
   }
-  return `${year} оны ${month} ${day}`;
+  return formatFullDate(date);
 }
 
 export function parseDate(value?: string | null): Date | null {

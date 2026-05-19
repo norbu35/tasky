@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -21,8 +21,6 @@ import { Textarea } from '../../components/ui/textarea';
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { Category, CategorySchemaVersion, AdminCategoryPayload } from '../../lib/apiClient';
-
-// ── Category Form Dialog ─────────────────────────────────────────────
 
 interface CategoryFormValues {
   name: string;
@@ -129,7 +127,7 @@ function CategoryFormDialog({
               }
             />
           </div>
-          <div className="flex items-center justify-between rounded-md border p-3">
+          <div className="flex items-center justify-between rounded-lg border border-border/40 bg-muted/20 px-4 py-3">
             <Label htmlFor="cat-intake-enabled">{t('admin.categories.intake')}</Label>
             <Switch
               id="cat-intake-enabled"
@@ -137,7 +135,7 @@ function CategoryFormDialog({
               onCheckedChange={(checked) => setForm((f) => ({ ...f, intake_enabled: checked }))}
             />
           </div>
-          <div className="flex items-center justify-between rounded-md border p-3">
+          <div className="flex items-center justify-between rounded-lg border border-border/40 bg-muted/20 px-4 py-3">
             <Label htmlFor="cat-assisted-distribution">
               {t('admin.categories.assistedDistribution')}
             </Label>
@@ -162,8 +160,6 @@ function CategoryFormDialog({
     </Dialog>
   );
 }
-
-// ── Schema Form Dialog ───────────────────────────────────────────────
 
 function SchemaFormDialog({
   open,
@@ -217,6 +213,7 @@ function SchemaFormDialog({
               rows={12}
               value={jsonText}
               onChange={(e) => setJsonText(e.target.value)}
+              className="font-mono text-body-sm"
               placeholder={`[
   {
     "key": "example",
@@ -230,7 +227,7 @@ function SchemaFormDialog({
   }
 ]`}
             />
-            {parseError && <p className="text-sm text-destructive">{parseError}</p>}
+            {parseError && <p className="text-body-sm text-destructive">{parseError}</p>}
           </div>
         </div>
         <DialogFooter>
@@ -246,8 +243,6 @@ function SchemaFormDialog({
   );
 }
 
-// ── Schema status badge variant helper ───────────────────────────────
-
 function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'ACTIVE':
@@ -262,8 +257,6 @@ function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destruct
       return 'secondary';
   }
 }
-
-// ── Schema Versions Panel ────────────────────────────────────────────
 
 function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   const { t } = useTranslation();
@@ -340,7 +333,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
 
   if (loading) {
     return (
-      <div className="space-y-2 p-4">
+      <div className="space-y-2 p-6">
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-8 w-full" />
       </div>
@@ -348,28 +341,30 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   }
 
   return (
-    <div className="space-y-3 border-t p-4">
+    <div className="border-t border-border/30 px-6 py-4 space-y-3 bg-muted/10">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold">{t('admin.categories.schemaVersions')}</h4>
+        <h4 className="text-label font-semibold">{t('admin.categories.schemaVersions')}</h4>
         <Button size="sm" variant="outline" onClick={() => setSchemaDialogOpen(true)}>
           {t('admin.categories.createSchema')}
         </Button>
       </div>
 
       {versions.length === 0 && (
-        <p className="text-sm text-muted-foreground">{t('admin.categories.noSchemas')}</p>
+        <p className="text-body-sm text-muted-foreground">{t('admin.categories.noSchemas')}</p>
       )}
 
       {versions.map((sv) => (
         <div
           key={sv.version}
           data-testid={`schema-row-${sv.version}`}
-          className="flex items-center justify-between rounded-md border p-3"
+          className="flex items-center justify-between rounded-lg border border-border/40 bg-card px-4 py-3"
         >
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">v{sv.version}</span>
-            <Badge variant={statusBadgeVariant(sv.status)}>{sv.status}</Badge>
-            <span className="text-xs text-muted-foreground">{sv.created_at}</span>
+            <span className="text-label font-semibold">v{sv.version}</span>
+            <Badge variant={statusBadgeVariant(sv.status)} className="uppercase tracking-caps">
+              {sv.status}
+            </Badge>
+            <span className="text-badge-text text-muted-foreground">{sv.created_at}</span>
           </div>
           <div className="flex gap-2">
             {(sv.status === 'DRAFT' || sv.status === 'CANARY') && (
@@ -395,8 +390,6 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   );
 }
 
-// ── Main Page ────────────────────────────────────────────────────────
-
 export function AdminCategoriesPage() {
   const { t } = useTranslation();
   const { session } = useAppContext();
@@ -406,11 +399,9 @@ export function AdminCategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Dialog state
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
-  // Expanded schema section
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null);
 
   const fetchCategories = useCallback(async () => {
@@ -491,19 +482,22 @@ export function AdminCategoriesPage() {
     setExpandedCategoryId((prev) => (prev === categoryId ? null : categoryId));
   };
 
-  // Loading state
   if (loading) {
     return (
-      <div data-testid="categories-loading" className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
+      <div data-testid="categories-loading" className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.categories.title')}
+        </h1>
         {[1, 2, 3].map((i) => (
           <Card key={i}>
-            <CardContent className="flex items-center justify-between p-6">
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-32" />
-                <Skeleton className="h-4 w-48" />
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+                <Skeleton className="h-8 w-20" />
               </div>
-              <Skeleton className="h-8 w-20" />
             </CardContent>
           </Card>
         ))}
@@ -511,15 +505,18 @@ export function AdminCategoriesPage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.categories.title')}
+        </h1>
         <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">{t('admin.categories.loadError')}</p>
-            <Button onClick={fetchCategories}>{t('common.retry')}</Button>
+          <CardContent className="flex flex-col items-center gap-4 py-8">
+            <p className="text-body-sm text-destructive">{t('admin.categories.loadError')}</p>
+            <Button variant="outline" size="sm" onClick={fetchCategories}>
+              {t('common.retry')}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -527,55 +524,47 @@ export function AdminCategoriesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.categories.title')}
+        </h1>
         <Button onClick={handleCreate}>{t('admin.categories.create')}</Button>
       </div>
 
-      {/* Empty state */}
       {categories.length === 0 && (
         <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-muted-foreground">{t('admin.categories.empty')}</p>
+          <CardContent className="py-12 text-center">
+            <p className="text-body-sm text-muted-foreground">{t('admin.categories.empty')}</p>
           </CardContent>
         </Card>
       )}
 
-      {/* Category list */}
       {categories.map((category) => (
         <Card key={category.id} data-testid={`category-row-${category.id}`}>
-          <CardContent className="p-0">
-            <div className="flex items-center justify-between p-6">
+          <CardHeader className="p-6 pb-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 {category.icon_url && (
-                  <img src={category.icon_url} alt={category.name} className="h-8 w-8 rounded" />
+                  <img
+                    src={category.icon_url}
+                    alt={category.name}
+                    className="h-10 w-10 rounded-lg object-cover ring-1 ring-inset ring-border/30"
+                  />
                 )}
-                <div className="space-y-1">
+                <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-base font-medium">{category.name}</p>
-                    <Badge variant={category.is_active ? 'default' : 'secondary'}>
+                    <CardTitle className="text-card-title">{category.name}</CardTitle>
+                    <Badge
+                      variant={category.is_active ? 'verified' : 'secondary'}
+                      className="uppercase tracking-caps"
+                    >
                       {category.is_active
                         ? t('admin.categories.active')
                         : t('admin.categories.inactive')}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{category.name_mn}</p>
-                  <div className="flex gap-4 text-xs text-muted-foreground">
-                    <span>
-                      {t('admin.categories.sortOrder')}: {category.sort_order}
-                    </span>
-                    <span>
-                      {t('admin.categories.intake')}:{' '}
-                      {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
-                    </span>
-                    <span>
-                      {t('admin.categories.assistedDistribution')}:{' '}
-                      {category.assisted_distribution_enabled
-                        ? t('common.enabled')
-                        : t('common.disabled')}
-                    </span>
-                  </div>
+                  <p className="text-body-sm text-muted-foreground mt-1">{category.name_mn}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -594,14 +583,33 @@ export function AdminCategoriesPage() {
                 </Button>
               </div>
             </div>
-
-            {/* Expandable schema section */}
-            {expandedCategoryId === category.id && <SchemaVersionsPanel categoryId={category.id} />}
+          </CardHeader>
+          <CardContent className="px-6 pb-4 pt-0">
+            <div className="flex gap-6 text-badge-text text-muted-foreground">
+              <span>
+                {t('admin.categories.sortOrder')}: {category.sort_order}
+              </span>
+              <span>
+                {t('admin.categories.intake')}:{' '}
+                {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
+              </span>
+              <span>
+                {t('admin.categories.assistedDistribution')}:{' '}
+                {category.assisted_distribution_enabled
+                  ? t('common.enabled')
+                  : t('common.disabled')}
+              </span>
+            </div>
           </CardContent>
+
+          {expandedCategoryId === category.id && (
+            <CardFooter className="block p-0">
+              <SchemaVersionsPanel categoryId={category.id} />
+            </CardFooter>
+          )}
         </Card>
       ))}
 
-      {/* Category form dialog */}
       <CategoryFormDialog
         open={formDialogOpen}
         onOpenChange={setFormDialogOpen}

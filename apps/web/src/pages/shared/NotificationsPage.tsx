@@ -14,7 +14,7 @@ export function NotificationsPage() {
       <StatePanel
         title={t('sharedPages.notifications.emptyTitle')}
         description={t('sharedPages.notifications.emptyDesc')}
-        icon={<Bell className="h-4 w-4" />}
+        icon={<Bell className="h-5 w-5" />}
         tone="muted"
       />
     </ResponsiveFeedShell>

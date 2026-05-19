@@ -14,6 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations, mobileTheme, overlays } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+import { resolveLocale } from '@/utils/formatDate';
+import i18n from 'i18next';
 
 const { colors, radius, spacing } = mobileTheme;
 
@@ -172,7 +174,7 @@ function parseBudgetInput(raw: string): number | null {
 
 function formatBudgetInput(value: number | null): string {
   if (value == null) return '';
-  return value.toLocaleString('en-US');
+  return value.toLocaleString(resolveLocale(i18n.language));
 }
 
 export function TaskFeedFilterSheet({

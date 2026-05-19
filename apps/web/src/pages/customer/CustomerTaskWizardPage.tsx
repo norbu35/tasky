@@ -157,16 +157,16 @@ export function CustomerTaskWizardPage() {
       stepLabel={t('customerPages.taskWizard.stepLabel')}
       footer={
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" form="customer-task-form" disabled={working}>
+          <Button type="submit" form="customer-task-form" disabled={working} size="lg">
             {working ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <Save className="mr-2 h-4 w-4" />
+              <Save className="mr-2 h-5 w-5" />
             )}
             {t('customerPages.taskWizard.createAction')}
           </Button>
-          <Button type="button" variant="secondary">
-            <Plus className="mr-2 h-4 w-4" />
+          <Button type="button" variant="outline" size="lg">
+            <Plus className="mr-2 h-5 w-5" />
             {t('customerPages.taskWizard.saveDraft')}
           </Button>
         </div>
@@ -189,19 +189,19 @@ export function CustomerTaskWizardPage() {
           />
         ) : null}
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
             <CardTitle>{t('customerPages.taskWizard.basicsTitle')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-4">
-            <p className="text-sm text-muted-foreground">
+          <CardContent className="grid gap-5">
+            <p className="text-body-sm text-muted-foreground">
               {t('customerPages.taskWizard.basicsDesc')}
             </p>
             <div className="grid gap-2">
               <Label htmlFor="task-category">{t('customerPages.taskWizard.categoryLabel')}</Label>
               <select
                 id="task-category"
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className="flex h-12 w-full rounded-lg border-[1.5px] border-border/60 bg-muted/20 px-4 py-3 text-body font-sans text-foreground transition-all duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:bg-background focus-visible:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 value={categoryId}
                 onChange={(event) => setCategoryId(event.target.value)}
               >
@@ -215,12 +215,12 @@ export function CustomerTaskWizardPage() {
             </div>
 
             {intakeSchema ? (
-              <div className="grid gap-4 rounded-lg border border-border/60 p-4">
+              <div className="grid gap-4 rounded-xl bg-muted/15 p-5 ring-1 ring-inset ring-border/30">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-semibold uppercase tracking-caps text-muted-foreground">
+                  <h3 className="text-xs font-semibold uppercase tracking-caps text-muted-foreground">
                     {t('customerPages.taskWizard.intakeTitle')}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body-sm text-muted-foreground">
                     {t('customerPages.taskWizard.intakeDesc')}
                   </p>
                 </div>
@@ -243,16 +243,17 @@ export function CustomerTaskWizardPage() {
                   setSummaryManuallyEdited(true);
                   setDescription(event.target.value);
                 }}
+                className="bg-muted/20 hover:bg-muted/30 focus-visible:bg-background focus-visible:border-foreground/40"
               />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
             <CardTitle>{t('customerPages.taskWizard.scheduleTitle')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
+          <CardContent className="grid gap-5 md:grid-cols-2">
             <div className="grid gap-2">
               <Label>{t('customerPages.taskWizard.pricingModeLabel')}</Label>
               <div className="flex gap-2">
@@ -263,6 +264,9 @@ export function CustomerTaskWizardPage() {
                     variant={pricingMode === mode ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setPricingMode(mode)}
+                    className={
+                      pricingMode === mode ? 'shadow-fab' : 'ring-1 ring-inset ring-border/40'
+                    }
                   >
                     {mode === 'BUDGET'
                       ? t('customerPages.taskWizard.budgetMode')
@@ -284,11 +288,13 @@ export function CustomerTaskWizardPage() {
                 />
               </div>
             ) : (
-              <div className="grid gap-2">
-                <Label>{t('customerPages.taskWizard.quoteModeHint')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('customerPages.taskWizard.quoteModeDesc')}
-                </p>
+              <div className="flex items-center">
+                <div className="grid gap-1.5 rounded-lg bg-muted/20 p-4 ring-1 ring-inset ring-border/30">
+                  <Label>{t('customerPages.taskWizard.quoteModeHint')}</Label>
+                  <p className="text-body-sm text-muted-foreground">
+                    {t('customerPages.taskWizard.quoteModeDesc')}
+                  </p>
+                </div>
               </div>
             )}
 
@@ -304,20 +310,20 @@ export function CustomerTaskWizardPage() {
               />
             </div>
 
-            <div className="grid gap-2 md:col-span-2">
+            <div className="grid gap-2.5 md:col-span-2">
               <Label htmlFor="task-location-text">
                 {t('customerPages.taskWizard.addressLabel')}
               </Label>
               {recentLocations && recentLocations.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-1">
-                  <span className="text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-badge-text text-muted-foreground">
                     {t('customerPages.taskWizard.recentLocations')}
                   </span>
                   {recentLocations.map((loc, i) => (
                     <button
                       key={i}
                       type="button"
-                      className="text-xs text-primary underline underline-offset-2 hover:text-primary/80"
+                      className="rounded-full bg-muted/30 px-3 py-1 text-badge-text font-medium text-primary ring-1 ring-inset ring-border/30 transition-colors hover:bg-primary/10 hover:ring-primary/20"
                       onClick={() => {
                         setLocationText(loc.location_text);
                         setLocationLat(loc.location_lat);

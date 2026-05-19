@@ -10,6 +10,7 @@ import { Touchable } from '@/components/ui/Touchable';
 import { useAcceptApplication } from '@/features/bookings/hooks/useAcceptApplication';
 import { useConfirmBookingIntent } from '@/features/bookings/hooks/useConfirmBookingIntent';
 import type { BookingIntent } from '@/lib/api/types';
+import { formatDate, formatDateTime } from '@/utils/formatDate';
 
 export default function BookingConfirmScreen() {
   const { t } = useTranslation();
@@ -111,7 +112,7 @@ export default function BookingConfirmScreen() {
                 {t('customer.bookings.selectionRespondBy')}
               </Text>
               <Text className="text-body text-primary-deep">
-                {new Date(pendingIntent.expires_at).toLocaleString()}
+                {formatDateTime(pendingIntent.expires_at)}
               </Text>
             </>
           )}
@@ -159,7 +160,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-body text-primary-deep mb-sm">{params.taskTitle}</Text>
         {params.taskSchedule && (
           <Text className="text-caption text-text-secondary mb-sm">
-            {new Date(params.taskSchedule).toLocaleDateString()}
+            {formatDate(params.taskSchedule)}
           </Text>
         )}
         {params.taskBudget && <PriceTag amount={Number(params.taskBudget)} size="sm" />}

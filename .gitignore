@@ -123,3 +123,6 @@ research/market-data/unegui/*
 
 # Static media files
 output/
+
+# Screenshot dumps at the root
+/*.png

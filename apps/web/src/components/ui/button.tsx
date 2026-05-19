@@ -5,14 +5,17 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex min-h-touch-target-min items-center justify-center whitespace-nowrap rounded-lg text-button-label font-semibold transition-all duration-sheet-close ease-sheet-close active:opacity-pressed active:scale-pressed focus-visible:outline-none focus-visible:ring-[length:var(--interaction-focused-ring-width)] focus-visible:ring-ring focus-visible:ring-offset-[length:var(--interaction-focused-ring-offset)] disabled:pointer-events-none disabled:opacity-disabled disabled:shadow-none ring-offset-background',
+  'inline-flex min-h-touch-target-min items-center justify-center gap-2 whitespace-nowrap rounded-lg text-button-label font-semibold transition-all duration-sheet-close ease-sheet-close active:opacity-pressed active:scale-pressed focus-visible:outline-none focus-visible:ring-[length:var(--interaction-focused-ring-width)] focus-visible:ring-ring focus-visible:ring-offset-[length:var(--interaction-focused-ring-offset)] disabled:pointer-events-none disabled:opacity-disabled disabled:shadow-none ring-offset-background',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-fab hover:opacity-hover',
-        destructive: 'bg-destructive text-destructive-foreground hover:opacity-hover',
+        default:
+          'bg-primary text-primary-foreground shadow-fab hover:opacity-hover active:shadow-card',
+        destructive:
+          'bg-destructive text-destructive-foreground shadow-card hover:shadow-elevated hover:opacity-hover',
         outline: 'bg-transparent text-primary border-[1.5px] border-border hover:bg-muted',
-        secondary: 'bg-sun-light text-secondary-foreground hover:opacity-hover',
+        secondary:
+          'bg-sun-light text-secondary-foreground shadow-card hover:shadow-elevated hover:opacity-hover',
         ghost: 'bg-transparent text-primary hover:bg-muted',
       },
       size: {

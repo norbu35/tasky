@@ -1,4 +1,6 @@
 import type { Task as SdkTask } from '@/lib/api/types';
+import i18n from 'i18next';
+import { resolveLocale } from '@/utils/formatDate';
 
 export interface CustomerTask extends SdkTask {
   tasker?: {
@@ -17,7 +19,7 @@ export function formatBudget(value?: number | null) {
   if (typeof value !== 'number') {
     return '₮0';
   }
-  return `₮${value.toLocaleString('en-US')}`;
+  return `₮${value.toLocaleString(resolveLocale(i18n.language))}`;
 }
 
 export function formatSchedule(value?: string | null) {

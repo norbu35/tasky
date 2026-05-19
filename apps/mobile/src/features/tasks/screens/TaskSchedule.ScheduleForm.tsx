@@ -16,10 +16,9 @@ import {
   type ActivePickerState,
   createScheduleDateOptions,
   createScheduleTimeOptions,
-  formatDateValue,
-  formatTimeValue,
   type PickerMode,
 } from './TaskSchedule.model';
+import { formatNumericDate, formatNumericTime } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
@@ -70,7 +69,7 @@ export function DateCard({
               style={{ color: selectedDate ? colors.primaryForeground : colors.mutedForeground }}
             >
               {selectedDate
-                ? formatDateValue(selectedDate)
+                ? formatNumericDate(selectedDate)
                 : t('ScheduleBudgetScreen.scheduleDatePlaceholder')}
             </Text>
           </Touchable>
@@ -92,7 +91,7 @@ export function DateCard({
               style={{ color: selectedTime ? colors.primaryForeground : colors.mutedForeground }}
             >
               {selectedTime
-                ? formatTimeValue(selectedTime)
+                ? formatNumericTime(selectedTime)
                 : t('ScheduleBudgetScreen.scheduleTimePlaceholder')}
             </Text>
           </Touchable>

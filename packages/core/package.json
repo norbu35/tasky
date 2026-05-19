@@ -16,6 +16,10 @@
     "./http": {
       "types": "./src/http/index.ts",
       "default": "./src/http/index.ts"
+    },
+    "./formatDate": {
+      "types": "./src/utils/formatDate.ts",
+      "default": "./src/utils/formatDate.ts"
     }
   },
   "scripts": {

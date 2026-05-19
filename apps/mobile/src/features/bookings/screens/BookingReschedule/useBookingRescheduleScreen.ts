@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useReschedule } from '@/features/bookings/hooks/useReschedule';
+import { formatDateTime as formatDt } from '@/utils/formatDate';
 
 import {
   type ActivePickerState,
@@ -11,7 +12,6 @@ import {
   type RescheduleState,
   combineDateAndTime,
   createDefaultRescheduleDate,
-  formatDateTime,
   toValidDate,
 } from './model';
 
@@ -58,7 +58,7 @@ export function useBookingRescheduleScreen(): BookingRescheduleState {
 
   const currentScheduledAt = booking?.confirmed_scheduled_at ?? booking?.task?.scheduled_at;
   const scheduledAtLabel = currentScheduledAt
-    ? formatDateTime(currentScheduledAt)
+    ? formatDt(currentScheduledAt)
     : t('customer.bookings.scheduleUnavailable');
 
   const openPicker = React.useCallback(

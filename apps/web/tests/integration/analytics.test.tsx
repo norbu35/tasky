@@ -102,7 +102,7 @@ describe('Analytics Integration', () => {
     );
 
     await screen.findByRole('heading', { name: 'Open task feed' });
-    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Clean my apartment/i }));
     const appMessageBox = await screen.findByLabelText('Application message');
     fireEvent.change(appMessageBox, {
       target: { value: 'Analytics instrumentation test task application.' },

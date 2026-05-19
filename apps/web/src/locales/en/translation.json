@@ -41,6 +41,8 @@
     "taskerTasks": "My Bookings",
     "inbox": "Inbox",
     "logout": "Logout",
+    "customer": "Customer",
+    "tasker": "Tasker",
     "bottomNavigation": "Bottom navigation"
   },
   "customerDashboard": {
@@ -449,7 +451,13 @@
     "save": "Save",
     "unknown": "Unknown",
     "unknownError": "Unknown error",
-    "yes": "Yes"
+    "yes": "Yes",
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}} hours ago",
+      "daysAgo": "{{count}} days ago"
+    }
   },
   "errors": {
     "sessionExpired": "Session expired. Please log in again.",
@@ -765,6 +773,7 @@
       "backLabel": "Back",
       "draftLabel": "Message draft",
       "railContent": "Booking details and quick actions will live in this rail.",
+      "railHeading": "Booking info",
       "replyPlaceholder": "Type your reply",
       "sampleMessage": "I can arrive by 10:00 tomorrow.",
       "sampleReply": "Thanks, I will keep updates here.",
@@ -792,7 +801,8 @@
       "defaultBio": "Reliable and responsive.",
       "defaultName": "Tasky User",
       "displayName": "Display name",
-      "saveAction": "Save profile"
+      "saveAction": "Save profile",
+      "cardHeading": "Profile details"
     },
     "help": {
       "title": "Help center",
@@ -911,7 +921,8 @@
       "title": "Booking detail",
       "description": "Review booking status, timeline, and support actions.",
       "cardDesc": "Taskers can review the booking and respond to issues here.",
-      "content": "Taskers can review the booking and respond to issues here."
+      "content": "Taskers can review the booking and respond to issues here.",
+      "actionsTitle": "Actions"
     },
     "cancelDialog": {
       "title": "Cancel booking",

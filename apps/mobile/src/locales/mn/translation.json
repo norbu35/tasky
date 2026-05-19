@@ -1248,7 +1248,13 @@
     "addPhoto": "Зураг нэмэх",
     "continue": "Үргэлжлүүлэх",
     "tryAgain": "Дахин оролдох",
-    "dismiss": "Хаах"
+    "dismiss": "Хаах",
+    "time": {
+      "justNow": "Сая",
+      "minutesAgo": "{{count}} минутын өмнө",
+      "hoursAgo": "{{count}} цагийн өмнө",
+      "daysAgo": "{{count}} хоногийн өмнө"
+    }
   },
   "customer": {
     "taskList": {

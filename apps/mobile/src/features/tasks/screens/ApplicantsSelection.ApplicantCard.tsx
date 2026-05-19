@@ -8,6 +8,9 @@ import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { MIN_PUBLIC_REVIEW_COUNT } from '@/features/profile/model';
+import { resolveLocale } from '@/utils/formatDate';
+
+import i18n from 'i18next';
 
 import { type ApplicantItem } from './ApplicantsSelection.model';
 
@@ -21,7 +24,7 @@ const APPLICANT_SURFACE = {
 
 function formatTugrik(amount?: number | null): string {
   if (amount == null) return '';
-  return `₮${amount.toLocaleString()}`;
+  return `₮${amount.toLocaleString(resolveLocale(i18n.language))}`;
 }
 
 interface ApplicantCardProps {

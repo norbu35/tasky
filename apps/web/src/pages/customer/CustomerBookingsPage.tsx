@@ -6,6 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useAppContext } from '../../context/AppContext';
 import { ResponsiveFeedShell } from '../../layout/parity';
 
+const BOOKING_STATUS_BADGE_VARIANT: Record<
+  string,
+  'statusAssigned' | 'statusCompleted' | 'statusCancelled' | 'noShow' | 'outline'
+> = {
+  ASSIGNED: 'statusAssigned',
+  COMPLETED: 'statusCompleted',
+  CANCELLED: 'statusCancelled',
+  NO_SHOW: 'noShow',
+};
+
+function getBookingBadgeVariant(status: string) {
+  return BOOKING_STATUS_BADGE_VARIANT[status] ?? 'outline';
+}
+
 export function CustomerBookingsPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
@@ -31,15 +45,15 @@ export function CustomerBookingsPage() {
     >
       <div className="grid gap-4 md:grid-cols-2">
         {bookings.map((booking) => (
-          <Card key={booking.id} className="border-border/60 shadow-sm">
+          <Card key={booking.id}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-3">
-                <CardTitle className="text-base">{booking.id}</CardTitle>
-                <Badge variant="secondary">{booking.status}</Badge>
+                <CardTitle className="text-base font-mono tracking-tight">{booking.id}</CardTitle>
+                <Badge variant={getBookingBadgeVariant(booking.status)}>{booking.status}</Badge>
               </div>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Task {booking.task_id} • ₮{booking.price.toLocaleString()}
+              Task {booking.task_id} · ₮{booking.price.toLocaleString()}
             </CardContent>
           </Card>
         ))}

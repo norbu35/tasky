@@ -51,7 +51,7 @@ export function CustomerReschedulePage() {
     <ScreenFrame maxWidth="narrow">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-2">
             <CalendarClock className="w-6 h-6 text-primary" />
             {t('customerPages.reschedule.title')}
           </h1>
@@ -60,9 +60,9 @@ export function CustomerReschedulePage() {
           </p>
         </div>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>{t('customerPages.reschedule.cardTitle')}</CardTitle>
+            <CardTitle className="text-lg">{t('customerPages.reschedule.cardTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">

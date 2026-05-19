@@ -1,9 +1,11 @@
 import { prettifyIntakeToken, type IntakeAnswerSummaryItem } from '@tasky/core';
+import i18n from 'i18next';
+import { resolveLocale, formatNumericDate, formatTime } from '@/utils/formatDate';
 
 export function formatBudget(amount: string): string {
   const num = Number(amount);
   if (Number.isNaN(num)) return amount;
-  return `₮${num.toLocaleString('en-US')}`;
+  return `₮${num.toLocaleString(resolveLocale(i18n.language))}`;
 }
 
 export function formatSchedule(scheduledAt?: string): string {
@@ -16,12 +18,8 @@ export function formatSchedule(scheduledAt?: string): string {
     return scheduledAt;
   }
 
-  const date = `${parsed.getFullYear()}.${String(parsed.getMonth() + 1).padStart(2, '0')}.${String(parsed.getDate()).padStart(2, '0')}`;
-  const time = parsed.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
+  const date = formatNumericDate(parsed);
+  const time = formatTime(parsed);
   return `${date}, ${time}`;
 }
 

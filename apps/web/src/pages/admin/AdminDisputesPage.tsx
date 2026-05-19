@@ -9,6 +9,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { Dispute } from '../../lib/apiClient';
+import { formatDate as formatDateUtil } from '../../lib/formatDate';
 
 function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
   switch (status) {
@@ -45,10 +46,6 @@ function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '...' : text;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString();
-}
-
 export function AdminDisputesPage() {
   const { t } = useTranslation();
   const { session } = useAppContext();
@@ -79,13 +76,15 @@ export function AdminDisputesPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.disputes.title')}
+        </h1>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
-              <CardContent className="p-4">
-                <Skeleton className="h-16 w-full" />
+              <CardContent className="p-6">
+                <Skeleton className="h-14 w-full" />
               </CardContent>
             </Card>
           ))}
@@ -96,12 +95,16 @@ export function AdminDisputesPage() {
 
   if (error) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.disputes.title')}
+        </h1>
         <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">{t('admin.disputes.error')}</p>
-            <Button onClick={fetchDisputes}>{t('common.retry')}</Button>
+          <CardContent className="flex flex-col items-center gap-4 py-8">
+            <p className="text-body-sm text-destructive">{t('admin.disputes.error')}</p>
+            <Button variant="outline" size="sm" onClick={fetchDisputes}>
+              {t('common.retry')}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -110,11 +113,13 @@ export function AdminDisputesPage() {
 
   if (disputes.length === 0) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.disputes.title')}
+        </h1>
         <Card>
-          <CardContent className="p-6 text-center">
-            <p className="text-muted-foreground">{t('admin.disputes.empty')}</p>
+          <CardContent className="py-12 text-center">
+            <p className="text-body-sm text-muted-foreground">{t('admin.disputes.empty')}</p>
           </CardContent>
         </Card>
       </div>
@@ -122,37 +127,54 @@ export function AdminDisputesPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
-      <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.reason')}</th>
-              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.status')}</th>
-              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.createdAt')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {disputes.map((dispute) => (
-              <tr
-                key={dispute.id}
-                data-testid="dispute-row"
-                className="border-b last:border-0 cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => navigate(`/admin/disputes/${dispute.id}`)}
-              >
-                <td className="px-4 py-3">{truncate(dispute.reason, 80)}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={disputeStatusVariant(dispute.status)}>
-                    {t(getDisputeStatusLabelKey(dispute.status))}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3">{formatDate(dispute.created_at)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <div className="space-y-6">
+      <h1 className="font-display text-2xl font-semibold tracking-tight">
+        {t('admin.disputes.title')}
+      </h1>
+      <Card>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto rounded-xl">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border/40 bg-muted/30">
+                  <th className="px-6 py-3.5 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                    {t('admin.disputes.reason')}
+                  </th>
+                  <th className="px-6 py-3.5 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                    {t('admin.disputes.status')}
+                  </th>
+                  <th className="px-6 py-3.5 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                    {t('admin.disputes.createdAt')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {disputes.map((dispute) => (
+                  <tr
+                    key={dispute.id}
+                    data-testid="dispute-row"
+                    className="border-b border-border/30 last:border-0 cursor-pointer hover:bg-muted/20 transition-colors"
+                    onClick={() => navigate(`/admin/disputes/${dispute.id}`)}
+                  >
+                    <td className="px-6 py-4 text-body-sm">{truncate(dispute.reason, 80)}</td>
+                    <td className="px-6 py-4">
+                      <Badge
+                        variant={disputeStatusVariant(dispute.status)}
+                        className="uppercase tracking-caps"
+                      >
+                        {t(getDisputeStatusLabelKey(dispute.status))}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-body-sm text-muted-foreground">
+                      {formatDateUtil(dispute.created_at)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

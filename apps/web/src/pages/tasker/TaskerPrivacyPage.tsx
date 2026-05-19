@@ -12,7 +12,7 @@ export function TaskerPrivacyPage() {
       description={t('taskerPages.privacy.description')}
     >
       <Card>
-        <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
+        <CardContent className="space-y-3 p-6 text-sm text-muted-foreground">
           <p>{t('taskerPages.privacy.content')}</p>
         </CardContent>
       </Card>

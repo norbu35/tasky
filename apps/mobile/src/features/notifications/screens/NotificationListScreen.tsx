@@ -12,7 +12,9 @@ import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useNotifications } from '@/features/notifications/hooks/useNotifications';
 
-import { buildRows, formatRelativeTimestamp, type Row } from './NotificationList.model';
+import { formatRelativeTime } from '@/utils/formatDate';
+
+import { buildRows, type Row } from './NotificationList.model';
 
 const { colors, spacing } = mobileTheme;
 
@@ -88,7 +90,7 @@ export default function NotificationListScreen() {
             </Text>
             <View className="flex-row items-center gap-xs">
               <Text className="text-micro text-text-tertiary">
-                {formatRelativeTimestamp(notification.created_at, t)}
+                {formatRelativeTime(notification.created_at, t)}
               </Text>
               {!notification.read ? (
                 <View

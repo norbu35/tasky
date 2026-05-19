@@ -2,6 +2,8 @@ import React from 'react';
 import { Text } from 'react-native';
 
 import { cn } from '@/lib/cn';
+import { resolveLocale } from '@/utils/formatDate';
+import i18n from 'i18next';
 
 type PriceSize = 'sm' | 'md' | 'lg';
 
@@ -19,7 +21,7 @@ const fontSizeClassMap: Record<PriceSize, string> = {
 };
 
 function formatAmount(amount: number): string {
-  return amount.toLocaleString('en-US');
+  return amount.toLocaleString(resolveLocale(i18n.language));
 }
 
 export function PriceTag({ amount, size = 'md', testID, className }: PriceTagProps) {

@@ -67,7 +67,7 @@ export function TaskerCancelDialog() {
     <ScreenFrame maxWidth="narrow">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-2">
             <XCircle className="w-6 h-6 text-destructive" />
             {t('taskerPages.cancelDialog.title')}
           </h1>
@@ -76,9 +76,9 @@ export function TaskerCancelDialog() {
           </p>
         </div>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>{t('taskerPages.cancelDialog.reasonTitle')}</CardTitle>
+            <CardTitle className="text-lg">{t('taskerPages.cancelDialog.reasonTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
@@ -89,10 +89,10 @@ export function TaskerCancelDialog() {
                     key={r}
                     type="button"
                     onClick={() => setSelectedReason(r)}
-                    className={`text-left px-4 py-3 rounded-lg border transition-colors text-sm ${
+                    className={`text-left px-4 py-3 rounded-lg ring-1 ring-inset transition-all duration-200 text-sm ${
                       selectedReason === r
-                        ? 'border-primary bg-primary/10 text-foreground font-medium'
-                        : 'border-border/60 bg-background text-muted-foreground hover:border-primary/40'
+                        ? 'ring-primary bg-primary/10 text-foreground font-medium shadow-elevated'
+                        : 'ring-border/40 bg-background text-muted-foreground hover:ring-primary/40 hover:bg-muted/30'
                     }`}
                   >
                     {t(REASON_LABEL_KEYS[r])}

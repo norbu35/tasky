@@ -12,7 +12,7 @@ export function TaskerTaskDetailPage() {
       description={t('taskerPages.taskDetail.description')}
     >
       <Card>
-        <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
+        <CardContent className="space-y-3 p-6 text-sm text-muted-foreground">
           <p>{t('taskerPages.taskDetail.content1')}</p>
           <p>{t('taskerPages.taskDetail.content2')}</p>
         </CardContent>

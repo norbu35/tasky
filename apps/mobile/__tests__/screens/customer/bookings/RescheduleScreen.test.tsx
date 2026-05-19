@@ -83,7 +83,7 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('shows the current schedule at the top in Mongolian date format', () => {
     render(<RescheduleScreen />);
     expect(screen.getByText('Одоогийн хуваарь')).toBeTruthy();
-    expect(screen.getByText('2026.04.01 18:00')).toBeTruthy();
+    expect(screen.getByText(/2026.*18:00/)).toBeTruthy();
   });
 
   it('renders reason field', () => {

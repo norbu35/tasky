@@ -279,7 +279,7 @@ export function AuthPage() {
             <Card className="border-none shadow-deep rounded-2xl overflow-hidden backdrop-blur-3xl bg-card/90 ring-1 ring-primary-deep/5">
               <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
                 <h1 className="sr-only">{t('auth.facebookLoginTitle')}</h1>
-                <CardTitle className="text-3xl font-display font-bold tracking-tight">
+                <CardTitle className="text-3xl font-display font-semibold tracking-tight">
                   {t('auth.welcomeBack')}
                 </CardTitle>
                 <CardDescription className="text-base font-medium text-muted-foreground leading-relaxed">

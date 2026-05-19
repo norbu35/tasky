@@ -28,8 +28,8 @@ export function ResponsiveDetailShell({
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className={cn('grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]', className)}>
-        <section aria-labelledby={titleId} className="space-y-5">
+      <div className={cn('grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem]', className)}>
+        <section aria-labelledby={titleId} className="min-w-0 space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
               {backLabel ? (
@@ -54,7 +54,9 @@ export function ResponsiveDetailShell({
           <div className="flex flex-col gap-3">{children}</div>
         </section>
 
-        {detailRail ? <aside className="space-y-3 lg:sticky lg:top-20">{detailRail}</aside> : null}
+        {detailRail ? (
+          <aside className="hidden lg:block space-y-3 lg:sticky lg:top-20">{detailRail}</aside>
+        ) : null}
       </div>
     </ScreenFrame>
   );

@@ -13,8 +13,7 @@ import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { VerificationDetail } from '../../lib/apiClient';
 import { parseError } from '../../lib/errorHandling';
-
-// ── SLA helpers ──────────────────────────────────────────────────────
+import { formatDateTime } from '../../lib/formatDate';
 
 const SLA_HOURS = 24;
 
@@ -31,7 +30,7 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   if (remainingMs <= 0) {
     return {
       label: t('admin.verifications.overdue'),
-      colorClass: 'bg-destructive text-destructive-foreground',
+      colorClass: 'bg-destructive text-destructive-foreground border-transparent',
     };
   }
 
@@ -51,26 +50,19 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   return { label, colorClass: 'bg-destructive/15 text-destructive border-destructive/30' };
 }
 
-// ── Component ────────────────────────────────────────────────────────
-
 export function AdminVerificationsPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { session } = useAppContext();
   const adminApiClient = useAdminApiClient();
-  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
-    ? 'mn-MN'
-    : 'en-US';
 
   const [verifications, setVerifications] = useState<VerificationDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Reject flow state
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  // Action busy flags
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const [confirmingRejectId, setConfirmingRejectId] = useState<string | null>(null);
 
@@ -82,7 +74,6 @@ export function AdminVerificationsPage() {
     setError(null);
     try {
       const data = await adminApiClient.adminListPendingVerifications(accessToken);
-      // Sort by submitted_at ascending (oldest first — highest urgency)
       const sorted = [...data].sort(
         (a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime(),
       );
@@ -148,36 +139,41 @@ export function AdminVerificationsPage() {
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
-    // Clear reject state when collapsing
     setRejectingId(null);
     setRejectReason('');
   }, []);
 
   const now = new Date();
 
-  // ── Loading State ──────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.verifications.title')}
+        </h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20 w-full" />
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton className="h-16 w-full" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
     );
   }
 
-  // ── Error State ────────────────────────────────────────────────────
   if (error && verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.verifications.title')}
+        </h1>
         <Card>
           <CardContent className="py-12 text-center space-y-4">
-            <p className="text-destructive">{error}</p>
-            <Button variant="secondary" onClick={fetchVerifications}>
+            <p className="text-body-sm text-destructive">{error}</p>
+            <Button variant="outline" size="sm" onClick={fetchVerifications}>
               <RefreshCw className="mr-2 h-4 w-4" />
               {t('admin.verifications.retry')}
             </Button>
@@ -187,32 +183,34 @@ export function AdminVerificationsPage() {
     );
   }
 
-  // ── Empty State ────────────────────────────────────────────────────
   if (verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.verifications.title')}
+        </h1>
         <Card>
           <CardContent className="py-16 text-center">
-            <p className="text-muted-foreground">{t('admin.verifications.empty')}</p>
+            <p className="text-body-sm text-muted-foreground">{t('admin.verifications.empty')}</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  // ── Main List ──────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
-        <Button variant="secondary" size="sm" onClick={fetchVerifications}>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">
+          {t('admin.verifications.title')}
+        </h1>
+        <Button variant="outline" size="sm" onClick={fetchVerifications}>
           <RefreshCw className="mr-2 h-4 w-4" />
           {t('admin.verifications.refresh')}
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {verifications.map((v) => {
           const sla = computeSla(v.submitted_at, now, t);
           const isExpanded = expandedId === v.id;
@@ -220,10 +218,9 @@ export function AdminVerificationsPage() {
 
           return (
             <Card key={v.id} className="overflow-hidden">
-              {/* Clickable Row Header */}
               <div
                 data-testid={`verification-row-${v.id}`}
-                className="flex items-center gap-4 px-6 py-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                className="flex items-center gap-4 px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
                 onClick={() => toggleExpand(v.id)}
                 role="button"
                 tabIndex={0}
@@ -244,67 +241,66 @@ export function AdminVerificationsPage() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
-                    <span className="font-medium truncate">{v.user_name}</span>
-                    <span className="text-sm text-muted-foreground">{v.user_phone}</span>
+                    <span className="text-body font-medium truncate">{v.user_name}</span>
+                    <span className="text-body-sm text-muted-foreground">{v.user_phone}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {t('admin.verifications.submittedAt')}{' '}
-                    {new Date(v.submitted_at).toLocaleString(locale)}
+                  <p className="text-badge-text text-muted-foreground mt-1">
+                    {t('admin.verifications.submittedAt')} {formatDateTime(v.submitted_at)}
                   </p>
                 </div>
 
-                <Badge data-testid={`sla-badge-${v.id}`} className={sla.colorClass}>
+                <Badge
+                  data-testid={`sla-badge-${v.id}`}
+                  className={`${sla.colorClass} uppercase tracking-caps`}
+                >
                   {sla.label}
                 </Badge>
               </div>
 
-              {/* Expanded Detail */}
               {isExpanded && (
-                <CardContent className="border-t pt-6 space-y-6">
-                  {/* ID Card Images */}
+                <CardContent className="border-t border-border/30 pt-6 pb-6 space-y-6">
                   <div>
-                    <h3 className="text-sm font-semibold mb-3">
+                    <h3 className="text-xs font-semibold mb-3 uppercase tracking-caps text-muted-foreground">
                       {t('admin.verifications.documents')}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <p className="text-xs text-muted-foreground mb-1">
+                        <p className="text-badge-text text-muted-foreground mb-1.5">
                           {t('admin.verifications.idFront')}
                         </p>
                         <img
                           src={v.id_card_front_url}
                           alt={t('admin.verifications.idFront')}
-                          className="rounded-lg border object-cover w-full max-h-48"
+                          className="rounded-lg border border-border/40 object-cover w-full max-h-48 shadow-card"
                         />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground mb-1">
+                        <p className="text-badge-text text-muted-foreground mb-1.5">
                           {t('admin.verifications.idBack')}
                         </p>
                         <img
                           src={v.id_card_back_url}
                           alt={t('admin.verifications.idBack')}
-                          className="rounded-lg border object-cover w-full max-h-48"
+                          className="rounded-lg border border-border/40 object-cover w-full max-h-48 shadow-card"
                         />
                       </div>
                       {v.selfie_url && (
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">
+                          <p className="text-badge-text text-muted-foreground mb-1.5">
                             {t('admin.verifications.selfie')}
                           </p>
                           <img
                             src={v.selfie_url}
                             alt={t('admin.verifications.selfie')}
-                            className="rounded-lg border object-cover w-full max-h-48"
+                            className="rounded-lg border border-border/40 object-cover w-full max-h-48 shadow-card"
                           />
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Reject Reason Input */}
                   {isRejecting && (
-                    <div className="space-y-2">
+                    <div className="space-y-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
                       <Input
                         placeholder={t('admin.verifications.rejectReasonPlaceholder')}
                         value={rejectReason}
@@ -314,7 +310,7 @@ export function AdminVerificationsPage() {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                          variant="destructive"
                           disabled={!rejectReason.trim() || confirmingRejectId === v.id}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -340,12 +336,12 @@ export function AdminVerificationsPage() {
                     </div>
                   )}
 
-                  {/* Action Buttons */}
                   {!isRejecting && (
                     <div className="flex gap-3">
                       <Button
                         size="sm"
-                        className="bg-verified hover:bg-verified/90 text-verified-foreground"
+                        variant="outline"
+                        className="border-verified/40 text-verified hover:bg-verified/10 hover:text-verified"
                         disabled={approvingId === v.id}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -359,7 +355,8 @@ export function AdminVerificationsPage() {
                       </Button>
                       <Button
                         size="sm"
-                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                        variant="outline"
+                        className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRejectClick(v.id);

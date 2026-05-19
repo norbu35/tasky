@@ -15,10 +15,12 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
+  /* eslint-disable-next-line @typescript-eslint/no-require-imports */
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 const mockUseBookingDetail = jest.fn();
@@ -31,11 +33,14 @@ jest.mock('../../../../src/features/chat/hooks/useConversations', () => ({
 }));
 
 jest.mock('lucide-react-native', () => {
+  /* eslint-disable-next-line @typescript-eslint/no-require-imports */
   const { Text } = require('react-native');
   return new Proxy(
     {},
     {
-      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+      get: (_, name) => (props: Record<string, unknown>) => (
+        <Text testID={`icon-${String(name)}`} {...props} />
+      ),
     },
   );
 });
@@ -108,7 +113,7 @@ describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
 
   it('renders primary CTA to message tasker', () => {
     render(<BookingConfirmedScreen />);
-    expect(screen.getByText('Зурвас илгээгч')).toBeTruthy(); // Based on failing test output it rendered "Зурвас илгээгч"
+    expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
   });
 
   it('primary CTA navigates to message', () => {

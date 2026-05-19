@@ -78,7 +78,7 @@ export function CustomerDisputeRaisePage() {
     <ScreenFrame maxWidth="narrow">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight flex items-center gap-2">
             <ShieldAlert className="w-6 h-6 text-destructive" />
             {t('customerPages.disputeRaise.title')}
           </h1>
@@ -87,9 +87,9 @@ export function CustomerDisputeRaisePage() {
           </p>
         </div>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card>
           <CardHeader>
-            <CardTitle>{t('customerPages.disputeRaise.cardTitle')}</CardTitle>
+            <CardTitle className="text-lg">{t('customerPages.disputeRaise.cardTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">

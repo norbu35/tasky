@@ -17,6 +17,7 @@ import {
 import type { Profile } from '@/lib/api/types';
 
 import { TaskerProfileReviewsSection } from './TaskerProfile.ReviewsSection';
+import { formatDate } from '@/utils/formatDate';
 
 interface TaskerProfileDetail extends Profile {
   bio?: string;
@@ -55,7 +56,7 @@ export default function TaskerProfileScreen() {
   const rawCategories = (detail?.categories ?? []) as string[];
   const categories = [...new Set(rawCategories)];
   const publicRatingVisible = canShowPublicRating(reviewCount, detail?.rating_avg);
-  const memberSince = detail?.created_at ? new Date(detail.created_at).toLocaleDateString() : null;
+  const memberSince = detail?.created_at ? formatDate(detail.created_at) : null;
 
   return (
     <DetailTemplate

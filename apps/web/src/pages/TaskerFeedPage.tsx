@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Coins, ImageIcon, Loader2, MapPin, Search, Star } from 'lucide-react';
+import { Calendar, ImageIcon, Loader2, MapPin, Search, Sparkles, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { useCategoriesQuery, useTasksQuery } from '@tasky/core';
 
+import { TaskCard } from '../components/feature/TaskCard';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import {
@@ -25,12 +25,12 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { PublicTask, TaskFeedItem } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
+import { formatDateTime } from '../lib/formatDate';
 
 export function TaskerFeedPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
   const { t, i18n } = useTranslation();
   const isMongolian = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn');
-  const locale = isMongolian ? 'mn-MN' : 'en-US';
 
   const [filters, setFilters] = useState<{
     categoryId: string;
@@ -142,26 +142,37 @@ export function TaskerFeedPage() {
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* Page header */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-display font-bold tracking-tight">
-            {t('taskerFeed.title')}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">{t('taskerFeed.subtitle')}</p>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        {/* ── Premium page header ── */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-background to-sky-soft/20 border border-border/30 p-6 sm:p-8">
+          <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
+          <div className="absolute -bottom-8 left-1/3 h-24 w-24 rounded-full bg-sky-soft/30 blur-2xl" />
+          <div className="relative flex flex-col gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <h1 className="font-display text-3xl font-semibold tracking-tight">
+                {t('taskerFeed.title')}
+              </h1>
+            </div>
+            <p className="text-body text-muted-foreground max-w-xl pl-[2.75rem]">
+              {t('taskerFeed.subtitle')}
+            </p>
+          </div>
         </div>
 
-        {/* Category filter chips & Radius Selector */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+        {/* ── Category filter chips & Radius Selector ── */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none max-w-full">
             <button
               type="button"
               aria-pressed={!filters.categoryId}
               onClick={() => setFilters((prev) => ({ ...prev, categoryId: '' }))}
-              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-badge-text font-semibold border transition-all duration-card-expand ease-card-expand ${
                 !filters.categoryId
-                  ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                  : 'bg-card text-muted-foreground border-border hover:border-primary/50'
+                  ? 'bg-primary text-primary-foreground border-primary shadow-card'
+                  : 'bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground'
               }`}
             >
               {t('taskerFeed.allCategories')}
@@ -172,10 +183,10 @@ export function TaskerFeedPage() {
                 type="button"
                 aria-pressed={filters.categoryId === c.id}
                 onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-badge-text font-semibold border transition-all duration-card-expand ease-card-expand ${
                   filters.categoryId === c.id
-                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                    : 'bg-card text-muted-foreground border-border hover:border-primary/50'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-card'
+                    : 'bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground'
                 }`}
               >
                 {isMongolian ? c.name_mn : c.name}
@@ -184,14 +195,14 @@ export function TaskerFeedPage() {
           </div>
 
           {/* Distance Filter */}
-          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/60 px-4 py-1.5 rounded-full shadow-sm">
+          <div className="flex items-center gap-2.5 shrink-0 bg-card ring-1 ring-inset ring-border/40 px-4 py-2 rounded-full shadow-card">
             <MapPin className="w-4 h-4 text-primary/70" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
+            <span className="text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
               {t('taskerFeed.distance')}:
             </span>
             <select
               title={t('taskerFeed.searchRadiusTitle')}
-              className="bg-transparent text-sm font-bold text-foreground focus:outline-none cursor-pointer border-none"
+              className="bg-transparent text-body-sm font-bold text-foreground focus:outline-none cursor-pointer border-none"
               value={filters.radiusKm}
               onChange={(e) => setFilters((prev) => ({ ...prev, radiusKm: e.target.value }))}
             >
@@ -203,40 +214,52 @@ export function TaskerFeedPage() {
           </div>
         </div>
 
+        {/* ── Error state ── */}
         {tasksError && (
-          <p className="text-sm text-destructive font-medium p-4 bg-destructive/10 rounded-xl">
+          <div className="flex items-center gap-3 text-sm font-medium text-destructive p-4 bg-destructive/5 rounded-xl ring-1 ring-inset ring-destructive/20">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+              <Search className="h-4 w-4 text-destructive" />
+            </div>
             {parseError(tasksError)}
-          </p>
+          </div>
         )}
 
+        {/* ── Application sent confirmation ── */}
         {sentTaskId ? (
-          <Card className="border-primary/30 bg-primary/5 shadow-sm">
-            <CardHeader className="space-y-2">
-              <CardTitle className="text-2xl font-display font-semibold">
-                {t('taskerPages.applicationSent.title')}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent shadow-elevated">
+            <CardHeader className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-verified/10">
+                  <Sparkles className="h-5 w-5 text-verified" />
+                </div>
+                <CardTitle className="text-section-heading font-display">
+                  {t('taskerPages.applicationSent.title')}
+                </CardTitle>
+              </div>
+              <p className="text-body-sm text-muted-foreground pl-[3.25rem]">
                 {t('taskerPages.applicationSent.description')}
               </p>
             </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="pt-0 pl-[3.25rem]">
+              <p className="text-body-sm text-muted-foreground">
                 {t('taskerPages.applicationSent.sentDesc')}
               </p>
             </CardContent>
-            <CardFooter className="justify-end gap-2">
+            <CardFooter className="pl-[3.25rem] gap-3">
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
                 disabled={working}
                 onClick={() => void withdrawApplication()}
               >
-                {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                {working ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : null}
                 {t('taskerFeed.withdrawAction')}
               </Button>
               <Button
                 type="button"
                 variant="secondary"
+                size="sm"
                 onClick={() => {
                   setSentTaskId(null);
                   setSentApplicationId(null);
@@ -248,18 +271,28 @@ export function TaskerFeedPage() {
           </Card>
         ) : null}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* ── Task cards grid ── */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {loadingTasks && (
-            <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4">
-              <Loader2 className="w-6 h-6 animate-spin" />
-              <p className="text-sm font-medium">{t('taskerFeed.scanningMsg')}</p>
+            <div className="col-span-full flex py-20 items-center justify-center flex-col gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-20" />
+                <Loader2 className="relative w-8 h-8 text-primary animate-spin" />
+              </div>
+              <p className="text-body font-medium text-muted-foreground">
+                {t('taskerFeed.scanningMsg')}
+              </p>
             </div>
           )}
 
           {!loadingTasks && taskCards.length === 0 && !tasksError && (
-            <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
-              <Search className="w-6 h-6 opacity-20" />
-              <p className="text-sm font-medium opacity-60">{t('taskerFeed.noTasksFound')}</p>
+            <div className="col-span-full flex py-20 items-center justify-center flex-col gap-5 bg-muted/10 rounded-2xl ring-1 ring-inset ring-border/30 border-dashed">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/30">
+                <Search className="w-7 h-7 text-muted-foreground/40" />
+              </div>
+              <p className="text-body font-medium text-muted-foreground/60">
+                {t('taskerFeed.noTasksFound')}
+              </p>
             </div>
           )}
 
@@ -273,288 +306,228 @@ export function TaskerFeedPage() {
               const showDetailError = openDialogId === task.id && isTaskDetailError;
 
               return (
-                <Card
+                <Dialog
                   key={task.id}
-                  className="overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group border-border/80 flex flex-col h-full bg-card"
+                  open={openDialogId === task.id}
+                  onOpenChange={(open) => setOpenDialogId(open ? task.id : null)}
                 >
-                  <CardHeader className="bg-muted/10 pb-4 border-b border-border/20">
-                    <div className="flex flex-col gap-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="secondary" className="hover:bg-secondary/80 px-2.5 py-0.5">
-                          {task.category?.name || t('taskerFeed.categoryFallback')}
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="text-verified border-verified/30 bg-verified/5 px-2.5 py-0.5 font-semibold"
-                        >
-                          {t('taskerFeed.statusOpen')}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl leading-snug font-medium line-clamp-2">
-                        {task.description}
-                      </CardTitle>
-                      <div className="text-2xl font-display font-bold text-foreground mt-1">
-                        {task.pricing_mode === 'QUOTE' ? (
-                          <span className="text-base font-medium text-muted-foreground">
-                            {t('taskerFeed.acceptingQuotes')}
-                          </span>
-                        ) : (
-                          <>
-                            {(task.budget ?? 0).toLocaleString(locale)}{' '}
-                            <span className="text-sm font-normal text-muted-foreground">MNT</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-5 pb-5 flex-1 grid grid-cols-1 gap-3 text-sm">
-                    <div className="flex items-center gap-2.5 text-foreground font-medium bg-muted/20 p-2.5 rounded-lg border border-border/30 shadow-sm">
-                      <MapPin className="w-4 h-4 shrink-0 text-primary/70" />
-                      <span>{task.approximate_location}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-foreground font-medium bg-muted/20 p-2.5 rounded-lg border border-border/30 shadow-sm">
-                      <Coins className="w-4 h-4 shrink-0 text-primary/70" />
-                      <span>
-                        {task.pricing_mode === 'QUOTE'
-                          ? t('taskerFeed.quoteRequest')
-                          : task.budget
-                            ? t('taskerFeed.budgetLabel', {
-                                amount: task.budget.toLocaleString(locale),
-                              })
-                            : t('taskerFeed.fixedPrice')}
-                      </span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="bg-muted/10 border-t border-border/40 p-4 mt-auto">
-                    <Dialog
-                      open={openDialogId === task.id}
-                      onOpenChange={(open) => setOpenDialogId(open ? task.id : null)}
-                    >
-                      <DialogTrigger asChild>
-                        <Button className="w-full rounded-xl shadow-md hover:-translate-y-[1px] transition-all font-semibold active:translate-y-0">
-                          {t('taskerFeed.viewAndApply')}
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl border-border/60 shadow-2xl overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
-                        <div className="p-6 pb-2">
-                          <DialogHeader className="mb-6">
-                            <DialogTitle className="text-2xl font-display font-semibold">
-                              {t('taskerFeed.applyToTask')}
-                            </DialogTitle>
-                            <DialogDescription className="text-sm">
-                              {t('taskerFeed.applyDescription')}
-                            </DialogDescription>
-                          </DialogHeader>
+                  <DialogTrigger asChild>
+                    <TaskCard task={task} variant="grid" onOpen={() => setOpenDialogId(task.id)} />
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl ring-1 ring-inset ring-border/30 shadow-modal overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
+                    <div className="p-6 pb-2">
+                      <DialogHeader className="mb-6">
+                        <DialogTitle className="text-section-heading font-display font-semibold">
+                          {t('taskerFeed.applyToTask')}
+                        </DialogTitle>
+                        <DialogDescription className="text-body-sm">
+                          {t('taskerFeed.applyDescription')}
+                        </DialogDescription>
+                      </DialogHeader>
 
-                          {showDetailLoading ? (
-                            <div className="flex items-center justify-center gap-3 py-12 text-muted-foreground">
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                              <span className="text-sm font-medium">{t('common.loading')}</span>
-                            </div>
-                          ) : null}
+                      {showDetailLoading ? (
+                        <div className="flex items-center justify-center gap-3 py-16 text-muted-foreground">
+                          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                          <span className="text-body-sm font-medium">{t('common.loading')}</span>
+                        </div>
+                      ) : null}
 
-                          {showDetailError ? (
-                            <div className="flex flex-col items-center gap-4 py-12 text-center">
-                              <p className="text-sm font-medium text-destructive">
-                                {t('common.error')}
-                              </p>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => void refetchTaskDetail()}
-                              >
-                                {t('common.retry')}
-                              </Button>
-                            </div>
-                          ) : null}
+                      {showDetailError ? (
+                        <div className="flex flex-col items-center gap-4 py-16 text-center">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10">
+                            <Search className="w-6 h-6 text-destructive" />
+                          </div>
+                          <p className="text-body-sm font-medium text-destructive">
+                            {t('common.error')}
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => void refetchTaskDetail()}
+                          >
+                            {t('common.retry')}
+                          </Button>
+                        </div>
+                      ) : null}
 
-                          {detailTask ? (
-                            <div className="grid gap-6">
-                              {/* Customer Row */}
-                              <div className="flex items-center justify-between bg-muted/20 p-4 rounded-xl border border-border/40 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                  <Avatar className="w-12 h-12 border border-border shadow-sm">
-                                    <AvatarImage
-                                      src={detailTask.customer?.avatar_url || ''}
-                                      alt={detailTask.customer?.full_name || t('common.customer')}
-                                      className="object-cover"
-                                    />
-                                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                      {detailTask.customer?.full_name?.charAt(0) || 'C'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <h3 className="font-semibold text-base leading-tight">
-                                      {detailTask.customer?.full_name || t('common.customer')}
-                                    </h3>
-                                    <div className="flex items-center text-sm text-secondary font-medium mt-0.5">
-                                      <Star className="w-4 h-4 fill-current mr-1" />
-                                      <span>
-                                        {detailTask.customer?.rating_avg?.toFixed(1) ||
-                                          t('taskerFeed.newCustomerRating')}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  {detailTask.pricing_mode === 'QUOTE' ? (
-                                    <div>
-                                      <div className="text-base font-semibold text-primary font-display">
-                                        {t('taskerFeed.acceptingQuotes')}
-                                      </div>
-                                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
-                                        {t('taskerFeed.quoteOnly')}
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      <div className="text-2xl font-bold text-primary font-display">
-                                        {(detailTask.budget ?? 0).toLocaleString(locale)}
-                                      </div>
-                                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
-                                        MNT
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Metrics Header */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                                  <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-caps">
-                                    <MapPin className="w-4 h-4 mr-1.5 text-primary/70" />
-                                    {t('taskerFeed.locationLabel')}
-                                  </div>
-                                  <span
-                                    className="font-medium text-sm line-clamp-1"
-                                    title={detailTask.approximate_location}
-                                  >
-                                    {detailTask.approximate_location}
-                                  </span>
-                                </div>
-                                <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                                  <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-caps">
-                                    <Calendar className="w-4 h-4 mr-1.5 text-primary/70" />
-                                    {t('taskerFeed.dateLabel')}
-                                  </div>
-                                  <span className="font-medium text-sm line-clamp-1">
-                                    {new Date(detailTask.scheduled_at).toLocaleDateString(locale, {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })}
+                      {detailTask ? (
+                        <div className="grid gap-5">
+                          <div className="flex items-center justify-between bg-muted/10 p-4 rounded-xl ring-1 ring-inset ring-border/30">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-11 w-11 ring-1 ring-inset ring-border/30">
+                                <AvatarImage
+                                  src={detailTask.customer?.avatar_url || ''}
+                                  alt={detailTask.customer?.full_name || t('common.customer')}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback className="bg-primary/10 text-primary font-bold text-body-sm">
+                                  {detailTask.customer?.full_name?.charAt(0) || 'C'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <h3 className="font-semibold text-sm leading-tight">
+                                  {detailTask.customer?.full_name || t('common.customer')}
+                                </h3>
+                                <div className="flex items-center text-body-sm text-secondary font-medium mt-0.5">
+                                  <Star className="w-3.5 h-3.5 fill-current mr-1" />
+                                  <span>
+                                    {detailTask.customer?.rating_avg?.toFixed(1) ||
+                                      t('taskerFeed.newCustomerRating')}
                                   </span>
                                 </div>
                               </div>
-
-                              {/* Task Description */}
-                              <div className="space-y-3">
-                                <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground">
-                                  {t('taskerFeed.descriptionLabel')}
-                                </h4>
-                                <div className="text-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl border border-border/40 shadow-sm whitespace-pre-wrap">
-                                  {detailTask.description}
+                            </div>
+                            <div className="text-right">
+                              {detailTask.pricing_mode === 'QUOTE' ? (
+                                <div>
+                                  <div className="text-body font-semibold text-primary font-display">
+                                    {t('taskerFeed.acceptingQuotes')}
+                                  </div>
+                                  <div className="text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
+                                    {t('taskerFeed.quoteOnly')}
+                                  </div>
                                 </div>
-                              </div>
-
-                              {/* Photo Gallery */}
-                              {detailTask.photo_urls && detailTask.photo_urls.length > 0 && (
-                                <div className="space-y-3">
-                                  <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground flex items-center gap-1.5">
-                                    <ImageIcon className="w-4 h-4" />
-                                    {t('taskerFeed.photosLabel')}
-                                  </h4>
-                                  <div className="flex flex-wrap gap-3">
-                                    {detailTask.photo_urls.map((url, idx) => (
-                                      <div
-                                        key={idx}
-                                        className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-border/40 shadow-sm shrink-0"
-                                      >
-                                        <img
-                                          src={url}
-                                          alt={t('taskerFeed.taskMediaAlt', { count: idx + 1 })}
-                                          className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                                        />
-                                      </div>
-                                    ))}
+                              ) : (
+                                <div>
+                                  <div className="text-price-display font-bold text-primary font-display">
+                                    {(detailTask.budget ?? 0).toLocaleString()}
+                                  </div>
+                                  <div className="text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
+                                    MNT
                                   </div>
                                 </div>
                               )}
                             </div>
-                          ) : null}
-                        </div>
+                          </div>
 
-                        {detailTask ? (
-                          <div className="bg-muted/40 border-t border-border/60 p-6 mt-4 shrink-0">
-                            <div className="flex flex-col gap-3">
-                              <Label
-                                htmlFor={`apply-${task.id}`}
-                                className="text-xs uppercase font-bold text-primary tracking-caps"
-                              >
-                                {t('taskerFeed.appMessageLabel')}
-                              </Label>
-                              <Textarea
-                                id={`apply-${task.id}`}
-                                className="resize-none min-h-[100px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors text-sm shadow-inner"
-                                value={applyDrafts[task.id] ?? ''}
-                                onChange={(e) =>
-                                  setApplyDrafts((prev) => ({
-                                    ...prev,
-                                    [task.id]: e.target.value,
-                                  }))
-                                }
-                                placeholder={t('taskerFeed.appMessagePlaceholder')}
-                              />
-                            </div>
-
-                            {detailTask.pricing_mode === 'QUOTE' ? (
-                              <div className="flex flex-col gap-2 mt-4">
-                                <Label htmlFor={`quote-${task.id}`}>
-                                  {t('taskerFeed.yourQuoteLabel')}
-                                </Label>
-                                <Input
-                                  id={`quote-${task.id}`}
-                                  type="number"
-                                  min="20000"
-                                  placeholder={t('taskerFeed.quotePlaceholder')}
-                                  value={quotePrices[task.id] ?? ''}
-                                  onChange={(e) =>
-                                    setQuotePrices((prev) => ({
-                                      ...prev,
-                                      [task.id]: e.target.value,
-                                    }))
-                                  }
-                                />
-                                <p className="text-xs text-muted-foreground">
-                                  {t('taskerFeed.quoteRequiredHint')}
-                                </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex flex-col gap-1.5 p-3 bg-muted/5 rounded-xl ring-1 ring-inset ring-border/20">
+                              <div className="flex items-center text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
+                                <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary/60" />
+                                {t('taskerFeed.locationLabel')}
                               </div>
-                            ) : (
-                              <p className="mt-4 text-sm text-muted-foreground">
-                                {t('taskerFeed.budgetAcceptHint')}
-                              </p>
-                            )}
-
-                            <div className="mt-5">
-                              <Button
-                                disabled={
-                                  working || (applyDrafts[task.id] ?? '').trim().length < 10
-                                }
-                                onClick={() => void applyToTask(task.id)}
-                                className="w-full rounded-xl font-bold py-6 text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all border border-primary/20"
+                              <span
+                                className="font-medium text-body-sm line-clamp-1"
+                                title={detailTask.approximate_location}
                               >
-                                {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-                                {t('taskerFeed.applySubmit')}
-                              </Button>
+                                {detailTask.approximate_location}
+                              </span>
+                            </div>
+                            <div className="flex flex-col gap-1.5 p-3 bg-muted/5 rounded-xl ring-1 ring-inset ring-border/20">
+                              <div className="flex items-center text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
+                                <Calendar className="w-3.5 h-3.5 mr-1.5 text-primary/60" />
+                                {t('taskerFeed.dateLabel')}
+                              </div>
+                              <span className="font-medium text-body-sm line-clamp-1">
+                                {formatDateTime(detailTask.scheduled_at)}
+                              </span>
                             </div>
                           </div>
-                        ) : null}
-                      </DialogContent>
-                    </Dialog>
-                  </CardFooter>
-                </Card>
+
+                          <div className="space-y-2.5">
+                            <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground">
+                              {t('taskerFeed.descriptionLabel')}
+                            </h4>
+                            <div className="text-body-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl ring-1 ring-inset ring-border/30 whitespace-pre-wrap">
+                              {detailTask.description}
+                            </div>
+                          </div>
+
+                          {detailTask.photo_urls && detailTask.photo_urls.length > 0 && (
+                            <div className="space-y-2.5">
+                              <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground flex items-center gap-1.5">
+                                <ImageIcon className="w-3.5 h-3.5" />
+                                {t('taskerFeed.photosLabel')}
+                              </h4>
+                              <div className="flex flex-wrap gap-2.5">
+                                {detailTask.photo_urls.map((url, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden ring-1 ring-inset ring-border/30 shrink-0"
+                                  >
+                                    <img
+                                      src={url}
+                                      alt={t('taskerFeed.taskMediaAlt', { count: idx + 1 })}
+                                      className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-card-expand ease-card-expand"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {detailTask ? (
+                      <div className="bg-muted/20 border-t border-border/30 p-6 mt-4 shrink-0">
+                        <div className="flex flex-col gap-3">
+                          <Label
+                            htmlFor={`apply-${task.id}`}
+                            className="text-badge-text font-bold text-primary uppercase tracking-caps"
+                          >
+                            {t('taskerFeed.appMessageLabel')}
+                          </Label>
+                          <Textarea
+                            id={`apply-${task.id}`}
+                            className="resize-none min-h-[100px] rounded-xl bg-background ring-1 ring-inset ring-border/30 focus:ring-primary/40 transition-shadow text-body-sm"
+                            value={applyDrafts[task.id] ?? ''}
+                            onChange={(e) =>
+                              setApplyDrafts((prev) => ({
+                                ...prev,
+                                [task.id]: e.target.value,
+                              }))
+                            }
+                            placeholder={t('taskerFeed.appMessagePlaceholder')}
+                          />
+                        </div>
+
+                        {detailTask.pricing_mode === 'QUOTE' ? (
+                          <div className="flex flex-col gap-2 mt-4">
+                            <Label
+                              htmlFor={`quote-${task.id}`}
+                              className="text-badge-text font-semibold text-muted-foreground"
+                            >
+                              {t('taskerFeed.yourQuoteLabel')}
+                            </Label>
+                            <Input
+                              id={`quote-${task.id}`}
+                              type="number"
+                              min="20000"
+                              placeholder={t('taskerFeed.quotePlaceholder')}
+                              value={quotePrices[task.id] ?? ''}
+                              onChange={(e) =>
+                                setQuotePrices((prev) => ({
+                                  ...prev,
+                                  [task.id]: e.target.value,
+                                }))
+                              }
+                            />
+                            <p className="text-caption text-muted-foreground">
+                              {t('taskerFeed.quoteRequiredHint')}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="mt-4 text-body-sm text-muted-foreground">
+                            {t('taskerFeed.budgetAcceptHint')}
+                          </p>
+                        )}
+
+                        <div className="mt-5">
+                          <Button
+                            disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
+                            onClick={() => void applyToTask(task.id)}
+                            className="w-full rounded-xl font-bold py-6 text-button-label shadow-fab hover:shadow-deep transition-shadow"
+                          >
+                            {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
+                            {t('taskerFeed.applySubmit')}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </DialogContent>
+                </Dialog>
               );
             })}
         </div>

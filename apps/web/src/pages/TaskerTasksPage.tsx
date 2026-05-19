@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { Task } from '../lib/apiClient';
+import { formatDate } from '../lib/formatDate';
 
 function TaskerBookingCard({ task }: { task: Task }) {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function TaskerBookingCard({ task }: { task: Task }) {
         </div>
         <CardDescription className="flex items-center gap-1 mt-1 text-xs">
           <Calendar className="w-4 h-4" />
-          {new Date(task.scheduled_at).toLocaleDateString()}
+          {formatDate(task.scheduled_at)}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-3 text-sm flex flex-col gap-2">
@@ -106,7 +107,7 @@ export function TaskerTasksPage() {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-end gap-4">
           <div>
-            <h1 className="text-3xl font-bold font-display tracking-tight">
+            <h1 className="font-display text-3xl font-semibold tracking-tight">
               {t('taskerTasks.title')}
             </h1>
             <p className="text-muted-foreground mt-1">{t('taskerTasks.subtitle')}</p>

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useAppContext } from '../../context/AppContext';
 import { ScreenFrame } from '../../layout/ScreenFrame';
 import { parseError } from '../../lib/errorHandling';
+import { formatDate, formatDateTime } from '../../lib/formatDate';
 
 const STATUS_CONFIG: Record<
   string,
@@ -68,7 +69,7 @@ export function CustomerDisputeStatusPage() {
     <ScreenFrame maxWidth="narrow">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-semibold tracking-tight">
             {t('customerPages.disputeStatus.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -83,8 +84,9 @@ export function CustomerDisputeStatusPage() {
         )}
 
         {error && (
-          <Card className="border-destructive/40">
-            <CardContent className="pt-6">
+          <Card className="ring-destructive/40">
+            <CardContent className="pt-6 flex items-center gap-3">
+              <ShieldAlert className="h-5 w-5 text-destructive shrink-0" />
               <p className="text-sm text-destructive">{parseError(error)}</p>
             </CardContent>
           </Card>
@@ -93,10 +95,10 @@ export function CustomerDisputeStatusPage() {
         {dispute && (
           <div className="space-y-4">
             {/* Status Card */}
-            <Card className="border-border/60 shadow-sm">
+            <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <StatusIcon className={`w-5 h-5 ${config.color}`} />
                     {t(getDisputeStatusLabelKey(dispute.status))}
                   </CardTitle>
@@ -104,13 +106,13 @@ export function CustomerDisputeStatusPage() {
                 </div>
               </CardHeader>
               <CardContent className="grid gap-3 text-sm">
-                <div className="flex justify-between">
+                <div className="flex justify-between rounded-lg bg-muted/30 px-3 py-2">
                   <span className="text-muted-foreground">
                     {t('customerPages.disputeStatus.disputeId')}
                   </span>
                   <span className="font-mono text-xs">{dispute.id.substring(0, 12)}...</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between rounded-lg bg-muted/30 px-3 py-2">
                   <span className="text-muted-foreground">
                     {t('customerPages.disputeStatus.bookingId')}
                   </span>
@@ -118,27 +120,21 @@ export function CustomerDisputeStatusPage() {
                     {dispute.booking_id.substring(0, 12)}...
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between rounded-lg bg-muted/30 px-3 py-2">
                   <span className="text-muted-foreground">
                     {t('customerPages.disputeStatus.filedOn')}
                   </span>
-                  <span>
-                    {new Date(dispute.created_at).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
+                  <span>{formatDateTime(dispute.created_at)}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Reason Card */}
-            <Card className="border-border/60 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle>{t('customerPages.disputeStatus.reasonTitle')}</CardTitle>
+                <CardTitle className="text-lg">
+                  {t('customerPages.disputeStatus.reasonTitle')}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap">{dispute.reason}</p>
@@ -147,9 +143,11 @@ export function CustomerDisputeStatusPage() {
 
             {/* Resolution Card */}
             {isResolved && dispute.resolution_notes && (
-              <Card className="border-border/60 shadow-sm">
+              <Card>
                 <CardHeader>
-                  <CardTitle>{t('customerPages.disputeStatus.resolutionTitle')}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {t('customerPages.disputeStatus.resolutionTitle')}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-3 text-sm">
                   {dispute.resolution_notes && (
@@ -158,13 +156,7 @@ export function CustomerDisputeStatusPage() {
                   {dispute.resolved_at && (
                     <div className="flex justify-between text-muted-foreground">
                       <span>{t('customerPages.disputeStatus.resolvedOn')}</span>
-                      <span>
-                        {new Date(dispute.resolved_at).toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
+                      <span>{formatDate(dispute.resolved_at)}</span>
                     </div>
                   )}
                 </CardContent>
@@ -173,10 +165,12 @@ export function CustomerDisputeStatusPage() {
 
             {/* Open Status Notice */}
             {!isResolved && (
-              <Card className="border-secondary/30 bg-secondary/5">
+              <Card className="bg-muted/30">
                 <CardContent className="pt-6">
                   <div className="flex gap-3">
-                    <Clock className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary/10">
+                      <Clock className="w-4 h-4 text-secondary" />
+                    </div>
                     <div>
                       <p className="font-medium text-sm">
                         {t('customerPages.disputeStatus.underReviewTitle')}

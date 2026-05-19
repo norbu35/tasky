@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent, CardHeader } from '../../components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -18,29 +19,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/ta
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { User, Message } from '../../lib/apiClient';
-
-function formatTimestamp(iso: string, locale: string): string {
-  try {
-    const date = new Date(iso);
-    return date.toLocaleString(locale, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return iso;
-  }
-}
+import { formatDateTime } from '../../lib/formatDate';
 
 export function AdminUsersPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { session } = useAppContext();
   const adminApiClient = useAdminApiClient();
-  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
-    ? 'mn-MN'
-    : 'en-US';
 
   // ── Search state ─────────────────────────────────────────────────
   const [phone, setPhone] = useState('');
@@ -134,8 +118,10 @@ export function AdminUsersPage() {
   }, [activeTab, flaggedLoaded, fetchFlagged]);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold font-display">{t('admin.users.title')}</h1>
+    <div className="space-y-6">
+      <h1 className="font-display text-2xl font-semibold tracking-tight">
+        {t('admin.users.title')}
+      </h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -145,96 +131,124 @@ export function AdminUsersPage() {
 
         {/* ── Search Users Tab ─────────────────────────────────────── */}
         <TabsContent value="search">
-          <div className="flex gap-2 mb-4">
-            <Input
-              placeholder={t('admin.users.phonePlaceholder')}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-            <Button onClick={doSearch} disabled={searchLoading}>
-              {t('admin.users.search')}
-            </Button>
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex gap-2 mb-6">
+                <Input
+                  placeholder={t('admin.users.phonePlaceholder')}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+                <Button onClick={doSearch} disabled={searchLoading}>
+                  {t('admin.users.search')}
+                </Button>
+              </div>
 
-          {searchLoading && (
-            <div data-testid="users-loading" className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-4">
-                    <Skeleton className="h-5 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {searchError && (
-            <Card>
-              <CardContent className="flex flex-col items-center gap-4 p-6">
-                <p className="text-destructive">{t('admin.users.searchError')}</p>
-                <Button onClick={doSearch}>{t('admin.users.retry')}</Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {!searchLoading && !searchError && hasSearched && users.length === 0 && (
-            <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">{t('admin.users.noResults')}</p>
-              </CardContent>
-            </Card>
-          )}
-
-          {!searchLoading && !searchError && users.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="px-4 py-3 text-left font-medium">{t('admin.users.colPhone')}</th>
-                    <th className="px-4 py-3 text-left font-medium">{t('admin.users.colRole')}</th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colStatus')}
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colCreated')}
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colActions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="border-b last:border-0"
-                      data-testid={`user-row-${user.id}`}
-                    >
-                      <td className="px-4 py-3">{user.phone ?? '—'}</td>
-                      <td className="px-4 py-3">{user.role}</td>
-                      <td className="px-4 py-3">{user.status}</td>
-                      <td className="px-4 py-3">{formatTimestamp(user.created_at, locale)}</td>
-                      <td className="px-4 py-3">
-                        {user.status === 'BANNED' ? (
-                          <Button variant="outline" size="sm" onClick={() => handleUnban(user.id)}>
-                            {t('admin.users.unban')}
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => setBanTarget(user)}
-                          >
-                            {t('admin.users.ban')}
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
+              {searchLoading && (
+                <div data-testid="users-loading" className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                </div>
+              )}
+
+              {searchError && (
+                <div className="flex flex-col items-center gap-4 py-8">
+                  <p className="text-body-sm text-destructive">{t('admin.users.searchError')}</p>
+                  <Button variant="outline" size="sm" onClick={doSearch}>
+                    {t('admin.users.retry')}
+                  </Button>
+                </div>
+              )}
+
+              {!searchLoading && !searchError && hasSearched && users.length === 0 && (
+                <div className="py-12 text-center">
+                  <p className="text-body-sm text-muted-foreground">{t('admin.users.noResults')}</p>
+                </div>
+              )}
+
+              {!searchLoading && !searchError && users.length > 0 && (
+                <div className="overflow-x-auto rounded-lg border border-border/40">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border/40 bg-muted/30">
+                        <th className="px-4 py-3 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                          {t('admin.users.colPhone')}
+                        </th>
+                        <th className="px-4 py-3 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                          {t('admin.users.colRole')}
+                        </th>
+                        <th className="px-4 py-3 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                          {t('admin.users.colStatus')}
+                        </th>
+                        <th className="px-4 py-3 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                          {t('admin.users.colCreated')}
+                        </th>
+                        <th className="px-4 py-3 text-left text-label font-medium uppercase tracking-caps text-muted-foreground">
+                          {t('admin.users.colActions')}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="border-b border-border/30 last:border-0 transition-colors hover:bg-muted/20"
+                          data-testid={`user-row-${user.id}`}
+                        >
+                          <td className="px-4 py-3 text-body-sm font-medium">
+                            {user.phone ?? '—'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <Badge variant="outline" className="text-badge-text">
+                              {user.role}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3">
+                            {user.status === 'BANNED' ? (
+                              <Badge variant="destructive" className="uppercase tracking-caps">
+                                {user.status}
+                              </Badge>
+                            ) : user.status === 'ACTIVE' ? (
+                              <Badge variant="verified" className="uppercase tracking-caps">
+                                {user.status}
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="uppercase tracking-caps">
+                                {user.status}
+                              </Badge>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-body-sm text-muted-foreground">
+                            {formatDateTime(user.created_at)}
+                          </td>
+                          <td className="px-4 py-3">
+                            {user.status === 'BANNED' ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleUnban(user.id)}
+                              >
+                                {t('admin.users.unban')}
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setBanTarget(user)}
+                              >
+                                {t('admin.users.ban')}
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* ── Flagged Messages Tab ─────────────────────────────────── */}
@@ -243,8 +257,8 @@ export function AdminUsersPage() {
             <div data-testid="flagged-loading" className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <Card key={i}>
-                  <CardContent className="p-4">
-                    <Skeleton className="h-5 w-full" />
+                  <CardContent className="p-6">
+                    <Skeleton className="h-16 w-full" />
                   </CardContent>
                 </Card>
               ))}
@@ -253,17 +267,19 @@ export function AdminUsersPage() {
 
           {flaggedError && (
             <Card>
-              <CardContent className="flex flex-col items-center gap-4 p-6">
-                <p className="text-destructive">{flaggedError}</p>
-                <Button onClick={fetchFlagged}>{t('admin.users.retry')}</Button>
+              <CardContent className="flex flex-col items-center gap-4 py-8">
+                <p className="text-body-sm text-destructive">{flaggedError}</p>
+                <Button variant="outline" size="sm" onClick={fetchFlagged}>
+                  {t('admin.users.retry')}
+                </Button>
               </CardContent>
             </Card>
           )}
 
           {!flaggedLoading && !flaggedError && flaggedLoaded && flaggedMessages.length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">{t('admin.users.noFlagged')}</p>
+              <CardContent className="py-12 text-center">
+                <p className="text-body-sm text-muted-foreground">{t('admin.users.noFlagged')}</p>
               </CardContent>
             </Card>
           )}
@@ -272,11 +288,13 @@ export function AdminUsersPage() {
             <div className="space-y-3">
               {flaggedMessages.map((msg) => (
                 <Card key={msg.id} data-testid={`flagged-msg-${msg.id}`}>
-                  <CardContent className="p-4 space-y-1">
-                    <p className="text-sm">{msg.content}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <CardHeader className="p-4 pb-2">
+                    <p className="text-body-sm">{msg.content}</p>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-badge-text text-muted-foreground">
                       {t('admin.users.sender')}: {msg.sender_id} &middot;{' '}
-                      {formatTimestamp(msg.sent_at, locale)}
+                      {formatDateTime(msg.sent_at)}
                     </p>
                   </CardContent>
                 </Card>
