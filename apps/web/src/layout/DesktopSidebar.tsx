@@ -29,20 +29,33 @@ const TASKER_NAV = [
   { to: '/profile', label: 'nav.profile', icon: User },
 ];
 
+const ADMIN_NAV = [
+  { to: '/admin/verifications', label: 'nav.adminDashboard', icon: LayoutDashboard },
+  { to: '/profile', label: 'nav.profile', icon: User },
+];
+
 export function DesktopSidebar() {
   const { profile, signOut } = useAppContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const navLinks =
-    profile?.role === 'CUSTOMER' ? CUSTOMER_NAV : profile?.role === 'TASKER' ? TASKER_NAV : null;
+    profile?.role === 'CUSTOMER'
+      ? CUSTOMER_NAV
+      : profile?.role === 'TASKER'
+        ? TASKER_NAV
+        : profile?.role === 'ADMIN'
+          ? ADMIN_NAV
+          : null;
 
   const roleLabel =
     profile?.role === 'CUSTOMER'
       ? t('nav.customer')
       : profile?.role === 'TASKER'
         ? t('nav.tasker')
-        : null;
+        : profile?.role === 'ADMIN'
+          ? t('nav.admin')
+          : null;
 
   return (
     <aside className="hidden md:flex md:flex-col md:w-64 md:shrink-0 border-r border-border/40 bg-card sticky top-0 h-screen">
@@ -59,11 +72,6 @@ export function DesktopSidebar() {
           <span className="text-heading-3 font-display font-semibold text-foreground leading-none">
             Tasky
           </span>
-          {roleLabel && (
-            <span className="text-badge-text font-medium text-primary mt-0.5 tracking-caps uppercase">
-              {roleLabel}
-            </span>
-          )}
         </div>
       </div>
 
@@ -111,36 +119,44 @@ export function DesktopSidebar() {
         </nav>
       )}
 
-      <div className="mt-auto">
-        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-
-        {profile && (
-          <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-lg bg-muted/30 px-3 py-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <User className="h-icon-xs w-icon-xs" />
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-body-sm font-medium text-foreground truncate">
-                {profile.full_name}
-              </span>
-              {roleLabel && <span className="text-caption text-muted-foreground">{roleLabel}</span>}
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center gap-1 px-3 py-3">
-          <LanguageSwitcher className="flex-1 justify-start" />
+      <div className="mt-auto p-3 shrink-0">
+        <div className="rounded-xl border border-border/30 bg-muted/20 p-3 flex flex-col gap-2.5 shadow-sm">
           {profile && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground gap-2 px-2"
-              onClick={signOut}
-              aria-label={t('nav.logout')}
-            >
-              <LogOut className="h-icon-xs w-icon-xs" />
-            </Button>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm">
+                  <User className="h-icon-xs w-icon-xs" />
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="text-body-sm font-semibold text-foreground truncate leading-snug">
+                    {profile.full_name}
+                  </span>
+                  {roleLabel && (
+                    <span className="text-caption text-muted-foreground truncate leading-none mt-0.5">
+                      {roleLabel}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 rounded-lg shrink-0 flex items-center justify-center"
+                onClick={signOut}
+                aria-label={t('nav.logout')}
+                title={t('nav.logout')}
+              >
+                <LogOut className="h-icon-xs w-icon-xs" />
+              </Button>
+            </div>
           )}
+
+          {profile && <div className="h-px bg-border/40 w-full" />}
+
+          <div className="flex items-center justify-between gap-2 pt-0.5">
+            <span className="text-xs font-medium text-muted-foreground">{t('nav.language')}</span>
+            <LanguageSwitcher className="hover:bg-muted/60 transition-colors" />
+          </div>
         </div>
       </div>
     </aside>

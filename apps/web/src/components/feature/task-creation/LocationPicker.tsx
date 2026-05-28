@@ -14,8 +14,10 @@ export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
 
   return (
     <div className="grid gap-2">
-      <Label>{t('taskCreation.locationPicker.label')}</Label>
-      <div className="h-[300px] w-full rounded-md overflow-hidden border border-border">
+      <Label className="text-body-sm font-semibold text-foreground/90">
+        {t('taskCreation.locationPicker.label')}
+      </Label>
+      <div className="h-[300px] w-full rounded-2xl overflow-hidden border border-border shadow-elevated transition-shadow duration-300 hover:shadow-deep">
         <Map
           height={300}
           center={[lat, lng]}
@@ -25,7 +27,9 @@ export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
           <Marker width={40} anchor={[lat, lng]} color="hsl(var(--primary))" />
         </Map>
       </div>
-      <p className="text-xs text-muted-foreground">{t('taskCreation.locationPicker.hint')}</p>
+      <p className="text-caption text-muted-foreground mt-1 font-medium">
+        {t('taskCreation.locationPicker.hint')}
+      </p>
     </div>
   );
 }

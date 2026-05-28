@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronRight, MapPin } from 'lucide-react';
+import { ArrowRight, CalendarDays, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import type { Task, TaskFeedItem } from '../../lib/apiClient';
@@ -10,8 +10,8 @@ type TaskData = Task | TaskFeedItem;
 
 interface TaskCardProps {
   task: TaskData;
-  variant: 'grid' | 'list';
   onOpen: () => void;
+  actionLabel?: string;
 }
 
 const STATUS_BADGE_VARIANT: Record<
@@ -43,7 +43,7 @@ function getScheduledAt(task: TaskData): string | null {
   return null;
 }
 
-export function TaskCard({ task, variant, onOpen }: TaskCardProps) {
+export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
   const { t } = useTranslation();
 
   const status = getStatus(task);
@@ -59,100 +59,66 @@ export function TaskCard({ task, variant, onOpen }: TaskCardProps) {
     }
   };
 
-  if (variant === 'list') {
-    return (
-      <Card
-        className="cursor-pointer hover:-translate-y-0.5"
-        role="button"
-        tabIndex={0}
-        onClick={onOpen}
-        onKeyDown={handleKeyDown}
-      >
-        <CardContent className="flex items-center justify-between gap-4 p-4">
-          <div className="min-w-0 space-y-1.5 flex-1">
-            <div className="flex items-center gap-2">
-              <Badge variant={badgeVariant}>{t(`sharedPages.status.${status}`)}</Badge>
-            </div>
-            <h2 className="truncate text-base font-semibold font-display text-foreground">
-              {task.description}
-            </h2>
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              {location && (
-                <span className="inline-flex items-center gap-1.5 text-body-sm text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5 text-muted-foreground/60" />
-                  {location}
-                </span>
-              )}
-              {scheduledAt && (
-                <span className="inline-flex items-center gap-1.5 text-body-sm text-muted-foreground">
-                  <CalendarDays className="h-3.5 w-3.5 text-muted-foreground/60" />
-                  {formatDate(scheduledAt)}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            {budget != null && (
-              <div className="text-right">
-                <span className="text-price-display font-display font-bold">
-                  {budget.toLocaleString()}
-                </span>{' '}
-                <span className="text-caption font-medium text-muted-foreground">
-                  {t('sharedPages.currencyMNT')}
-                </span>
-              </div>
-            )}
-            <ChevronRight className="h-4 w-4 text-muted-foreground/40" />
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card
-      className="group flex flex-col cursor-pointer hover:-translate-y-0.5"
+      hoverable
+      className="group flex flex-col cursor-pointer overflow-hidden ring-border/20"
       role="button"
+      aria-label={task.description}
       tabIndex={0}
       onClick={onOpen}
       onKeyDown={handleKeyDown}
     >
-      <CardHeader className="p-4 pb-3">
+      <CardHeader className="p-5 pb-3">
         <div className="flex items-center justify-between gap-2">
-          <Badge variant={badgeVariant} className="text-badge-text">
+          <Badge variant={badgeVariant} size="md">
             {t(`sharedPages.status.${status}`)}
           </Badge>
           {budget != null ? (
-            <span className="text-price-display font-display font-bold text-foreground">
-              {budget.toLocaleString()}{' '}
-              <span className="text-caption font-medium text-muted-foreground">
-                {t('sharedPages.currencyMNT')}
+            <div className="flex flex-col items-end">
+              <span className="text-xl font-display font-bold text-primary leading-none">
+                {budget.toLocaleString()}
+                <span className="text-nav font-bold text-primary/60 ml-0.5 uppercase tracking-wider">
+                  {t('sharedPages.currencyMNT')}
+                </span>
               </span>
-            </span>
+            </div>
           ) : (
-            <span className="text-body font-medium text-muted-foreground">&mdash;</span>
+            <span className="text-body-sm font-medium text-muted-foreground">&mdash;</span>
           )}
         </div>
-        <h2 className="mt-1 line-clamp-2 text-base font-semibold font-display leading-snug text-foreground">
+        <h2 className="mt-3 line-clamp-2 text-lg font-bold font-display leading-tight text-foreground transition-colors group-hover:text-primary">
           {task.description}
         </h2>
       </CardHeader>
 
-      <CardContent className="flex-1 p-4 pt-0">
+      <CardContent className="flex-1 p-5 pt-0">
         {location && (
-          <div className="flex items-center gap-1.5 text-body-sm text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-            <span className="truncate">{location}</span>
+          <div className="flex items-center gap-2 text-body-sm text-muted-foreground bg-muted/20 px-3 py-1.5 rounded-xl ring-1 ring-inset ring-border/10">
+            <MapPin className="h-4 w-4 shrink-0 text-primary/50" />
+            <span className="truncate font-medium">{location}</span>
           </div>
         )}
       </CardContent>
 
-      {scheduledAt && (
-        <CardFooter className="px-4 py-3">
-          <div className="flex items-center gap-1.5 text-caption text-muted-foreground">
-            <CalendarDays className="h-3.5 w-3.5" />
-            <span>{formatDate(scheduledAt)}</span>
-          </div>
+      {(actionLabel || scheduledAt) && (
+        <CardFooter className="px-5 py-4 bg-muted/5 border-t border-border/10 flex justify-between items-center gap-3">
+          {scheduledAt ? (
+            <div className="flex items-center gap-2 text-caption font-medium text-muted-foreground">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background shadow-card ring-1 ring-inset ring-border/20">
+                <CalendarDays className="h-3.5 w-3.5 text-primary/70" />
+              </div>
+              <span>{formatDate(scheduledAt)}</span>
+            </div>
+          ) : (
+            <div />
+          )}
+          {actionLabel && (
+            <span className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 px-3.5 py-2 text-badge-text font-bold text-primary transition-all duration-card-expand group-hover:bg-primary group-hover:text-primary-foreground shadow-sm">
+              {actionLabel}
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-sheet-close group-hover:translate-x-0.5" />
+            </span>
+          )}
         </CardFooter>
       )}
     </Card>

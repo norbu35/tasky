@@ -25,7 +25,7 @@ export function CardTitle({ style, className, ...props }: CardTextProps) {
   return (
     <Text
       style={style}
-      className={cn('text-title font-sans-bold text-card-foreground tracking-tight', className)}
+      className={cn('text-title font-sans-bold text-card-foreground', className)}
       {...props}
     />
   );

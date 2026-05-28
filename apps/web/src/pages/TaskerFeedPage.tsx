@@ -312,7 +312,11 @@ export function TaskerFeedPage() {
                   onOpenChange={(open) => setOpenDialogId(open ? task.id : null)}
                 >
                   <DialogTrigger asChild>
-                    <TaskCard task={task} variant="grid" onOpen={() => setOpenDialogId(task.id)} />
+                    <TaskCard
+                      task={task}
+                      onOpen={() => setOpenDialogId(task.id)}
+                      actionLabel={t('taskerFeed.viewAndApply')}
+                    />
                   </DialogTrigger>
                   <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl ring-1 ring-inset ring-border/30 shadow-modal overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
                     <div className="p-6 pb-2">

@@ -43,7 +43,10 @@
     "logout": "Гарах",
     "customer": "Үйлчлүүлэгч",
     "tasker": "Гүйцэтгэгч",
-    "bottomNavigation": "Доод навигац"
+    "admin": "Админ",
+    "adminDashboard": "Админ хянах самбар",
+    "bottomNavigation": "Доод навигац",
+    "language": "Хэл"
   },
   "customerDashboard": {
     "reviewApplicants": "Хүсэлтүүдийг шалгах",
@@ -529,11 +532,14 @@
       "loadingDesc": "Захиалгын мэдээллийг татаж байна.",
       "timelineTitle": "Цагийн хуваарилалтын түүх",
       "invalidDesc": "Замаас захиалгын ID дутуу байна.",
-      "taskLabel": "Ажил {{id}}"
+      "bookingIdLabel": "Захиалгын ID: {{id}}",
+      "taskFallback": "Ажил {{id}}"
     },
     "bookings": {
       "title": "Захиалгууд",
-      "description": "Идэвхтэй, дууссан, цуцалсан захиалгуудаа нэг дороос хянах."
+      "description": "Идэвхтэй, дууссан, цуцалсан захиалгуудаа нэг дороос хянах.",
+      "bookingId": "Захиалгын ID",
+      "taskFallback": "Ажил {{id}}"
     },
     "disputeRaise": {
       "title": "Маргаан үүсгэх",
@@ -714,7 +720,7 @@
     "tasksList": {
       "title": "Миний ажлууд",
       "description": "Нийтлэгдсэн ажлуудаа хянах болон шинэ даалгавар үүсгэх.",
-      "postNew": "Шинэ ажил нийтлэх",
+      "postNew": "Шинэ ажил оруулах",
       "freshRequestTitle": "Шинэ хүсэлт хэрэгтэй юу?",
       "freshRequestDesc": "Яг ижил урсгалаар дахин шинэ захиалга нэмээрэй.",
       "startPosting": "Нийтэлж эхлэх",

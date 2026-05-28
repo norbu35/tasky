@@ -546,6 +546,12 @@ describe('IntakeFormRenderer', () => {
       expect(screen.getByRole('spinbutton')).toHaveValue(5);
     });
 
+    it('displays the field minimum when the value is unset', () => {
+      render(<IntakeFormRenderer schema={numericCounterSchema} values={{}} onChange={vi.fn()} />);
+
+      expect(screen.getByRole('spinbutton')).toHaveValue(1);
+    });
+
     it('calls onChange with field name and numeric value when input changes', () => {
       const onChange = vi.fn();
       render(

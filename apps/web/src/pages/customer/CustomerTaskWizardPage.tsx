@@ -7,6 +7,7 @@ import {
   createTaskSchema,
   generateIntakeScopeSummary,
   normalizeCategoryIntakeSchema,
+  type IntakeSchema,
 } from '@tasky/core';
 
 import { IntakeFormRenderer } from '../../components/feature/task-creation/IntakeFormRenderer';
@@ -16,6 +17,13 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
 import { useAppContext } from '../../context/AppContext';
 import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
@@ -24,6 +32,20 @@ import { parseError } from '../../lib/errorHandling';
 
 const PRICING_MODES = ['BUDGET', 'QUOTE'] as const;
 type PricingMode = (typeof PRICING_MODES)[number];
+
+function getDefaultIntakeAnswers(schema: IntakeSchema | null): Record<string, unknown> {
+  if (!schema) {
+    return {};
+  }
+
+  return schema.fields.reduce<Record<string, unknown>>((answers, field) => {
+    if (field.type === 'numeric_counter') {
+      answers[field.name] = field.min ?? 0;
+    }
+
+    return answers;
+  }, {});
+}
 
 export function CustomerTaskWizardPage() {
   const { t, i18n } = useTranslation();
@@ -84,7 +106,7 @@ export function CustomerTaskWizardPage() {
   );
 
   useEffect(() => {
-    setIntakeAnswers({});
+    setIntakeAnswers(getDefaultIntakeAnswers(intakeSchema));
     setSummaryManuallyEdited(false);
     if (intakeSchema) {
       setDescription('');
@@ -119,6 +141,9 @@ export function CustomerTaskWizardPage() {
 
     try {
       const parsedBudget = pricingMode === 'BUDGET' ? Number(budget) : null;
+      const effectiveIntakeAnswers = intakeSchema
+        ? { ...getDefaultIntakeAnswers(intakeSchema), ...intakeAnswers }
+        : {};
 
       const payload = createTaskSchema.parse({
         category_id: categoryId,
@@ -135,7 +160,7 @@ export function CustomerTaskWizardPage() {
         ...payload,
         pricing_mode: pricingMode,
         budget: parsedBudget,
-        intake_answers: intakeSchema ? intakeAnswers : {},
+        intake_answers: effectiveIntakeAnswers,
         intake_schema_version: intakeSchema?.version ?? 1,
         scope_summary: intakeSchema ? description.trim() : null,
       });
@@ -199,19 +224,26 @@ export function CustomerTaskWizardPage() {
             </p>
             <div className="grid gap-2">
               <Label htmlFor="task-category">{t('customerPages.taskWizard.categoryLabel')}</Label>
-              <select
-                id="task-category"
-                className="flex h-12 w-full rounded-lg border-[1.5px] border-border/60 bg-muted/20 px-4 py-3 text-body font-sans text-foreground transition-all duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:bg-background focus-visible:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              <input type="hidden" id="task-category-hidden" value={categoryId} readOnly />
+              <Select
                 value={categoryId}
-                onChange={(event) => setCategoryId(event.target.value)}
+                onValueChange={(value) => {
+                  if (value) {
+                    setCategoryId(value);
+                  }
+                }}
               >
-                <option value="">{t('customerPages.taskWizard.selectCategory')}</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="task-category" className="bg-muted/20 hover:bg-muted/30">
+                  <SelectValue placeholder={t('customerPages.taskWizard.selectCategory')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {intakeSchema ? (

@@ -826,9 +826,10 @@ export interface paths {
         put?: never;
         /**
          * Rebook a completed booking
-         * @description Creates a booking intent to rebook the same tasker for a completed booking.
-         *     The original booking must be in COMPLETED status.
-         *     Requires Idempotency-Key header.
+         * @description Deferred Phase 2 repeat-booking surface. Current runtime creates a new OPEN task snapshot copied from a completed booking,
+         *     with schedule intentionally unset so the customer must choose a new time before normal launch posting behavior applies.
+         *     The original booking must be in COMPLETED status. Launch UX must not expose this surface until repeat-booking activation
+         *     is approved by the PRD, strategy, maintenance policy, UX/copy, verification, monitoring, and rollback workflow.
          */
         post: operations["rebookBooking"];
         delete?: never;
@@ -2555,6 +2556,29 @@ export interface components {
             confirmed_booking_id?: string | null;
             /** Format: date-time */
             confirmed_at?: string | null;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        RebookedTask: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customer_id: string;
+            /** Format: uuid */
+            category_id: string;
+            description: string;
+            /** @description Copied budget in MNT when the original task used BUDGET pricing. Null for QUOTE mode tasks. */
+            budget: number | null;
+            /** Format: double */
+            location_lat: number;
+            /** Format: double */
+            location_lng: number;
+            /** @description Copied exact address from the original completed task. */
+            location_text: string;
+            /** @enum {string} */
+            status: "OPEN";
             /** Format: date-time */
             created_at: string;
             /** Format: date-time */
@@ -4495,10 +4519,7 @@ export interface operations {
     rebookBooking: {
         parameters: {
             query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
+            header?: never;
             path: {
                 id: components["parameters"]["PathId"];
             };
@@ -4506,13 +4527,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Rebook intent created. */
-            200: {
+            /** @description Rebooked task snapshot created. */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BookingIntent"];
+                    "application/json": components["schemas"]["RebookedTask"];
                 };
             };
             401: components["responses"]["Unauthorized"];

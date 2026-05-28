@@ -62,6 +62,6 @@ describe('CustomerBookingDetailPage', () => {
     await waitFor(() => {
       expect(apiClient.getBooking).toHaveBeenCalledWith(makeSession().accessToken, 'booking-99');
     });
-    expect(screen.getByText('booking-99')).toBeInTheDocument();
+    expect(screen.getByText(/booking-99/)).toBeInTheDocument();
   });
 });

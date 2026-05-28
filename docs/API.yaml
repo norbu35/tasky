@@ -1092,6 +1092,57 @@ components:
         updated_at:
           type: string
           format: date-time
+    RebookedTask:
+      type: object
+      x-tasky-status: deferred
+      x-tasky-phase: phase_2
+      required:
+        - id
+        - customer_id
+        - category_id
+        - description
+        - budget
+        - location_lat
+        - location_lng
+        - location_text
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        budget:
+          type: integer
+          nullable: true
+          description: Copied budget in MNT when the original task used BUDGET pricing. Null for QUOTE mode tasks.
+        location_lat:
+          type: number
+          format: double
+        location_lng:
+          type: number
+          format: double
+        location_text:
+          type: string
+          description: Copied exact address from the original completed task.
+        status:
+          type: string
+          enum:
+            - OPEN
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     BookingScheduleEvent:
       type: object
       required:
@@ -3622,27 +3673,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /bookings/{id}/rebook:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_2
+    x-tasky-target-phase: phase_2
     post:
       tags:
         - Bookings
       summary: Rebook a completed booking
       description: |
-        Creates a booking intent to rebook the same tasker for a completed booking.
-        The original booking must be in COMPLETED status.
-        Requires Idempotency-Key header.
+        Deferred Phase 2 repeat-booking surface. Current runtime creates a new OPEN task snapshot copied from a completed booking,
+        with schedule intentionally unset so the customer must choose a new time before normal launch posting behavior applies.
+        The original booking must be in COMPLETED status. Launch UX must not expose this surface until repeat-booking activation
+        is approved by the PRD, strategy, maintenance policy, UX/copy, verification, monitoring, and rollback workflow.
       operationId: rebookBooking
       security:
         - BearerAuth: []
       parameters:
         - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
-        "200":
-          description: Rebook intent created.
+        "201":
+          description: Rebooked task snapshot created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
+                $ref: "#/components/schemas/RebookedTask"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":

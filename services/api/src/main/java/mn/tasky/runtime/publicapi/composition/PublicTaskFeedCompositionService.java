@@ -37,7 +37,8 @@ public class PublicTaskFeedCompositionService {
         response.put("approximate_lat", row.approximateLat());
         response.put("approximate_lng", row.approximateLng());
         response.put("status", row.status());
-        response.put("scheduled_at", row.scheduledAt().toString());
+        response.put(
+                "scheduled_at", row.scheduledAt() != null ? row.scheduledAt().toString() : null);
         response.put("created_at", row.createdAt().toString());
         return response;
     }

@@ -233,7 +233,7 @@ describe('AdminLayout', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Logout' }).length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Outlet for child content', () => {

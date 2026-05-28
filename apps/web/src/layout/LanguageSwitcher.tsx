@@ -17,9 +17,9 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       variant="ghost"
       size="sm"
       onClick={toggleLanguage}
-      className={`min-w-16 h-8 px-2 flex items-center gap-1.5${className ? ` ${className}` : ''}`}
+      className={`h-7 px-2 flex items-center gap-1.5 text-xs rounded-lg${className ? ` ${className}` : ''}`}
     >
-      <span className="text-xl leading-none pt-0.5">{isEnglish ? '🇬🇧' : '🇲🇳'}</span>
+      <span className="text-base leading-none">{isEnglish ? '🇬🇧' : '🇲🇳'}</span>
       <span className="font-semibold">{isEnglish ? 'EN' : 'МН'}</span>
     </Button>
   );

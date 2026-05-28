@@ -133,29 +133,29 @@ export function BookingConfirmationPage() {
             {t('bookingConfirmation.selectionRequestedDesc')}
           </p>
 
-          <Card className="w-full text-left mb-8 shadow-sm">
-            <CardHeader className="bg-muted/30 pb-4">
+          <Card className="w-full text-left mb-8 shadow-elevated border border-border/40 overflow-hidden rounded-2xl">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/40">
               <CardTitle className="text-lg">
                 {t('bookingConfirmation.selectionRequestDetails')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 grid gap-3">
+            <CardContent className="pt-5 grid gap-3">
               <div className="flex justify-between gap-4">
                 <span className="text-muted-foreground">
                   {t('bookingConfirmation.selectionRequestId')}
                 </span>
-                <span className="font-medium text-right break-all">{pendingSelection.id}</span>
+                <span className="font-semibold text-right break-all">{pendingSelection.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t('bookingConfirmation.status')}</span>
-                <span className="font-medium text-primary">{pendingSelection.status}</span>
+                <span className="font-semibold text-primary">{pendingSelection.status}</span>
               </div>
               {pendingSelection.expires_at && (
                 <div className="flex justify-between gap-4">
                   <span className="text-muted-foreground">
                     {t('bookingConfirmation.respondBy')}
                   </span>
-                  <span className="font-medium text-right">
+                  <span className="font-semibold text-right">
                     {formatDateTime(pendingSelection.expires_at)}
                   </span>
                 </div>
@@ -189,25 +189,25 @@ export function BookingConfirmationPage() {
             {t('bookingConfirmation.bookingConfirmedDesc')}
           </p>
 
-          <Card className="w-full text-left mb-8 shadow-sm">
-            <CardHeader className="bg-muted/30 pb-4">
+          <Card className="w-full text-left mb-8 shadow-elevated border border-border/40 overflow-hidden rounded-2xl">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/40">
               <CardTitle className="text-lg">{t('bookingConfirmation.bookingDetails')}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 grid gap-3">
+            <CardContent className="pt-5 grid gap-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t('bookingConfirmation.bookingId')}</span>
-                <span className="font-medium">{successBooking.id}</span>
+                <span className="font-semibold">{successBooking.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t('bookingConfirmation.status')}</span>
-                <span className="font-medium text-primary">{successBooking.status}</span>
+                <span className="font-semibold text-primary">{successBooking.status}</span>
               </div>
               {task && (
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">
                     {t('bookingConfirmation.totalBudget')}
                   </span>
-                  <span className="font-semibold font-display text-lg">
+                  <span className="font-bold font-display text-heading-3 text-primary">
                     ₮{(task.budget ?? 0).toLocaleString()}
                   </span>
                 </div>
@@ -237,7 +237,7 @@ export function BookingConfirmationPage() {
   }
 
   return (
-    <ScreenFrame maxWidth="narrow">
+    <ScreenFrame maxWidth="wide">
       <div>
         <Button variant="ghost" className="mb-6 -ml-2" onClick={() => navigate(-1)}>
           <ChevronLeft className="w-4 h-4 mr-1" />
@@ -258,7 +258,7 @@ export function BookingConfirmationPage() {
                 <Skeleton className="w-full h-24" />
               ) : task ? (
                 <Card>
-                  <CardContent className="p-4">
+                  <CardContent className="p-5 sm:p-6">
                     <h3 className="font-medium font-display text-lg leading-tight mb-1">
                       {task.description}
                     </h3>
@@ -278,26 +278,26 @@ export function BookingConfirmationPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold font-display mb-4">
+              <h2 className="text-heading-3 font-semibold font-display mb-4">
                 {t('bookingConfirmation.selectedTaskerTitle')}
               </h2>
               {loadingApp ? (
-                <Skeleton className="w-full h-20" />
+                <Skeleton className="w-full h-20 rounded-2xl" />
               ) : application ? (
-                <div className="flex items-center gap-4 p-4 border rounded-lg bg-card text-card-foreground shadow-sm">
-                  <Avatar className="w-14 h-14 border">
+                <div className="flex items-center gap-4 p-5 sm:p-6 border border-border/60 rounded-2xl bg-card text-card-foreground shadow-elevated hover:shadow-deep transition-all duration-300">
+                  <Avatar className="w-14 h-14 border border-border/80 shadow-card">
                     {application.tasker.avatar_url && (
                       <AvatarImage src={application.tasker.avatar_url} />
                     )}
-                    <AvatarFallback>
+                    <AvatarFallback className="font-display font-semibold bg-primary/10 text-primary">
                       {application.tasker.full_name?.charAt(0) ?? 'T'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-semibold font-display text-lg">
+                    <div className="font-bold font-display text-lg text-foreground">
                       {application.tasker.full_name}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-body-sm text-muted-foreground font-medium mt-0.5">
                       ⭐ {application.tasker.rating_avg.toFixed(1)} •{' '}
                       {t('bookingConfirmation.completedTasks', {
                         count: application.tasker.completed_tasks,
@@ -306,7 +306,7 @@ export function BookingConfirmationPage() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground font-medium">
                   {source === 'rebook'
                     ? t('bookingConfirmation.rebookTaskerPending')
                     : t('bookingConfirmation.applicantLoadError')}
@@ -314,13 +314,15 @@ export function BookingConfirmationPage() {
               )}
             </section>
 
-            <section className="bg-muted/30 p-4 rounded-lg flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-primary mt-0.5" />
+            <section className="bg-muted/30 p-5 sm:p-6 rounded-2xl border border-border/40 flex items-start gap-3 shadow-card hover:bg-muted/40 transition-colors">
+              <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
               <div className="text-sm">
-                <p className="font-semibold mb-1">
+                <p className="font-bold text-foreground mb-1">
                   {t('bookingConfirmation.trustSafetyGuarantee')}
                 </p>
-                <p className="text-muted-foreground">{t('bookingConfirmation.trustSafetyDesc')}</p>
+                <p className="text-muted-foreground font-medium">
+                  {t('bookingConfirmation.trustSafetyDesc')}
+                </p>
               </div>
             </section>
 
@@ -355,7 +357,7 @@ export function BookingConfirmationPage() {
                   {t('bookingConfirmation.settlementNotice')}
                 </p>
 
-                <div className="flex items-start space-x-3 mb-6 bg-muted/20 p-3 rounded-md border">
+                <div className="flex items-start space-x-3 mb-6 bg-muted/20 p-4 rounded-2xl border border-border/60 shadow-sm transition-colors hover:bg-muted/30">
                   <Checkbox
                     id="liability-disclaimer"
                     checked={disclaimerAccepted}
@@ -365,11 +367,11 @@ export function BookingConfirmationPage() {
                   <div className="grid gap-1.5 leading-none">
                     <label
                       htmlFor="liability-disclaimer"
-                      className="text-sm font-medium leading-tight cursor-pointer"
+                      className="text-sm font-semibold leading-tight cursor-pointer text-foreground"
                     >
                       {t('bookingConfirmation.acceptTerms')}
                     </label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-caption text-muted-foreground font-medium">
                       {t('bookingConfirmation.termsDesc')}
                     </p>
                   </div>

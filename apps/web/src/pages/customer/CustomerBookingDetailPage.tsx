@@ -10,6 +10,16 @@ import { useAppContext } from '../../context/AppContext';
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 import { formatDateTime } from '../../lib/formatDate';
 
+const BOOKING_STATUS_BADGE_VARIANT: Record<
+  string,
+  'statusAssigned' | 'statusCompleted' | 'statusCancelled' | 'noShow' | 'outline'
+> = {
+  ASSIGNED: 'statusAssigned',
+  COMPLETED: 'statusCompleted',
+  CANCELLED: 'statusCancelled',
+  NO_SHOW: 'noShow',
+};
+
 export function CustomerBookingDetailPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
@@ -90,9 +100,17 @@ export function CustomerBookingDetailPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <div>
-              <CardTitle className="font-mono">{data.id}</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('customerPages.bookingDetail.taskLabel', { id: data.task_id })}
+              <CardTitle className="text-xl font-bold font-display leading-tight">
+                {data.task?.description ??
+                  t('customerPages.bookingDetail.taskFallback', {
+                    id:
+                      data.task_id.length > 12
+                        ? `${data.task_id.substring(0, 8)}...`
+                        : data.task_id,
+                  })}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1 font-mono">
+                {t('customerPages.bookingDetail.bookingIdLabel', { id: data.id })}
               </p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -104,8 +122,11 @@ export function CustomerBookingDetailPage() {
               <span className="text-muted-foreground">
                 {t('customerPages.bookingDetail.statusLabel')}
               </span>
-              <Badge variant="outline" className="font-medium">
-                {data.status}
+              <Badge
+                variant={BOOKING_STATUS_BADGE_VARIANT[data.status] ?? 'outline'}
+                className="font-medium"
+              >
+                {t(`sharedPages.status.${data.status}`)}
               </Badge>
             </div>
             <div className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
@@ -120,20 +141,22 @@ export function CustomerBookingDetailPage() {
                   <Clock className="h-4 w-4 text-primary" />
                   {t('customerPages.bookingDetail.timelineTitle')}
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {scheduleEvents.data.map((event) => (
                     <div
                       key={event.id}
-                      className="flex items-center gap-2 text-xs rounded-md px-2 py-1.5 bg-muted/20"
+                      className="flex items-center gap-2 text-xs rounded-xl px-3 py-2 bg-muted/25 border border-border/40 transition-colors hover:bg-muted/40"
                     >
-                      <span className="font-mono text-muted-foreground shrink-0">
+                      <span className="font-mono text-muted-foreground shrink-0 font-medium">
                         {formatDateTime(event.created_at)}
                       </span>
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[10px] rounded-lg">
                         {event.event_type}
                       </Badge>
                       {event.reason && (
-                        <span className="text-muted-foreground truncate">— {event.reason}</span>
+                        <span className="text-muted-foreground truncate font-medium">
+                          — {event.reason}
+                        </span>
                       )}
                     </div>
                   ))}

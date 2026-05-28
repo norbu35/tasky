@@ -135,6 +135,7 @@ export function AdminUsersPage() {
             <CardContent className="p-6">
               <div className="flex gap-2 mb-6">
                 <Input
+                  className="flex-1"
                   placeholder={t('admin.users.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -206,15 +207,13 @@ export function AdminUsersPage() {
                           </td>
                           <td className="px-4 py-3">
                             {user.status === 'BANNED' ? (
-                              <Badge variant="destructive" className="uppercase tracking-caps">
-                                {user.status}
-                              </Badge>
+                              <Badge variant="destructive">{user.status}</Badge>
                             ) : user.status === 'ACTIVE' ? (
-                              <Badge variant="verified" className="uppercase tracking-caps">
+                              <Badge variant="verified" isCaps>
                                 {user.status}
                               </Badge>
                             ) : (
-                              <Badge variant="secondary" className="uppercase tracking-caps">
+                              <Badge variant="secondary" isCaps>
                                 {user.status}
                               </Badge>
                             )}

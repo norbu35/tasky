@@ -5,17 +5,18 @@ import BottomSheet, {
   type BottomSheetFooterProps,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
+import i18n from 'i18next';
 import { CalendarDays, Coins, Tag, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Input } from '@/components/ui/Input';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations, mobileTheme, overlays } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 import { resolveLocale } from '@/utils/formatDate';
-import i18n from 'i18next';
 
 const { colors, radius, spacing } = mobileTheme;
 
@@ -378,37 +379,23 @@ export function TaskFeedFilterSheet({
                   {t('tasker.browse.filterBudget')}
                 </Text>
                 <View className="flex-row items-center gap-md">
-                  <View
-                    className="flex-1 flex-row items-center rounded-md border border-border bg-card px-md"
-                    style={{ minHeight: 44 }}
-                  >
-                    <Text className="text-body font-sans-bold text-text-secondary mr-xs">₮</Text>
-                    <TextInput
-                      value={formatBudgetInput(minBudget)}
-                      onChangeText={handleMinChange}
-                      keyboardType="number-pad"
-                      placeholder={t('tasker.browse.budgetMinPlaceholder')}
-                      placeholderTextColor={colors.textTertiary}
-                      className="flex-1 text-body font-sans text-foreground py-sm"
-                      testID="task-feed-filter-sheet-budget-min"
-                    />
-                  </View>
+                  <Input
+                    value={formatBudgetInput(minBudget)}
+                    onChangeText={handleMinChange}
+                    keyboardType="number-pad"
+                    placeholder={t('tasker.browse.budgetMinPlaceholder')}
+                    className="flex-1 bg-card"
+                    testID="task-feed-filter-sheet-budget-min"
+                  />
                   <Text className="text-caption text-text-tertiary">–</Text>
-                  <View
-                    className="flex-1 flex-row items-center rounded-md border border-border bg-card px-md"
-                    style={{ minHeight: 44 }}
-                  >
-                    <Text className="text-body font-sans-bold text-text-secondary mr-xs">₮</Text>
-                    <TextInput
-                      value={formatBudgetInput(maxBudget)}
-                      onChangeText={handleMaxChange}
-                      keyboardType="number-pad"
-                      placeholder={t('tasker.browse.budgetMaxPlaceholder')}
-                      placeholderTextColor={colors.textTertiary}
-                      className="flex-1 text-body font-sans text-foreground py-sm"
-                      testID="task-feed-filter-sheet-budget-max"
-                    />
-                  </View>
+                  <Input
+                    value={formatBudgetInput(maxBudget)}
+                    onChangeText={handleMaxChange}
+                    keyboardType="number-pad"
+                    placeholder={t('tasker.browse.budgetMaxPlaceholder')}
+                    className="flex-1 bg-card"
+                    testID="task-feed-filter-sheet-budget-max"
+                  />
                 </View>
               </View>
             ) : null}

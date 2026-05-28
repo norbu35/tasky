@@ -139,7 +139,11 @@ export function CustomerTaskDetailsPage() {
             <ChevronLeft className="w-icon-sm h-icon-sm" />
           </Button>
           <h1 className="font-display text-3xl font-semibold tracking-tight truncate">
-            {task.description}
+            {task.category
+              ? i18n.language === 'mn'
+                ? task.category.name_mn
+                : task.category.name
+              : t('common.unknown')}
           </h1>
         </div>
 
@@ -148,14 +152,10 @@ export function CustomerTaskDetailsPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1.5">
-                    <CardTitle className="text-section-heading">
-                      {task.category
-                        ? i18n.language === 'mn'
-                          ? task.category.name_mn
-                          : task.category.name
-                        : t('common.unknown')}
-                    </CardTitle>
+                  <div className="space-y-3">
+                    <div className="text-body text-foreground whitespace-pre-wrap leading-relaxed">
+                      {task.description}
+                    </div>
                     <CardDescription className="flex items-center gap-1.5">
                       <MapPin className="w-icon-sm h-icon-sm" />
                       {task.location_text}
@@ -292,9 +292,9 @@ function ApplicationCard({
   return (
     <Card className="group overflow-hidden">
       <CardHeader className="p-4 sm:p-5">
-        <div className="flex justify-between items-start gap-3">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 ring-1 ring-inset ring-border/40">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div className="flex items-start gap-3 min-w-0 w-full sm:w-auto">
+            <Avatar className="h-10 w-10 ring-1 ring-inset ring-border/40 shrink-0">
               {application.tasker.avatar_url ? (
                 <AvatarImage src={application.tasker.avatar_url} />
               ) : null}
@@ -302,13 +302,15 @@ function ApplicationCard({
                 {application.tasker.full_name?.charAt(0) ?? 'T'}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-display font-semibold text-label text-foreground">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-display font-semibold text-label text-foreground truncate max-w-full">
                   {application.tasker.full_name}
                 </span>
-                <Badge variant="verified" className="px-1.5 py-0 text-badge-text">
-                  {t('customerTaskDetails.idVerifiedTasker')}
+                <Badge variant="verified" size="sm" className="max-w-full">
+                  <span className="truncate block">
+                    {t('customerTaskDetails.idVerifiedTasker')}
+                  </span>
                 </Badge>
               </div>
               <div className="flex items-center gap-1.5 text-body-sm text-muted-foreground mt-0.5">
@@ -332,14 +334,14 @@ function ApplicationCard({
                 `/customer/booking-confirmation?taskId=${taskId}&applicationId=${application.id}`,
               )
             }
-            className="flex-shrink-0"
+            className="flex-shrink-0 w-full sm:w-auto mt-2 sm:mt-0"
           >
             {t('customerTaskDetails.reviewAndAccept')}
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="px-4 sm:px-5 pb-3 text-body-sm text-foreground/80 italic leading-relaxed">
-        &ldquo;{application.message}&rdquo;
+      <CardContent className="px-4 sm:px-5 pb-3 text-body-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+        {application.message}
       </CardContent>
       <CardFooter className="px-4 sm:px-5 py-3 text-caption text-muted-foreground">
         {t('customerTaskDetails.appliedAgo', {

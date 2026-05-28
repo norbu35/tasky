@@ -2,6 +2,7 @@ package mn.tasky.task.application;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,19 +72,15 @@ public class TaskAssistanceService {
     }
 
     public Map<String, Object> buildExternalDistributionPayload(TaskState task) {
-        return Map.of(
-                "task_id",
-                task.id(),
-                "category_id",
-                task.categoryId(),
-                "pricing_mode",
-                task.pricingMode(),
-                "budget",
-                task.budget() != null ? task.budget() : 0,
-                "scheduled_at",
-                task.scheduledAt().toString(),
-                "approximate_location",
-                task.locationText());
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("task_id", task.id());
+        payload.put("category_id", task.categoryId());
+        payload.put("pricing_mode", task.pricingMode());
+        payload.put("budget", task.budget() != null ? task.budget() : 0);
+        payload.put(
+                "scheduled_at", task.scheduledAt() != null ? task.scheduledAt().toString() : null);
+        payload.put("approximate_location", task.locationText());
+        return payload;
     }
 
     public TaskRescueEvent recordExternalDistribution(TaskState task, String triggerWindow, Instant triggeredAt) {

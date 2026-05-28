@@ -233,6 +233,39 @@ class PublicTaskCompositionServiceTests {
 
             assertThat(response.get("photo_urls")).isEqualTo(List.of());
         }
+
+        @Test
+        @DisplayName("handles null scheduledAt by returning null scheduled_at")
+        void handlesNullScheduledAt() {
+            TaskState task = new TaskState(
+                    "t1",
+                    "c1",
+                    "cat1",
+                    "desc",
+                    100,
+                    47.9,
+                    106.9,
+                    "loc",
+                    "OPEN",
+                    null,
+                    "BUDGET",
+                    null,
+                    null,
+                    null,
+                    null,
+                    Instant.now(),
+                    Instant.now());
+            when(locationQueryPort.reverseGeocode(anyDouble(), anyDouble())).thenReturn(buildReverseGeocode());
+            when(categoryQueryPort.getCategory(anyString())).thenReturn(Optional.empty());
+            when(identityQueryPort.getProfile(anyString())).thenReturn(Optional.empty());
+            when(marketplaceQueryPort.buildPhotoAccessUrls(any(), anyString())).thenReturn(List.of());
+            when(marketplaceQueryPort.countApplications(anyString())).thenReturn(0);
+
+            Map<String, Object> response =
+                    service.toPublicTaskResponses(List.of(task)).get(0);
+
+            assertThat(response.get("scheduled_at")).isNull();
+        }
     }
 
     @Nested
@@ -253,7 +286,7 @@ class PublicTaskCompositionServiceTests {
                     "Sukhbaatar",
                     "ASSIGNED",
                     Instant.parse("2025-07-01T10:00:00Z"),
-                    "HOURLY",
+                    "BUDGET",
                     List.of("uploads/tasks/c1/photo1.jpg"),
                     "{\"q1\":\"a1\"}",
                     1,
@@ -290,6 +323,36 @@ class PublicTaskCompositionServiceTests {
 
             assertThat(response.get("photos")).isEqualTo(List.of());
             assertThat(response.get("photo_keys")).isEqualTo(List.of());
+        }
+
+        @Test
+        @DisplayName("handles null scheduledAt in owned responses by returning null scheduled_at")
+        void handlesNullScheduledAtInOwnedResponse() {
+            TaskState task = new TaskState(
+                    "t-owned",
+                    "c1",
+                    "cat1",
+                    "Detailed task",
+                    80000,
+                    47.9184,
+                    106.9175,
+                    "Sukhbaatar",
+                    "ASSIGNED",
+                    null,
+                    "BUDGET",
+                    null,
+                    "{\"q1\":\"a1\"}",
+                    1,
+                    "GPT",
+                    Instant.parse("2025-06-20T08:00:00Z"),
+                    Instant.parse("2025-06-21T08:00:00Z"));
+
+            when(categoryQueryPort.getCategory("cat1")).thenReturn(Optional.empty());
+
+            Map<String, Object> response =
+                    service.toOwnedTaskResponses(List.of(task)).get(0);
+
+            assertThat(response.get("scheduled_at")).isNull();
         }
 
         private TaskState buildTaskWithNullPhotos() {

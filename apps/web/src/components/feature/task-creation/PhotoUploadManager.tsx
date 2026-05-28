@@ -81,27 +81,27 @@ export function PhotoUploadManager({
 
   return (
     <div className="grid gap-2">
-      <Label>
+      <Label className="text-body-sm font-semibold text-foreground/90">
         {t('taskCreation.photoUpload.label')} ({photoKeys.length}/{maxPhotos})
       </Label>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 items-center">
         {photoKeys.map((key, index) => (
           <div
             key={index}
-            className="relative h-24 w-24 rounded-sm border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden shadow-card"
+            className="relative h-24 w-24 rounded-2xl border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden shadow-elevated transition-all duration-300 hover:scale-105"
           >
-            <span className="text-caption text-muted-foreground w-full truncate break-all">
+            <span className="text-caption text-muted-foreground w-full truncate break-all font-medium">
               {key.split('/').pop()}
             </span>
             <Button
               variant="secondary"
               size="sm"
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+              className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full p-0 bg-danger text-white shadow-fab border border-white hover:bg-danger/90 transition-transform hover:scale-110 active:scale-95"
               onClick={() => removePhoto(index)}
               disabled={uploading}
               type="button"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           </div>
         ))}
@@ -111,14 +111,14 @@ export function PhotoUploadManager({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="h-24 w-24 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-24 w-24 rounded-2xl border-2 border-dashed border-border/80 flex flex-col items-center justify-center gap-2 bg-white hover:bg-primary/[0.03] hover:border-primary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group shadow-card hover:shadow-elevated"
           >
             {uploading ? (
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
             ) : (
               <>
-                <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
+                <ImagePlus className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="text-xs text-muted-foreground group-hover:text-primary font-medium transition-colors">
                   {t('taskCreation.photoUpload.addPhoto')}
                 </span>
               </>
@@ -126,7 +126,7 @@ export function PhotoUploadManager({
           </button>
         )}
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-sm text-danger mt-1 font-medium">{error}</p>}
 
       <input
         type="file"

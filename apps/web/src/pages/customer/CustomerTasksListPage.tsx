@@ -38,10 +38,12 @@ export function CustomerTasksListPage() {
       title={t('customerPages.tasksList.title')}
       description={t('customerPages.tasksList.description')}
       primaryAction={
-        <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
-          <Plus className="mr-2 h-4 w-4" />
-          {t('customerPages.tasksList.postNew')}
-        </Button>
+        tasks.length > 0 ? (
+          <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('customerPages.tasksList.postNew')}
+          </Button>
+        ) : undefined
       }
       sideRail={undefined}
     >
@@ -80,12 +82,11 @@ export function CustomerTasksListPage() {
           }
         />
       ) : (
-        <div className="grid gap-3">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
-              variant="list"
               onOpen={() => navigate(`/customer/tasks/${task.id}`)}
             />
           ))}

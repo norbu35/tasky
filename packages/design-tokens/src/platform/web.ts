@@ -279,7 +279,7 @@ const cssVariableSections = {
     '--color-primary-fg': cssVar('--tenger-canvas'),
     '--color-primary-deep': cssVar('--tenger-ink-deep'),
     '--color-secondary': cssVar('--tenger-sun'),
-    '--color-secondary-fg': cssVar('--tenger-surface'),
+    '--color-secondary-fg': cssVar('--tenger-ink'),
     '--color-muted': cssVar('--tenger-subtle'),
     '--color-muted-fg': cssVar('--tenger-muted-text'),
     '--color-accent': cssVar('--tenger-sky'),

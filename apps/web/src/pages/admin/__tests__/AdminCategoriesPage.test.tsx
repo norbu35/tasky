@@ -215,10 +215,12 @@ describe('AdminCategoriesPage', () => {
     });
 
     const row1 = screen.getByTestId('category-row-cat-1');
-    expect(within(row1).getByText(/Sort.*1/)).toBeInTheDocument();
+    expect(within(row1).getByText(/Sort order/i)).toBeInTheDocument();
+    expect(within(row1).getByText('1')).toBeInTheDocument();
 
     const row3 = screen.getByTestId('category-row-cat-3');
-    expect(within(row3).getByText(/Sort.*3/)).toBeInTheDocument();
+    expect(within(row3).getByText(/Sort order/i)).toBeInTheDocument();
+    expect(within(row3).getByText('3')).toBeInTheDocument();
   });
 
   // ── Empty state ────────────────────────────────────────────────────

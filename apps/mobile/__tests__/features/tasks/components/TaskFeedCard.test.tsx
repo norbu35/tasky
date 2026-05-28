@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
+import { Image } from 'react-native';
 
 import { TaskFeedCard } from '@/features/tasks/components/TaskFeedCard';
 import type { TaskFeedItem } from '@/lib/api/types';
@@ -55,11 +56,24 @@ describe('TaskFeedCard', () => {
 
     expect(screen.getByTestId('task-feed-card')).toBeTruthy();
     expect(screen.getByText('Cleaning')).toBeTruthy();
+    expect(screen.getByText('Fixed budget')).toBeTruthy();
     expect(screen.getByLabelText('75,000 tugrik')).toBeTruthy();
     expect(screen.getByText('Deep clean a two-bedroom apartment')).toBeTruthy();
     expect(screen.getByText(/Bayangol district/)).toBeTruthy();
+    expect(
+      screen.getByText('Apply with a structured response. Exact address comes after confirmation.'),
+    ).toBeTruthy();
     expect(screen.queryByText('Ari Customer')).toBeNull();
     expect(screen.queryByText(/2 applications/i)).toBeNull();
+  });
+
+  it('uses compact operational card anatomy instead of external hero imagery', () => {
+    const result = render(
+      <TaskFeedCard task={makeTask()} onPress={jest.fn()} testID="task-feed-card" />,
+    );
+
+    expect(result.UNSAFE_queryAllByType(Image)).toHaveLength(0);
+    expect(screen.getByTestId('task-feed-card-category-mark')).toBeTruthy();
   });
 
   it('renders quote-mode pricing when budget is missing', () => {

@@ -1,4 +1,5 @@
 import '../../src/lib/i18n';
+import * as React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
@@ -11,6 +12,46 @@ import {
   localDateTimeInput,
 } from '../../src/test/factories';
 import type { AuthTokens, Profile, Task } from '../../src/lib/apiClient';
+
+vi.mock('@radix-ui/react-select', () => {
+  return {
+    Root: ({ children, value, onValueChange }: any) => {
+      let triggerId: string | undefined = undefined;
+      React.Children.forEach(children, (child) => {
+        if (React.isValidElement(child) && child.props && (child.props as any).id) {
+          triggerId = (child.props as any).id;
+        }
+      });
+      return (
+        <select
+          id={triggerId}
+          value={value || ''}
+          onChange={(e) => onValueChange?.(e.target.value)}
+        >
+          <option value="">Select category...</option>
+          {children}
+        </select>
+      );
+    },
+    Trigger: () => null,
+    Value: () => null,
+    Portal: ({ children }: any) => <>{children}</>,
+    Content: ({ children }: any) => <>{children}</>,
+    Viewport: ({ children }: any) => <>{children}</>,
+    Item: ({ children, value }: any) => {
+      const cleanChildren = React.Children.toArray(children).filter(
+        (child) => !React.isValidElement(child) || child.type !== 'span',
+      );
+      return <option value={value}>{cleanChildren}</option>;
+    },
+    ItemText: ({ children }: any) => <>{children}</>,
+    ItemIndicator: () => null,
+    Group: ({ children }: any) => <>{children}</>,
+    Icon: () => null,
+    Separator: () => null,
+    Label: ({ children }: any) => <>{children}</>,
+  };
+});
 
 describe('Tasks Integration', () => {
   it('TID-TASK-080-WEB-TASK-APPLICATION-FLOW supports task create, privacy-safe feed browsing, and tasker apply', async () => {

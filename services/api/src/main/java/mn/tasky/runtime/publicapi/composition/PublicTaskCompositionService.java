@@ -111,7 +111,8 @@ public class PublicTaskCompositionService {
         response.put("approximate_lat", approx.approximateLat());
         response.put("approximate_lng", approx.approximateLng());
         response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
+        response.put(
+                "scheduled_at", task.scheduledAt() != null ? task.scheduledAt().toString() : null);
         List<String> photoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
         response.put("photo_urls", marketplaceQueryPort.buildPhotoAccessUrls(photoKeys, task.customerId()));
         response.put("application_count", marketplaceQueryPort.countApplications(task.id()));
@@ -144,7 +145,8 @@ public class PublicTaskCompositionService {
         response.put("location_lng", task.locationLng());
         response.put("location_text", task.locationText());
         response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
+        response.put(
+                "scheduled_at", task.scheduledAt() != null ? task.scheduledAt().toString() : null);
         response.put("intake_answers", parseJsonOrEmptyObject(task.intakeAnswersJson()));
         response.put("intake_schema_version", task.intakeSchemaVersion() != null ? task.intakeSchemaVersion() : 0);
         response.put("scope_summary_source", task.scopeSummarySource());

@@ -73,9 +73,8 @@ describe('CustomerTaskDetailsPage', () => {
       </MemoryRouter>,
     );
 
-    expect(
-      await screen.findByRole('heading', { name: 'Deep clean apartment' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Cleaning' })).toBeInTheDocument();
+    expect(screen.getByText('Deep clean apartment')).toBeInTheDocument();
     await waitFor(() => {
       expect(apiClient.listTaskApplications).toHaveBeenCalledWith(
         makeSession().accessToken,

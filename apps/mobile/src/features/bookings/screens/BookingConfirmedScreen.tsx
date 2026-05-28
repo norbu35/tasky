@@ -54,7 +54,7 @@ export default function BookingConfirmedScreen() {
           </View>
         </View>
 
-        <Text className="text-heading font-sans-bold text-primary-deep text-center tracking-tight px-md leading-tight">
+        <Text className="text-heading font-sans-bold text-primary-deep text-center px-md leading-tight">
           {t('customer.bookings.confirmedHeadline')}
         </Text>
 

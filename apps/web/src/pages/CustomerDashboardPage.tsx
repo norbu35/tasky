@@ -90,14 +90,16 @@ export function CustomerDashboardPage() {
                   })}
             </p>
           </div>
-          <Button
-            aria-label={t('customerDashboard.postNewTask')}
-            onClick={() => navigate('/customer/tasks/new')}
-            className="gap-2 flex-shrink-0 shadow-fab"
-          >
-            <Plus className="w-icon-sm h-icon-sm" />
-            <span className="hidden sm:inline">{t('customerDashboard.postNewTask')}</span>
-          </Button>
+          {tasksPage?.data && tasksPage.data.length > 0 && (
+            <Button
+              aria-label={t('customerDashboard.postNewTask')}
+              onClick={() => navigate('/customer/tasks/new')}
+              className="gap-2 flex-shrink-0 shadow-fab"
+            >
+              <Plus className="w-icon-sm h-icon-sm" />
+              <span className="hidden sm:inline">{t('customerDashboard.postNewTask')}</span>
+            </Button>
+          )}
         </div>
 
         {error ? (
@@ -139,7 +141,6 @@ export function CustomerDashboardPage() {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="grid"
                     onOpen={() => navigate(`/customer/tasks/${task.id}`)}
                   />
                 ))}
@@ -159,7 +160,6 @@ export function CustomerDashboardPage() {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="grid"
                     onOpen={() => navigate(`/customer/tasks/${task.id}`)}
                   />
                 ))}
@@ -179,7 +179,6 @@ export function CustomerDashboardPage() {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="grid"
                     onOpen={() => navigate(`/customer/tasks/${task.id}`)}
                   />
                 ))}

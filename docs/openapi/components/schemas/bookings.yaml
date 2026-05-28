@@ -136,6 +136,57 @@ BookingIntent:
     updated_at:
       type: string
       format: date-time
+RebookedTask:
+  type: object
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
+  required:
+    - id
+    - customer_id
+    - category_id
+    - description
+    - budget
+    - location_lat
+    - location_lng
+    - location_text
+    - status
+    - created_at
+    - updated_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    customer_id:
+      type: string
+      format: uuid
+    category_id:
+      type: string
+      format: uuid
+    description:
+      type: string
+    budget:
+      type: integer
+      nullable: true
+      description: Copied budget in MNT when the original task used BUDGET pricing. Null for QUOTE mode tasks.
+    location_lat:
+      type: number
+      format: double
+    location_lng:
+      type: number
+      format: double
+    location_text:
+      type: string
+      description: Copied exact address from the original completed task.
+    status:
+      type: string
+      enum:
+        - OPEN
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
 BookingScheduleEvent:
   type: object
   required:

@@ -1,3 +1,6 @@
+import { Minus, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 import {
   getIntakeFieldLabel,
   getIntakeOptionLabel,
@@ -7,6 +10,7 @@ import {
 } from '@tasky/core';
 
 import { cn } from '../../../lib/utils';
+import { Button } from '../../ui/button';
 
 export type { IntakeField, IntakeSchema } from '@tasky/core';
 
@@ -236,8 +240,19 @@ function NumericCounterField({
   error?: string;
   locale: IntakeLocale;
 }) {
+  const { t } = useTranslation();
   const fieldLabel = getFieldLabel(field, locale);
   const currentValue = typeof value === 'number' ? value : (field.min ?? 0);
+  const decrementLabel = t('taskCreation.intakeForm.decrement', { lng: locale });
+  const incrementLabel = t('taskCreation.intakeForm.increment', { lng: locale });
+  const decrementDisabled = field.min !== undefined && currentValue <= field.min;
+  const incrementDisabled = field.max !== undefined && currentValue >= field.max;
+
+  const clampValue = (nextValue: number) => {
+    if (field.min !== undefined && nextValue < field.min) return field.min;
+    if (field.max !== undefined && nextValue > field.max) return field.max;
+    return nextValue;
+  };
 
   return (
     <div data-field={field.name}>
@@ -245,45 +260,57 @@ function NumericCounterField({
         {fieldLabel}
         {field.required && <span>*</span>}
       </label>
-      <div className="flex items-center gap-2">
-        <button
+      <div className="flex items-center gap-2 pt-1">
+        <Button
           type="button"
-          aria-label="Decrement"
+          variant="outline"
+          size="sm"
+          aria-label={decrementLabel}
+          disabled={decrementDisabled}
+          className="h-10 w-10 shrink-0 rounded-xl p-0 text-muted-foreground"
           onClick={() => {
-            if (field.min !== undefined && currentValue <= field.min) return;
             onChange(field.name, currentValue - 1);
           }}
         >
-          -
-        </button>
+          <Minus className="h-icon-xs w-icon-xs" aria-hidden="true" />
+        </Button>
         <input
           type="number"
           id={field.name}
-          value={typeof value === 'number' ? value : ''}
+          value={currentValue}
           min={field.min !== undefined ? String(field.min) : undefined}
           max={field.max !== undefined ? String(field.max) : undefined}
+          inputMode="numeric"
           aria-required={field.required ? 'true' : undefined}
           aria-invalid={!!error}
           className={cn(
-            'w-20 rounded-sm border-[1.5px] border-border bg-background px-3 py-2 text-sm text-center',
+            'h-10 w-20 rounded-xl border-[1.5px] border-border bg-background px-3 py-2 text-sm font-semibold text-center text-foreground shadow-card',
             'focus-visible:outline-none focus-visible:border-foreground',
             'aria-invalid:border-destructive',
           )}
+          onFocus={(e) => e.currentTarget.select()}
           onChange={(e) => {
-            const num = Number(e.target.value);
-            onChange(field.name, num);
+            const rawValue = e.target.value;
+            const nextValue = rawValue === '' ? (field.min ?? 0) : Number(rawValue);
+
+            if (Number.isFinite(nextValue)) {
+              onChange(field.name, clampValue(nextValue));
+            }
           }}
         />
-        <button
+        <Button
           type="button"
-          aria-label="Increment"
+          variant="outline"
+          size="sm"
+          aria-label={incrementLabel}
+          disabled={incrementDisabled}
+          className="h-10 w-10 shrink-0 rounded-xl p-0 text-muted-foreground"
           onClick={() => {
-            if (field.max !== undefined && currentValue >= field.max) return;
             onChange(field.name, currentValue + 1);
           }}
         >
-          +
-        </button>
+          <Plus className="h-icon-xs w-icon-xs" aria-hidden="true" />
+        </Button>
       </div>
       {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>

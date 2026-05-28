@@ -148,7 +148,7 @@ function renderListPage(apiClient: ApiClient) {
         <MemoryRouter initialEntries={['/admin/disputes']}>
           <Routes>
             <Route path="/admin/disputes" element={<AdminDisputesPage />} />
-            <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
+            <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetailPage />} />
           </Routes>
         </MemoryRouter>
       </AdminApiClientContext.Provider>
@@ -164,7 +164,7 @@ function renderDetailPage(apiClient: ApiClient, disputeId = 'd-001') {
         <MemoryRouter initialEntries={[`/admin/disputes/${disputeId}`]}>
           <Routes>
             <Route path="/admin/disputes" element={<AdminDisputesPage />} />
-            <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
+            <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetailPage />} />
           </Routes>
         </MemoryRouter>
       </AdminApiClientContext.Provider>

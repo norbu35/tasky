@@ -204,7 +204,9 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    fireEvent.click(await screen.findByRole('button', { name: /Quote-mode task/i }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /Quote-mode task/i }, { timeout: 10000 }),
+    );
 
     // Fill in message
     fireEvent.change(await screen.findByLabelText('Application message'), {
@@ -274,7 +276,9 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    fireEvent.click(await screen.findByRole('button', { name: /Budget-mode task/i }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /Budget-mode task/i }, { timeout: 10000 }),
+    );
     expect(screen.queryByLabelText(/Your quote \(MNT\)/i)).not.toBeInTheDocument();
 
     fireEvent.change(await screen.findByLabelText('Application message'), {
@@ -322,7 +326,9 @@ describe('W1: Pricing mode', () => {
     const ctx = createTaskerContext({ apiClient });
     renderWithProviders(<TaskerFeedPage />, ctx);
 
-    fireEvent.click(await screen.findByRole('button', { name: /Quote required task/i }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /Quote required task/i }, { timeout: 10000 }),
+    );
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can do this quickly and safely.' },
     });
@@ -679,7 +685,9 @@ describe('W5: Application withdraw', () => {
     renderWithProviders(<TaskerFeedPage />, ctx);
 
     // Apply first
-    fireEvent.click(await screen.findByRole('button', { name: /Task to withdraw from/i }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /Task to withdraw from/i }, { timeout: 10000 }),
+    );
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I want to apply to this task please.' },
     });

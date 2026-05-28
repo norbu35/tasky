@@ -15,8 +15,8 @@ test('runtime CSS tokens are generated from the TypeScript token graph', () => {
   });
 
   assert.equal(generated, readFileSync(tokensCssPath, 'utf8'));
-  assert.match(generated, /--tenger-canvas: 40 25% 97%;/);
-  assert.match(generated, /--font-size-display-xl: 48px;/);
+  assert.match(generated, /--tenger-canvas: 0 0% 98%;/);
+  assert.match(generated, /--font-size-display-xl: 56px;/);
   assert.match(generated, /--letter-spacing-caps: var\(--tenger-letter-spacing-caps\);/);
   assert.doesNotMatch(generated, /^\.dark\s*\{/m);
 });

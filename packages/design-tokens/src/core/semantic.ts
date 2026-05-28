@@ -12,7 +12,7 @@ export const semanticTokens = {
     primaryForeground: primitiveTokens.palette.canvas,
     primaryDeep: primitiveTokens.palette.inkDeep,
     secondary: primitiveTokens.palette.sun,
-    secondaryForeground: primitiveTokens.palette.surface,
+    secondaryForeground: primitiveTokens.palette.ink,
     muted: primitiveTokens.palette.subtle,
     mutedForeground: primitiveTokens.palette.mutedText,
     accent: primitiveTokens.palette.sky,

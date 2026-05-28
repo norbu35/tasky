@@ -78,4 +78,32 @@ class PublicTaskFeedCompositionServiceTest {
                         "intake_schema_version",
                         "intake_schema_json");
     }
+
+    @Test
+    @DisplayName("maps projection row with null scheduledAt safely")
+    void mapsProjectionRowsWithNullScheduledAtSafely() {
+        PublicTaskFeedRow row = new PublicTaskFeedRow(
+                UUID.randomUUID().toString(),
+                "cat-1",
+                "Cleaning",
+                "Цэвэрлэгээ",
+                null,
+                "Clean apartment",
+                50_000,
+                "BUDGET",
+                "Sukhbaatar, Ulaanbaatar",
+                47.9213,
+                106.9197,
+                "OPEN",
+                null,
+                Instant.parse("2026-04-01T10:00:00Z"));
+        when(projectionService.listOpenFeed(eq("cat-1"), eq(47.9), eq(106.9), eq(10.0), eq(null), eq(20)))
+                .thenReturn(new mn.tasky.projection.publicfeed.PublicTaskFeedPage(java.util.List.of(row), null, false));
+
+        var response = service.listTaskFeed("cat-1", 47.9, 106.9, 10.0, null, 20);
+
+        assertThat(response.data()).hasSize(1);
+        Map<String, Object> feedItem = response.data().getFirst();
+        assertThat(feedItem.get("scheduled_at")).isNull();
+    }
 }

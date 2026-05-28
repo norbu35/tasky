@@ -1,14 +1,8 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
-import { Text as MockText } from 'react-native';
-import mockReanimated from 'react-native-reanimated/mock';
 
 import DisputeStatusScreen from '../../../../src/app/(customer)/disputes/[disputeId]';
-import {
-  createReactI18nextMock as mockCreateReactI18nextMock,
-  resetTestI18n,
-  setTestLanguage,
-} from '../../../test-utils/mockI18n';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 

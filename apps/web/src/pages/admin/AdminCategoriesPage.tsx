@@ -361,9 +361,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
         >
           <div className="flex items-center gap-3">
             <span className="text-label font-semibold">v{sv.version}</span>
-            <Badge variant={statusBadgeVariant(sv.status)} className="uppercase tracking-caps">
-              {sv.status}
-            </Badge>
+            <Badge variant={statusBadgeVariant(sv.status)}>{sv.status}</Badge>
             <span className="text-badge-text text-muted-foreground">{sv.created_at}</span>
           </div>
           <div className="flex gap-2">
@@ -541,69 +539,107 @@ export function AdminCategoriesPage() {
       )}
 
       {categories.map((category) => (
-        <Card key={category.id} data-testid={`category-row-${category.id}`}>
-          <CardHeader className="p-6 pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {category.icon_url && (
-                  <img
-                    src={category.icon_url}
-                    alt={category.name}
-                    className="h-10 w-10 rounded-lg object-cover ring-1 ring-inset ring-border/30"
-                  />
+        <Card
+          key={category.id}
+          data-testid={`category-row-${category.id}`}
+          className="overflow-hidden"
+        >
+          <CardHeader className="p-0 border-b-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center">
+              <div className="p-6 flex flex-1 items-start gap-4">
+                {category.icon_url ? (
+                  <div className="h-16 w-16 shrink-0 rounded-2xl overflow-hidden ring-1 ring-inset ring-border/20 shadow-sm bg-muted/10 flex items-center justify-center transition-transform hover:scale-105">
+                    <img
+                      src={category.icon_url}
+                      alt={category.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-16 w-16 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-inset ring-primary/20">
+                    <span className="text-xl font-bold text-primary">
+                      {category.name.charAt(0)}
+                    </span>
+                  </div>
                 )}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="text-card-title">{category.name}</CardTitle>
-                    <Badge
-                      variant={category.is_active ? 'verified' : 'secondary'}
-                      className="uppercase tracking-caps"
-                    >
+                <div className="min-w-0 flex-1 py-1">
+                  <div className="flex items-center gap-3 mb-1">
+                    <CardTitle className="text-xl sm:text-2xl font-bold truncate">
+                      {category.name}
+                    </CardTitle>
+                    <Badge variant={category.is_active ? 'verified' : 'secondary'} size="sm" isCaps>
                       {category.is_active
                         ? t('admin.categories.active')
                         : t('admin.categories.inactive')}
                     </Badge>
                   </div>
-                  <p className="text-body-sm text-muted-foreground mt-1">{category.name_mn}</p>
+                  <p className="text-body-sm font-medium text-muted-foreground">
+                    {category.name_mn}
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={category.is_active}
-                  onCheckedChange={() => handleToggleActive(category)}
-                  aria-label={t('admin.categories.toggleCategoryAria', {
-                    name: category.name,
-                  })}
-                />
-                <Button size="sm" variant="outline" onClick={() => handleEdit(category)}>
-                  {t('common.edit')}
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => handleToggleSchemas(category.id)}>
-                  {t('admin.categories.schemas')}
-                </Button>
+              <div className="px-6 py-4 sm:py-0 sm:border-l border-border/10 flex items-center gap-3 bg-muted/5 sm:h-full">
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={category.is_active}
+                    onCheckedChange={() => handleToggleActive(category)}
+                    aria-label={t('admin.categories.toggleCategoryAria', {
+                      name: category.name,
+                    })}
+                  />
+                  <div className="h-8 w-[1px] bg-border/20 hidden sm:block mx-1" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(category)}
+                    className="rounded-xl"
+                  >
+                    {t('common.edit')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleToggleSchemas(category.id)}
+                    className="rounded-xl"
+                  >
+                    {t('admin.categories.schemas')}
+                  </Button>
+                </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="px-6 pb-4 pt-0">
-            <div className="flex gap-6 text-badge-text text-muted-foreground">
-              <span>
-                {t('admin.categories.sortOrder')}: {category.sort_order}
+          <CardContent className="px-6 pb-6 pt-0">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60 border-t border-border/10 pt-4">
+              <span className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-primary/40" />
+                {t('admin.categories.sortOrder')}:{' '}
+                <span className="text-foreground/70">{category.sort_order}</span>
               </span>
-              <span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-primary/40" />
                 {t('admin.categories.intake')}:{' '}
-                {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
+                <span className={category.intake_enabled ? 'text-verified' : 'text-destructive/70'}>
+                  {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
+                </span>
               </span>
-              <span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-primary/40" />
                 {t('admin.categories.assistedDistribution')}:{' '}
-                {category.assisted_distribution_enabled
-                  ? t('common.enabled')
-                  : t('common.disabled')}
+                <span
+                  className={
+                    category.assisted_distribution_enabled ? 'text-verified' : 'text-destructive/70'
+                  }
+                >
+                  {category.assisted_distribution_enabled
+                    ? t('common.enabled')
+                    : t('common.disabled')}
+                </span>
               </span>
             </div>
           </CardContent>
 
           {expandedCategoryId === category.id && (
-            <CardFooter className="block p-0">
+            <CardFooter className="block p-0 border-t border-border/10">
               <SchemaVersionsPanel categoryId={category.id} />
             </CardFooter>
           )}

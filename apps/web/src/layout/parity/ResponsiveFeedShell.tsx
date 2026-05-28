@@ -25,7 +25,13 @@ export function ResponsiveFeedShell({
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className={cn('grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem]', className)}>
+      <div
+        className={cn(
+          'grid gap-6 grid-cols-1',
+          sideRail && 'lg:grid-cols-[minmax(0,1fr)_22rem]',
+          className,
+        )}
+      >
         <section aria-labelledby={titleId} className="min-w-0 space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1.5">

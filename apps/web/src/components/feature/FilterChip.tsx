@@ -12,7 +12,7 @@ export function FilterChip({ label, active = false, onClick }: FilterChipProps) 
       type="button"
       onClick={onClick}
       className={cn(
-        'shrink-0 rounded-full px-4 py-1.5',
+        'shrink-0 rounded-full px-3 py-1',
         'text-badge-text font-semibold font-sans',
         'transition-all duration-badge-pop ease-badge-pop',
         'active:scale-pressed',

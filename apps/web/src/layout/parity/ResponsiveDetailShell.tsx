@@ -28,7 +28,13 @@ export function ResponsiveDetailShell({
 
   return (
     <ScreenFrame maxWidth="wide">
-      <div className={cn('grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem]', className)}>
+      <div
+        className={cn(
+          'grid gap-6 grid-cols-1',
+          detailRail && 'lg:grid-cols-[minmax(0,1fr)_20rem]',
+          className,
+        )}
+      >
         <section aria-labelledby={titleId} className="min-w-0 space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">

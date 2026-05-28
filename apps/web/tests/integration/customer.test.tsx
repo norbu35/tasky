@@ -1,10 +1,51 @@
 import '../../src/lib/i18n';
+import * as React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@radix-ui/react-select', () => {
+  return {
+    Root: ({ children, value, onValueChange }: any) => {
+      let triggerId: string | undefined = undefined;
+      React.Children.forEach(children, (child) => {
+        if (React.isValidElement(child) && child.props && (child.props as any).id) {
+          triggerId = (child.props as any).id;
+        }
+      });
+      return (
+        <select
+          id={triggerId}
+          value={value || ''}
+          onChange={(e) => onValueChange?.(e.target.value)}
+        >
+          <option value="">Select category...</option>
+          {children}
+        </select>
+      );
+    },
+    Trigger: () => null,
+    Value: () => null,
+    Portal: ({ children }: any) => <>{children}</>,
+    Content: ({ children }: any) => <>{children}</>,
+    Viewport: ({ children }: any) => <>{children}</>,
+    Item: ({ children, value }: any) => {
+      const cleanChildren = React.Children.toArray(children).filter(
+        (child) => !React.isValidElement(child) || child.type !== 'span',
+      );
+      return <option value={value}>{cleanChildren}</option>;
+    },
+    ItemText: ({ children }: any) => <>{children}</>,
+    ItemIndicator: () => null,
+    Group: ({ children }: any) => <>{children}</>,
+    Icon: () => null,
+    Separator: () => null,
+    Label: ({ children }: any) => <>{children}</>,
+  };
+});
 
 import { AppContext } from '../../src/context/AppContext';
 import type { AppContextValue } from '../../src/context/AppContext';
@@ -122,7 +163,7 @@ describe('Customer phase 1 parity', () => {
     await waitFor(() => {
       expect(screen.getByText('Room count')).toBeInTheDocument();
     });
-    expect(screen.getByRole('spinbutton', { name: /Room count/i })).toBeInTheDocument();
+    expect(screen.getByRole('spinbutton', { name: /Room count/i })).toHaveValue(1);
   });
 
   it('TID-TASK-000-WEB-TASK-WIZARD-SUBMIT renders the routed task wizard with location, budget, and submit controls', async () => {
@@ -187,6 +228,7 @@ describe('Customer phase 1 parity', () => {
         expect.objectContaining({
           category_id: makeCategory().id,
           budget: 120000,
+          intake_answers: expect.objectContaining({ room_count: 2 }),
           location_text: 'ХУД 15-р хороо',
         }),
       );

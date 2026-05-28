@@ -45,7 +45,7 @@ function getDisputeStatusLabelKey(status: string): string {
 
 export function AdminDisputeDetailPage() {
   const { t } = useTranslation();
-  const { id } = useParams<{ id: string }>();
+  const { disputeId: id } = useParams<{ disputeId: string }>();
   const { session } = useAppContext();
   const adminApiClient = useAdminApiClient();
   const navigate = useNavigate();
@@ -153,7 +153,7 @@ export function AdminDisputeDetailPage() {
   const task = booking['task'] as Record<string, unknown> | undefined;
   const customer = booking['customer'] as Record<string, unknown> | undefined;
   const tasker = booking['tasker'] as Record<string, unknown> | undefined;
-  const evidenceMessages = detail.evidence_messages as Array<{
+  const evidenceMessages = (detail.evidence_messages || []) as Array<{
     id: string;
     sender_id: string;
     content: string;

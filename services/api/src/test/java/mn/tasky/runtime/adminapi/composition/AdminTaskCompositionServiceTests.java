@@ -121,5 +121,38 @@ class AdminTaskCompositionServiceTests {
             assertThat(body).containsEntry("intake_schema_version", 2);
             assertThat(body).containsEntry("scope_summary", "summary");
         }
+
+        @Test
+        @DisplayName("handles null scheduled_at by returning null value")
+        void taskDetail_handlesNullScheduledAt() {
+            String taskId = UUID.randomUUID().toString();
+            Instant now = Instant.now();
+            TaskState task = new TaskState(
+                    taskId,
+                    "c1",
+                    "cat1",
+                    "desc",
+                    1000,
+                    47.0,
+                    106.0,
+                    "loc",
+                    "ASSIGNED",
+                    null,
+                    "QUOTE",
+                    List.of("photo1.jpg"),
+                    "{\"q1\":\"a1\"}",
+                    2,
+                    "summary",
+                    now,
+                    now);
+
+            when(marketplaceQueryPort.getTask(taskId)).thenReturn(Optional.of(task));
+
+            Optional<java.util.Map<String, Object>> result = service.taskDetail(taskId);
+
+            assertThat(result).isPresent();
+            java.util.Map<String, Object> body = result.get();
+            assertThat(body).containsEntry("scheduled_at", null);
+        }
     }
 }

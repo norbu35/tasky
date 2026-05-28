@@ -31,7 +31,8 @@ public class AdminTaskCompositionService {
         response.put("location_lng", task.locationLng());
         response.put("location_text", task.locationText());
         response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
+        response.put(
+                "scheduled_at", task.scheduledAt() != null ? task.scheduledAt().toString() : null);
         response.put("pricing_mode", task.pricingMode());
         response.put("photo_keys", task.photoKeys());
         response.put("intake_answers_json", task.intakeAnswersJson());

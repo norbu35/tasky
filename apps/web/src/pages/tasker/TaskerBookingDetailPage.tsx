@@ -19,6 +19,7 @@ import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/pari
 import type { TimelineItem } from '../../layout/parity/TimelineList';
 import { TimelineList } from '../../layout/parity/TimelineList';
 import { formatDateTime } from '../../lib/formatDate';
+import { cn } from '../../lib/utils';
 
 const statusBadgeVariant: Record<
   string,
@@ -120,66 +121,81 @@ export function TaskerBookingDetailPage() {
       }
     >
       {data ? (
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
-              <div className="min-w-0">
-                <CardTitle className="truncate">{data.task?.description ?? data.id}</CardTitle>
-                <p className="text-body-sm text-muted-foreground mt-1 flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 shrink-0" />
-                  {formatDateTime(data.confirmed_scheduled_at)}
-                </p>
-              </div>
-              <Badge variant={statusBadgeVariant[data.status] ?? 'default'} className="shrink-0">
-                {data.status}
-              </Badge>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex items-center gap-2.5 bg-muted/10 p-3 rounded-xl ring-1 ring-inset ring-border/20">
-                  <MapPin className="w-4 h-4 shrink-0 text-primary/60" />
-                  <span className="text-body-sm font-medium truncate">
+        <div className="flex flex-col gap-6">
+          <Card className="overflow-hidden border-none shadow-deep ring-1 ring-border/10">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 sm:p-8 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+              <div className="min-w-0 space-y-2">
+                <Badge
+                  variant={statusBadgeVariant[data.status] ?? 'default'}
+                  size="md"
+                  isCaps
+                  className="mb-2"
+                >
+                  {data.status}
+                </Badge>
+                <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+                  {data.task?.description ?? data.id}
+                </CardTitle>
+                <div className="flex flex-wrap items-center gap-4 text-body-sm text-muted-foreground font-medium pt-1">
+                  <div className="flex items-center gap-2 bg-muted/30 px-3 py-1 rounded-full">
+                    <Calendar className="h-4 w-4 text-primary/60" />
+                    {formatDateTime(data.confirmed_scheduled_at)}
+                  </div>
+                  <div className="flex items-center gap-2 bg-muted/30 px-3 py-1 rounded-full">
+                    <MapPin className="h-4 w-4 text-primary/60" />
                     {data.task?.location_text ?? '—'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5 bg-muted/10 p-3 rounded-xl ring-1 ring-inset ring-border/20">
-                  <span className="text-body-sm font-medium">
-                    <span className="text-muted-foreground">
-                      {t('taskerPages.bookingDetail.cardDesc')}
-                    </span>
-                  </span>
+                  </div>
                 </div>
               </div>
+            </CardHeader>
+            <CardContent className="p-6 sm:p-8 pt-0">
+              <div className="grid gap-6">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between bg-primary/[0.03] p-4 sm:p-6 rounded-3xl ring-1 ring-inset ring-primary/10 gap-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        'flex h-12 w-12 items-center justify-center rounded-2xl shadow-card ring-1 ring-inset',
+                        data.status === 'COMPLETED'
+                          ? 'bg-verified/10 ring-verified/20 text-verified'
+                          : 'bg-primary/10 ring-primary/20 text-primary',
+                      )}
+                    >
+                      <CheckCircle className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-0.5">
+                        {t('taskerPages.bookingDetail.actionsTitle')}
+                      </p>
+                      <p className="text-lg font-bold text-foreground">
+                        {data.status === 'COMPLETED'
+                          ? t('taskerPages.jobs.statusCompleted')
+                          : t('taskerPages.jobs.statusAssigned')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start sm:items-end bg-background sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none ring-1 ring-border/10 sm:ring-0">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-0.5">
+                      {t('customerTaskDetails.budgetLabel')}
+                    </p>
+                    <div className="text-3xl font-display font-black text-primary flex items-baseline gap-1">
+                      {data.price.toLocaleString()}
+                      <span className="text-sm font-bold text-primary/50">MNT</span>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="flex items-center justify-between bg-muted/5 p-3 rounded-xl ring-1 ring-inset ring-border/20 mt-1">
-                <div className="flex items-center gap-2">
-                  <CheckCircle
-                    className={`w-4 h-4 ${
-                      data.status === 'COMPLETED' ? 'text-status-completed' : 'text-primary/60'
-                    }`}
-                  />
-                  <span className="text-body-sm font-medium">
-                    {data.status === 'COMPLETED'
-                      ? t('taskerPages.jobs.statusCompleted')
-                      : t('taskerPages.jobs.statusAssigned')}
-                  </span>
-                </div>
-                <div className="text-price-display font-display font-bold text-primary">
-                  {data.price.toLocaleString()}
-                  <span className="text-body-sm font-normal text-muted-foreground ml-1">MNT</span>
-                </div>
+                {data.task?.description && (
+                  <div className="bg-muted/5 p-6 rounded-3xl ring-1 ring-inset ring-border/10">
+                    <h4 className="text-[11px] uppercase tracking-widest font-black text-muted-foreground/50 mb-4 flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+                      {t('taskerFeed.descriptionLabel')}
+                    </h4>
+                    <p className="text-body-sm text-foreground/90 leading-relaxed whitespace-pre-wrap font-medium">
+                      {data.task.description}
+                    </p>
+                  </div>
+                )}
               </div>
-
-              {data.task?.description && (
-                <div className="mt-1 p-4 rounded-xl ring-1 ring-inset ring-border/20 bg-background">
-                  <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground mb-2">
-                    {t('taskerFeed.descriptionLabel')}
-                  </h4>
-                  <p className="text-body-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                    {data.task.description}
-                  </p>
-                </div>
-              )}
             </CardContent>
           </Card>
 

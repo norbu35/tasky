@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { useAppContext } from '../../context/AppContext';
 import { ScreenFrame } from '../../layout/ScreenFrame';
 import { parseError } from '../../lib/errorHandling';
@@ -90,12 +92,14 @@ export function TaskerNoShowDialog() {
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
-              <Label>{t('taskerPages.noShow.confirmLabel')}</Label>
-              <input
-                className="flex h-12 w-full rounded-md border-[1.5px] border-border bg-background px-4 py-3 text-base font-sans text-foreground transition-colors placeholder:text-text-tertiary focus-visible:outline-none focus-visible:border-foreground"
+              <Label className="text-body-sm font-semibold text-foreground/90">
+                {t('taskerPages.noShow.confirmLabel')}
+              </Label>
+              <Input
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="NO-SHOW"
+                className="bg-muted/20 hover:bg-muted/30 focus-visible:bg-background focus-visible:border-foreground/40"
               />
             </div>
             <div className="flex gap-2 justify-end">
@@ -121,13 +125,5 @@ export function TaskerNoShowDialog() {
         </Card>
       </div>
     </ScreenFrame>
-  );
-}
-
-function Label({ children }: { children: React.ReactNode }) {
-  return (
-    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-      {children}
-    </label>
   );
 }

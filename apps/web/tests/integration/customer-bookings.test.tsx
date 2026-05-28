@@ -103,7 +103,7 @@ describe('Customer bookings phase 1 parity', () => {
     const bookingsView = renderWithContext(<CustomerBookingsPage />, apiClient);
 
     expect(await screen.findByRole('heading', { name: 'Bookings' })).toBeInTheDocument();
-    expect(await screen.findByText('booking-1')).toBeInTheDocument();
+    expect(await screen.findByText(/booking-1/)).toBeInTheDocument();
     bookingsView.unmount();
 
     const detailView = renderWithRoute(

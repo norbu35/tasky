@@ -76,13 +76,13 @@ describe('Token Binding', () => {
 
     expect(sharedTokenSource).toContain('--interaction-pressed-opacity: 0.85;');
     expect(sharedTokenSource).toMatch(
-      /--overlay-scrim-modal:\s*rgba\(16,\s*38,\s*56,\s*0\.5(?:0)?\);/,
+      /--overlay-scrim-modal:\s*rgba\(3,\s*7,\s*18,\s*0\.5(?:0)?\);/,
     );
     expect(sharedTokenSource).toContain('--icon-size-md: 24px;');
     expect(sharedTokenSource).toContain('--z-modal: 40;');
     expect(sharedTokenSource).toContain('--animation-sheet-open-duration: 400ms;');
     expect(sharedTokenSource).toMatch(
-      /--color-primary-10:\s*rgba\(27,\s*58,\s*92,\s*0\.1(?:0)?\);/,
+      /--color-primary-10:\s*rgba\(17,\s*24,\s*39,\s*0\.1(?:0)?\);/,
     );
     expect(sharedTokenSource).toContain('--typography-page-heading-letter-spacing: 0em;');
     expect(sharedTokenSource).not.toContain('--letter-spacing-tight: -');

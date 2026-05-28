@@ -43,7 +43,10 @@
     "logout": "Logout",
     "customer": "Customer",
     "tasker": "Tasker",
-    "bottomNavigation": "Bottom navigation"
+    "admin": "Admin",
+    "adminDashboard": "Admin Dashboard",
+    "bottomNavigation": "Bottom navigation",
+    "language": "Language"
   },
   "customerDashboard": {
     "reviewApplicants": "Review applicants",
@@ -529,11 +532,14 @@
       "loadingDesc": "Loading booking information.",
       "timelineTitle": "Reschedule Timeline",
       "invalidDesc": "Booking ID is missing from the route.",
-      "taskLabel": "Task {{id}}"
+      "bookingIdLabel": "Booking ID: {{id}}",
+      "taskFallback": "Task {{id}}"
     },
     "bookings": {
       "title": "Bookings",
-      "description": "Track active, completed, and cancelled bookings in one place."
+      "description": "Track active, completed, and cancelled bookings in one place.",
+      "bookingId": "Booking ID",
+      "taskFallback": "Task {{id}}"
     },
     "disputeRaise": {
       "title": "Raise dispute",

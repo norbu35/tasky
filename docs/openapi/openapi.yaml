@@ -137,6 +137,8 @@ components:
       $ref: ./components/schemas/bookings.yaml#/Booking
     BookingIntent:
       $ref: ./components/schemas/bookings.yaml#/BookingIntent
+    RebookedTask:
+      $ref: ./components/schemas/bookings.yaml#/RebookedTask
     BookingScheduleEvent:
       $ref: ./components/schemas/bookings.yaml#/BookingScheduleEvent
     PendingReview:

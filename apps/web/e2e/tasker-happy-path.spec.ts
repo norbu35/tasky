@@ -10,7 +10,7 @@ test.describe('Tasker happy path', () => {
 
     await expect(page.getByRole('heading', { name: 'Open task feed' })).toBeVisible();
     await expect(page.getByText('Window cleaning for a two-bedroom apartment')).toBeVisible();
-    await page.getByRole('button', { name: 'View Details & Apply' }).click();
+    await page.getByRole('button', { name: 'Window cleaning for a two-bedroom apartment' }).click();
 
     await page
       .getByLabel('Application message')

@@ -22,6 +22,20 @@ import { parseError } from '../lib/errorHandling';
 
 type DevRole = 'CUSTOMER' | 'TASKER' | 'ADMIN';
 
+function devLandingPath(role: DevRole): string {
+  if (role === 'CUSTOMER') return '/customer/dashboard';
+  if (role === 'TASKER') return '/tasker/feed';
+  return '/admin';
+}
+
+function isCrossRoleReturnPath(returnPath: string, role: DevRole): boolean {
+  return (
+    (returnPath.startsWith('/tasker') && role !== 'TASKER') ||
+    (returnPath.startsWith('/customer') && role !== 'CUSTOMER') ||
+    (returnPath.startsWith('/admin') && role !== 'ADMIN')
+  );
+}
+
 type FacebookAuthResponse = {
   accessToken: string;
 };
@@ -63,7 +77,7 @@ function FacebookIcon({ className }: { className?: string }) {
 
 export function AuthPage() {
   const contractLoaded: boolean = typeof ({} as paths) === 'object';
-  const devAuthEnabled = import.meta.env.DEV && import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
+  const devAuthEnabled = import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
   const facebookAppId = import.meta.env['VITE_FACEBOOK_APP_ID'];
 
   const { apiClient, session, setSession, setProfile, loadProfile } = useAppContext();
@@ -212,7 +226,12 @@ export function AuthPage() {
       setSession(session);
       setProfile(null);
       await loadProfile(session.accessToken);
-      navigate(returnPath, { replace: true });
+      navigate(
+        returnPath === '/' || isCrossRoleReturnPath(returnPath, role)
+          ? devLandingPath(role)
+          : returnPath,
+        { replace: true },
+      );
     } catch (error) {
       toast.error(parseError(error));
     } finally {
@@ -222,16 +241,20 @@ export function AuthPage() {
 
   return (
     <main className="min-h-screen w-full flex bg-background font-sans overflow-hidden">
+      {/* Visual side panel - premium gradient style with smooth background image blur */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-primary-foreground relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep">
         {/* Background Image & Overlay */}
         <img
           src="/images/auth-bg.png"
           alt={t('auth.heroImageAlt')}
-          className="pointer-events-none absolute inset-0 z-0 w-full h-full object-cover mix-blend-overlay opacity-50"
+          className="pointer-events-none absolute inset-0 z-0 w-full h-full object-cover mix-blend-overlay opacity-60 filter saturate-100"
         />
+        {/* Modern glowing gradients */}
+        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-transparent via-primary-deep/50 to-accent/20 z-0" />
 
-        <div className="relative z-10 flex items-center">
-          <img src="/logo.png" alt="" className="h-20 w-20 rounded-2xl shadow-elevated" />
+        <div className="relative z-10 flex items-center gap-2">
+          <img src="/logo.png" alt="" className="h-12 w-12 rounded-2xl shadow-elevated" />
+          <span className="text-2xl font-display font-bold text-white">Tasky</span>
         </div>
 
         <div className="relative z-10 max-w-lg mt-auto mb-20 space-y-6">
@@ -239,7 +262,7 @@ export function AuthPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl font-display font-medium leading-[1.1]"
+            className="text-5xl font-display font-bold leading-[1.1] text-white tracking-tight"
           >
             {t('auth.trustedNetwork')}
           </motion.h1>
@@ -247,28 +270,29 @@ export function AuthPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg text-primary-foreground/80 font-medium"
+            className="text-lg text-white/80 font-medium"
           >
             {t('auth.connectSecurely')}
           </motion.p>
         </div>
 
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between border-t border-primary-foreground/20 pt-8 gap-4 text-sm text-primary-foreground/60 w-full">
+        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between border-t border-white/20 pt-8 gap-4 text-sm text-white/60 w-full">
           <p>{t('auth.copyright')}</p>
           <div className="flex items-center gap-4">
             <p className="hidden sm:block aria-hidden">
               {t('auth.sdkBindingLabel')}:{' '}
               {contractLoaded ? t('auth.sdkBindingVerified') : t('auth.sdkBindingOffline')}
             </p>
-            <LanguageSwitcher className="hover:bg-foreground/10" />
+            <LanguageSwitcher className="hover:bg-white/10 text-white" />
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10 bg-subtle">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden mb-8 flex items-center">
-            <img src="/logo.png" alt="" className="h-14 w-14 rounded-xl shadow-card" />
+          <div className="lg:hidden mb-8 flex items-center gap-2">
+            <img src="/logo.png" alt="" className="h-12 w-12 rounded-xl shadow-card" />
+            <span className="text-2xl font-display font-bold text-foreground">Tasky</span>
           </div>
 
           <motion.div
@@ -276,10 +300,10 @@ export function AuthPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Card className="border-none shadow-deep rounded-2xl overflow-hidden backdrop-blur-3xl bg-card/90 ring-1 ring-primary-deep/5">
-              <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
+            <Card className="border-none shadow-deep rounded-3xl overflow-hidden bg-white ring-1 ring-border/50">
+              <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-subtle to-transparent">
                 <h1 className="sr-only">{t('auth.facebookLoginTitle')}</h1>
-                <CardTitle className="text-3xl font-display font-semibold tracking-tight">
+                <CardTitle className="text-3xl font-display font-bold tracking-tight text-foreground">
                   {t('auth.welcomeBack')}
                 </CardTitle>
                 <CardDescription className="text-base font-medium text-muted-foreground leading-relaxed">
@@ -289,13 +313,13 @@ export function AuthPage() {
 
               <CardContent className="pt-10 px-10 grid gap-5">
                 {facebookOutage && (
-                  <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                  <div className="flex items-start gap-3 rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                     <span>{t('auth.facebookOutage')}</span>
                   </div>
                 )}
                 <Button
-                  className="w-full h-14 text-base rounded-2xl font-bold shadow-fab transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
+                  className="w-full h-14 text-base rounded-2xl font-bold shadow-fab transition-all duration-300 hover:scale-[1.02] bg-primary text-primary-foreground hover:bg-primary-deep"
                   disabled={loading || !facebookReady || facebookOutage}
                   onClick={handleFacebookLogin}
                   type="button"

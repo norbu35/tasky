@@ -22,6 +22,7 @@ import {
   CustomerAdvantageVisual,
   TaskerAdvantageVisual,
 } from '../components/feature/landing/ComparisonVisuals';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 
@@ -117,21 +118,26 @@ function AnimatedTaskFeed() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex items-center gap-4 rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 shadow-elevated backdrop-blur-md px-5 py-4 hover:bg-primary-foreground/20 transition-colors cursor-pointer"
+            className="flex items-center gap-4 rounded-2xl border border-border bg-white shadow-elevated px-5 py-4 hover:border-primary hover:shadow-deep transition-all duration-300 cursor-pointer"
           >
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${CATEGORY_COLORS[task.category]}`}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-primary-foreground truncate">{task.title}</p>
-              <p className="text-xs text-primary-foreground/80 mt-0.5">
+              <p className="text-sm font-bold text-foreground truncate">{task.title}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {task.price} · {task.district}
               </p>
             </div>
-            <span className="text-badge-text font-bold bg-verified/10 text-verified border border-verified/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
+            <Badge
+              variant="verified"
+              size="lg"
+              isCaps
+              className="bg-verified/10 text-verified border-verified/20 gap-1 flex-shrink-0"
+            >
               <BadgeCheck className="w-4 h-4" />
               {t('landing.verified')}
-            </span>
+            </Badge>
           </motion.div>
         ))}
       </AnimatePresence>
@@ -144,17 +150,18 @@ export function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen font-sans selection:bg-accent/20">
-      {/* Header — floating glassmorphic nav */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-primary-foreground/5 backdrop-blur-xl border-b border-primary-foreground/5 shadow-sm px-6 py-4 transition-all duration-300">
+    <div className="min-h-screen font-sans selection:bg-accent/20 bg-background">
+      {/* Header — clean glassmorphic nav */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-b border-border/40 shadow-sm px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <img src="/logo.png" alt="" className="h-12 w-12 rounded-xl shadow-card" />
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl shadow-card" />
+            <span className="text-2xl font-display font-bold text-foreground">Tasky</span>
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher className="bg-primary-deep/20 text-primary-foreground hover:bg-primary-deep/40 border border-primary-foreground/10 backdrop-blur-md shadow-sm" />
+            <LanguageSwitcher className="bg-muted text-foreground hover:bg-muted/80 border border-border backdrop-blur-md shadow-sm" />
             <Button
-              className="font-semibold bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20 transition-all hover:-translate-y-0.5 flex items-center gap-2"
+              className="font-bold bg-primary text-primary-foreground hover:bg-primary-deep shadow-elevated transition-all hover:-translate-y-0.5 flex items-center gap-2 px-5"
               onClick={() => navigate('/auth')}
             >
               <User className="w-4 h-4" />
@@ -165,30 +172,39 @@ export function LandingPage() {
       </header>
 
       <main className="pb-20">
-        {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center bg-primary-deep overflow-hidden">
+        {/* Hero Section - Light Modern Mesh */}
+        <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-subtle via-white to-skySoft/25">
+          {/* Subtle glowing elements */}
+          <div
+            className="absolute top-1/4 left-10 w-[500px] h-[500px] rounded-full bg-skySoft/20 -z-10"
+            style={{ filter: 'blur(100px)' }}
+          />
+          <div className="absolute bottom-1/4 right-10 w-[400px] h-[400px] rounded-full bg-sunWash/30 blur-[80px] -z-10" />
+
           <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 lg:py-0 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="space-y-8 text-center lg:text-left"
             >
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-primary-foreground drop-shadow-sm">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-foreground">
                 {t('landing.heroTitle1')}
                 <br />
-                {t('landing.heroTitle2')}
+                <span className="bg-gradient-to-r from-trust to-sky bg-clip-text text-transparent">
+                  {t('landing.heroTitle2')}
+                </span>
               </h1>
 
-              <p className="text-lg sm:text-xl text-primary-foreground/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-muted-foreground font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
                 {t('landing.heroSubtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl shadow-accent/20 transition-all hover:scale-105 active:scale-95 group"
+                  className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary-deep shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group rounded-2xl"
                   onClick={() => navigate('/auth')}
                 >
                   {t('landing.postTaskBtn')}
@@ -196,8 +212,8 @@ export function LandingPage() {
                 </Button>
                 <Button
                   size="lg"
-                  variant="ghost"
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/90 border border-primary-foreground/20 hover:bg-primary-foreground/10 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 hover:border-primary-foreground/40 hover:text-primary-foreground"
+                  variant="outline"
+                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-foreground border-border hover:bg-muted/50 transition-all hover:scale-105 active:scale-95 rounded-2xl"
                   onClick={() => navigate('/auth')}
                 >
                   {t('landing.becomeTaskerBtn')}
@@ -300,12 +316,20 @@ export function LandingPage() {
                     {t('landing.featFurnitureDesc')}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-badge-text font-bold uppercase">
+                    <Badge
+                      size="lg"
+                      isCaps
+                      className="bg-primary/10 text-primary border-transparent"
+                    >
                       {t('landing.tagVerified')}
-                    </span>
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-badge-text font-bold uppercase">
+                    </Badge>
+                    <Badge
+                      size="lg"
+                      isCaps
+                      className="bg-primary/10 text-primary border-transparent"
+                    >
                       {t('landing.tagQuote')}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               </div>

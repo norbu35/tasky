@@ -11,7 +11,8 @@ test.describe('Customer happy path', () => {
     await page.getByRole('button', { name: 'Post new task' }).click();
 
     await expect(page.getByRole('heading', { name: 'Post a new task' })).toBeVisible();
-    await expect(page.locator('#task-category')).toHaveValue('cat-cleaning');
+    await expect(page.getByRole('combobox', { name: 'Category' })).toContainText('Cleaning');
+    await expect(page.locator('#task-category-hidden')).toHaveValue('cat-cleaning');
 
     await page.getByLabel('Task details').fill('Deep clean a two-bedroom apartment');
     await page.getByLabel('Scheduled at').fill(nextLocalDateTimeInput(24));
