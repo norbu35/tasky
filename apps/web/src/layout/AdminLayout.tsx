@@ -22,19 +22,17 @@ const NAV_ITEMS = [
     to: '/admin/verifications',
     icon: ShieldCheck,
     label: 'admin.nav.verifications',
-    fallback: 'Verifications',
   },
-  { to: '/admin/disputes', icon: AlertTriangle, label: 'admin.nav.disputes', fallback: 'Disputes' },
-  { to: '/admin/users', icon: Users, label: 'admin.nav.users', fallback: 'Users' },
+  { to: '/admin/disputes', icon: AlertTriangle, label: 'admin.nav.disputes' },
+  { to: '/admin/users', icon: Users, label: 'admin.nav.users' },
   {
     to: '/admin/categories',
     icon: FolderTree,
     label: 'admin.nav.categories',
-    fallback: 'Categories',
   },
-  { to: '/admin/features', icon: ToggleLeft, label: 'admin.nav.features', fallback: 'Features' },
-  { to: '/admin/concierge', icon: Headset, label: 'admin.nav.concierge', fallback: 'Concierge' },
-  { to: '/admin/moderation', icon: Scale, label: 'admin.nav.moderation', fallback: 'Moderation' },
+  { to: '/admin/features', icon: ToggleLeft, label: 'admin.nav.features' },
+  { to: '/admin/concierge', icon: Headset, label: 'admin.nav.concierge' },
+  { to: '/admin/moderation', icon: Scale, label: 'admin.nav.moderation' },
 ] as const;
 
 export function AdminLayout() {
@@ -44,34 +42,49 @@ export function AdminLayout() {
   const roleLabel = profile?.role === 'ADMIN' ? t('nav.admin') : null;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen overflow-x-hidden bg-background text-foreground">
       {/* Sidebar */}
-      <aside className="hidden w-56 shrink-0 border-r border-border bg-surface md:flex md:flex-col sticky top-0 h-screen">
-        <div className="flex h-16 items-center gap-2 border-b border-border px-6 shrink-0">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-border/40 bg-card/95 backdrop-blur-xl md:flex md:flex-col">
+        <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border/30 px-5">
           <ShieldCheck className="h-6 w-6 text-primary" />
-          <span className="text-lg font-extrabold tracking-tight text-primary">
+          <span className="font-display text-lg font-semibold tracking-normal text-foreground">
             {t('admin.title')}
           </span>
         </div>
         <nav
-          className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto"
-          aria-label="Admin navigation"
+          className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3 pt-5"
+          aria-label={t('admin.nav.label')}
         >
-          {NAV_ITEMS.map(({ to, icon: Icon, label, fallback }) => (
+          {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'group relative flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    ? 'bg-primary/[0.08] text-foreground'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                 ].join(' ')
               }
             >
-              <Icon className="h-4 w-4" />
-              {t(label, fallback)}
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`absolute left-0 top-1/2 w-[3px] -translate-y-1/2 rounded-full bg-primary transition-all duration-200 ${
+                      isActive ? 'h-5 opacity-100' : 'h-0 opacity-0'
+                    }`}
+                  />
+                  <Icon
+                    className={`h-4 w-4 shrink-0 transition-colors ${
+                      isActive
+                        ? 'text-primary'
+                        : 'text-muted-foreground group-hover:text-foreground'
+                    }`}
+                  />
+                  <span className="truncate">{t(label)}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -98,7 +111,7 @@ export function AdminLayout() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 rounded-lg shrink-0 flex items-center justify-center"
+                  className="h-8 w-8 shrink-0 rounded-[var(--radius-sm)] p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 flex items-center justify-center"
                   onClick={signOut}
                   aria-label={t('nav.logout')}
                   title={t('nav.logout')}
@@ -119,31 +132,38 @@ export function AdminLayout() {
       </aside>
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col bg-[linear-gradient(180deg,hsl(var(--color-background))_0%,hsl(var(--color-muted)/0.18)_46%,hsl(var(--color-background))_100%)]">
         {/* Top header */}
-        <header className="flex h-16 items-center justify-between border-b border-border bg-background/70 backdrop-blur-md px-6">
-          <span className="text-lg font-extrabold tracking-tight text-primary md:hidden">
+        <header className="flex h-14 items-center justify-between gap-3 border-b border-border/40 bg-background/90 px-4 shadow-nav backdrop-blur-xl md:hidden">
+          <span className="truncate font-display text-xl font-semibold tracking-normal text-foreground">
             {t('admin.title')}
           </span>
-          <div className="ml-auto">
-            <Button variant="ghost" size="sm" className="text-xs font-semibold" onClick={signOut}>
-              {t('nav.logout')}
+          <div className="shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-10 w-10 rounded-[var(--radius-sm)] p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              onClick={signOut}
+              aria-label={t('nav.logout')}
+              title={t('nav.logout')}
+            >
+              <LogOut className="h-icon-xs w-icon-xs" />
             </Button>
           </div>
         </header>
 
         {/* Mobile nav */}
         <nav
-          className="flex gap-1 overflow-x-auto border-b border-border px-4 py-2 md:hidden"
-          aria-label="Admin navigation mobile"
+          className="flex max-w-full gap-1 overflow-x-auto border-b border-border/40 bg-background/80 px-4 py-2 md:hidden"
+          aria-label={t('admin.nav.mobileLabel')}
         >
-          {NAV_ITEMS.map(({ to, icon: Icon, label, fallback }) => (
+          {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 [
-                  'flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                  'flex shrink-0 items-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-2 text-xs font-medium transition-colors',
                   isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -151,13 +171,13 @@ export function AdminLayout() {
               }
             >
               <Icon className="h-4 w-4" />
-              {t(label, fallback)}
+              {t(label)}
             </NavLink>
           ))}
         </nav>
 
         {/* Page content */}
-        <main className="flex-1 p-6">
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

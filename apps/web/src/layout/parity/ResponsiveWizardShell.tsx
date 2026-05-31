@@ -33,7 +33,10 @@ export function ResponsiveWizardShell({
             </div>
           ) : null}
           <div className="space-y-1.5">
-            <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
+            <h1
+              id={titleId}
+              className="font-display text-2xl font-semibold tracking-normal sm:text-3xl"
+            >
               {title}
             </h1>
             {description ? (

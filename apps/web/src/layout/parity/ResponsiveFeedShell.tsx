@@ -35,7 +35,10 @@ export function ResponsiveFeedShell({
         <section aria-labelledby={titleId} className="min-w-0 space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1.5">
-              <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
+              <h1
+                id={titleId}
+                className="font-display text-2xl font-semibold tracking-normal sm:text-3xl"
+              >
                 {title}
               </h1>
               {description ? (

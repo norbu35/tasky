@@ -11,11 +11,11 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        'rounded-2xl bg-card text-card-foreground shadow-elevated',
-        'ring-1 ring-inset ring-border/30',
-        'transition-all duration-300',
+        'rounded-[var(--radius-sm)] bg-card text-card-foreground shadow-card',
+        'ring-1 ring-inset ring-border/40',
+        'transition-all duration-200',
         hoverable &&
-          'hover:shadow-deep hover:ring-border/50 hover:-translate-y-0.5 cursor-pointer ease-badge-pop duration-500',
+          'hover:shadow-elevated hover:ring-border/60 hover:-translate-y-0.5 cursor-pointer ease-badge-pop',
         className,
       )}
       {...props}
@@ -31,8 +31,8 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
       className={cn(
         'flex flex-col space-y-1.5 p-5 sm:p-6',
         'border-b border-border/20',
-        'bg-gradient-to-b from-muted/30 to-transparent',
-        'rounded-t-2xl',
+        'bg-gradient-to-b from-muted/20 to-transparent',
+        'rounded-t-[var(--radius-sm)]',
         className,
       )}
       {...props}
@@ -46,7 +46,7 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTML
     <h3
       ref={ref}
       className={cn(
-        'text-xl sm:text-2xl font-display font-bold leading-tight tracking-tight text-foreground',
+        'text-xl sm:text-2xl font-display font-bold leading-tight tracking-normal text-foreground',
         className,
       )}
       {...props}

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -34,20 +35,24 @@ export function Header() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="fixed top-0 left-0 right-0 z-sticky border-b border-border/30 bg-background/95 md:hidden shadow-nav"
+      className="fixed left-0 right-0 top-0 z-sticky border-b border-border/40 bg-background/95 shadow-nav md:hidden"
     >
-      <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
+      <div className="flex h-14 items-center justify-between gap-3 px-4">
         <div
-          className="flex cursor-pointer items-center gap-2"
+          className="flex min-w-0 cursor-pointer items-center gap-2"
           onClick={() => navigate('/')}
           aria-label={t('nav.home')}
         >
-          <img src="/logo.png" alt="" className="h-9 w-9 rounded-lg shadow-card" />
-          <span className="text-heading-3 font-display font-semibold text-foreground">Tasky</span>
+          <img
+            src="/logo.png"
+            alt=""
+            className="h-9 w-9 shrink-0 rounded-[var(--radius-sm)] shadow-card"
+          />
+          <span className="truncate font-display text-xl font-semibold text-foreground">Tasky</span>
         </div>
 
         {navLinks && (
-          <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center gap-6" aria-label={t('nav.mainNavigation')}>
             {navLinks.map(({ to, label }) => (
               <NavLink
                 key={to}
@@ -64,7 +69,7 @@ export function Header() {
           </nav>
         )}
 
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex shrink-0 items-center gap-2 md:gap-3">
           <div className="hidden md:block">
             <LanguageSwitcher />
           </div>
@@ -75,10 +80,12 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-sm font-semibold h-9 px-3 rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="h-10 w-10 rounded-[var(--radius-sm)] p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               onClick={signOut}
+              aria-label={t('nav.logout')}
+              title={t('nav.logout')}
             >
-              {t('nav.logout')}
+              <LogOut className="h-icon-xs w-icon-xs" />
             </Button>
           ) : (
             <Button

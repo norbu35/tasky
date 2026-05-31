@@ -143,20 +143,18 @@ export function TaskerFeedPage() {
   return (
     <ScreenFrame maxWidth="wide">
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* ── Premium page header ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-background to-sky-soft/20 border border-border/30 p-6 sm:p-8">
-          <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
-          <div className="absolute -bottom-8 left-1/3 h-24 w-24 rounded-full bg-sky-soft/30 blur-2xl" />
-          <div className="relative flex flex-col gap-2">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+        {/* ── Page header ── */}
+        <div className="border-b border-border/40 pb-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-primary/10 ring-1 ring-inset ring-primary/15">
                 <Sparkles className="h-5 w-5 text-primary" />
               </div>
-              <h1 className="font-display text-3xl font-semibold tracking-tight">
+              <h1 className="font-display text-2xl font-semibold tracking-normal sm:text-3xl">
                 {t('taskerFeed.title')}
               </h1>
             </div>
-            <p className="text-body text-muted-foreground max-w-xl pl-[2.75rem]">
+            <p className="max-w-2xl text-body-sm text-muted-foreground sm:pl-[3.25rem] sm:text-body">
               {t('taskerFeed.subtitle')}
             </p>
           </div>
@@ -169,7 +167,7 @@ export function TaskerFeedPage() {
               type="button"
               aria-pressed={!filters.categoryId}
               onClick={() => setFilters((prev) => ({ ...prev, categoryId: '' }))}
-              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-badge-text font-semibold border transition-all duration-card-expand ease-card-expand ${
+              className={`min-h-10 flex-shrink-0 rounded-[var(--radius-sm)] border px-4 py-2 text-badge-text font-semibold transition-all duration-card-expand ease-card-expand ${
                 !filters.categoryId
                   ? 'bg-primary text-primary-foreground border-primary shadow-card'
                   : 'bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground'
@@ -183,7 +181,7 @@ export function TaskerFeedPage() {
                 type="button"
                 aria-pressed={filters.categoryId === c.id}
                 onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-badge-text font-semibold border transition-all duration-card-expand ease-card-expand ${
+                className={`min-h-10 flex-shrink-0 rounded-[var(--radius-sm)] border px-4 py-2 text-badge-text font-semibold transition-all duration-card-expand ease-card-expand ${
                   filters.categoryId === c.id
                     ? 'bg-primary text-primary-foreground border-primary shadow-card'
                     : 'bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground'
@@ -195,7 +193,7 @@ export function TaskerFeedPage() {
           </div>
 
           {/* Distance Filter */}
-          <div className="flex items-center gap-2.5 shrink-0 bg-card ring-1 ring-inset ring-border/40 px-4 py-2 rounded-full shadow-card">
+          <div className="flex min-h-10 shrink-0 items-center gap-2.5 rounded-[var(--radius-sm)] bg-card px-4 py-2 shadow-card ring-1 ring-inset ring-border/40">
             <MapPin className="w-4 h-4 text-primary/70" />
             <span className="text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
               {t('taskerFeed.distance')}:
@@ -216,8 +214,8 @@ export function TaskerFeedPage() {
 
         {/* ── Error state ── */}
         {tasksError && (
-          <div className="flex items-center gap-3 text-sm font-medium text-destructive p-4 bg-destructive/5 rounded-xl ring-1 ring-inset ring-destructive/20">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+          <div className="flex items-center gap-3 rounded-[var(--radius-sm)] bg-destructive/5 p-4 text-sm font-medium text-destructive ring-1 ring-inset ring-destructive/20">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-destructive/10">
               <Search className="h-4 w-4 text-destructive" />
             </div>
             {parseError(tasksError)}
@@ -229,7 +227,7 @@ export function TaskerFeedPage() {
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent shadow-elevated">
             <CardHeader className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-verified/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-sm)] bg-verified/10">
                   <Sparkles className="h-5 w-5 text-verified" />
                 </div>
                 <CardTitle className="text-section-heading font-display">
@@ -286,8 +284,8 @@ export function TaskerFeedPage() {
           )}
 
           {!loadingTasks && taskCards.length === 0 && !tasksError && (
-            <div className="col-span-full flex py-20 items-center justify-center flex-col gap-5 bg-muted/10 rounded-2xl ring-1 ring-inset ring-border/30 border-dashed">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/30">
+            <div className="col-span-full flex flex-col items-center justify-center gap-5 rounded-[var(--radius-sm)] border-dashed bg-muted/10 py-20 ring-1 ring-inset ring-border/30">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[var(--radius-sm)] bg-muted/30">
                 <Search className="w-7 h-7 text-muted-foreground/40" />
               </div>
               <p className="text-body font-medium text-muted-foreground/60">
@@ -318,7 +316,7 @@ export function TaskerFeedPage() {
                       actionLabel={t('taskerFeed.viewAndApply')}
                     />
                   </DialogTrigger>
-                  <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl ring-1 ring-inset ring-border/30 shadow-modal overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
+                  <DialogContent className="hidden-scrollbar flex max-h-[90vh] max-w-[95vw] flex-col overflow-y-auto rounded-[var(--radius-sm)] p-0 shadow-modal ring-1 ring-inset ring-border/30 sm:max-w-[600px]">
                     <div className="p-6 pb-2">
                       <DialogHeader className="mb-6">
                         <DialogTitle className="text-section-heading font-display font-semibold">
@@ -338,7 +336,7 @@ export function TaskerFeedPage() {
 
                       {showDetailError ? (
                         <div className="flex flex-col items-center gap-4 py-16 text-center">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-sm)] bg-destructive/10">
                             <Search className="w-6 h-6 text-destructive" />
                           </div>
                           <p className="text-body-sm font-medium text-destructive">
@@ -357,7 +355,7 @@ export function TaskerFeedPage() {
 
                       {detailTask ? (
                         <div className="grid gap-5">
-                          <div className="flex items-center justify-between bg-muted/10 p-4 rounded-xl ring-1 ring-inset ring-border/30">
+                          <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-muted/10 p-4 ring-1 ring-inset ring-border/30">
                             <div className="flex items-center gap-3">
                               <Avatar className="h-11 w-11 ring-1 ring-inset ring-border/30">
                                 <AvatarImage
@@ -406,7 +404,7 @@ export function TaskerFeedPage() {
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/5 rounded-xl ring-1 ring-inset ring-border/20">
+                            <div className="flex flex-col gap-1.5 rounded-[var(--radius-sm)] bg-muted/5 p-3 ring-1 ring-inset ring-border/20">
                               <div className="flex items-center text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
                                 <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary/60" />
                                 {t('taskerFeed.locationLabel')}
@@ -418,7 +416,7 @@ export function TaskerFeedPage() {
                                 {detailTask.approximate_location}
                               </span>
                             </div>
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/5 rounded-xl ring-1 ring-inset ring-border/20">
+                            <div className="flex flex-col gap-1.5 rounded-[var(--radius-sm)] bg-muted/5 p-3 ring-1 ring-inset ring-border/20">
                               <div className="flex items-center text-badge-text font-semibold text-muted-foreground uppercase tracking-caps">
                                 <Calendar className="w-3.5 h-3.5 mr-1.5 text-primary/60" />
                                 {t('taskerFeed.dateLabel')}
@@ -433,7 +431,7 @@ export function TaskerFeedPage() {
                             <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground">
                               {t('taskerFeed.descriptionLabel')}
                             </h4>
-                            <div className="text-body-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl ring-1 ring-inset ring-border/30 whitespace-pre-wrap">
+                            <div className="whitespace-pre-wrap rounded-[var(--radius-sm)] bg-background p-4 text-body-sm font-medium leading-relaxed text-foreground ring-1 ring-inset ring-border/30">
                               {detailTask.description}
                             </div>
                           </div>
@@ -448,7 +446,7 @@ export function TaskerFeedPage() {
                                 {detailTask.photo_urls.map((url, idx) => (
                                   <div
                                     key={idx}
-                                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden ring-1 ring-inset ring-border/30 shrink-0"
+                                    className="h-24 w-24 shrink-0 overflow-hidden rounded-[var(--radius-sm)] ring-1 ring-inset ring-border/30 sm:h-28 sm:w-28"
                                   >
                                     <img
                                       src={url}
@@ -475,7 +473,7 @@ export function TaskerFeedPage() {
                           </Label>
                           <Textarea
                             id={`apply-${task.id}`}
-                            className="resize-none min-h-[100px] rounded-xl bg-background ring-1 ring-inset ring-border/30 focus:ring-primary/40 transition-shadow text-body-sm"
+                            className="min-h-[100px] resize-none rounded-[var(--radius-sm)] bg-background text-body-sm ring-1 ring-inset ring-border/30 transition-shadow focus:ring-primary/40"
                             value={applyDrafts[task.id] ?? ''}
                             onChange={(e) =>
                               setApplyDrafts((prev) => ({
@@ -522,7 +520,7 @@ export function TaskerFeedPage() {
                           <Button
                             disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
                             onClick={() => void applyToTask(task.id)}
-                            className="w-full rounded-xl font-bold py-6 text-button-label shadow-fab hover:shadow-deep transition-shadow"
+                            className="w-full rounded-[var(--radius-sm)] py-6 text-button-label font-bold shadow-fab transition-shadow hover:shadow-deep"
                           >
                             {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
                             {t('taskerFeed.applySubmit')}

@@ -29,6 +29,8 @@ test.describe('UI inspection', () => {
 
       await expect(page).toHaveURL(surface.expectedUrl);
       await expect(page.locator('body')).toBeVisible();
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(300);
 
       const screenshot = await page.screenshot({ fullPage: true });
       await testInfo.attach(`${surface.name}.png`, {

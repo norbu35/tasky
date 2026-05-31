@@ -46,6 +46,7 @@
     "admin": "Admin",
     "adminDashboard": "Admin Dashboard",
     "bottomNavigation": "Bottom navigation",
+    "mainNavigation": "Main navigation",
     "language": "Language"
   },
   "customerDashboard": {
@@ -1092,6 +1093,17 @@
     }
   },
   "admin": {
+    "nav": {
+      "label": "Admin navigation",
+      "mobileLabel": "Admin navigation mobile",
+      "verifications": "Verifications",
+      "disputes": "Disputes",
+      "users": "Users",
+      "categories": "Categories",
+      "features": "Features",
+      "concierge": "Concierge",
+      "moderation": "Moderation"
+    },
     "categories": {
       "activate": "Activate",
       "activated": "Activated",

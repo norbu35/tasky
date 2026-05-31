@@ -46,6 +46,7 @@
     "admin": "Админ",
     "adminDashboard": "Админ хянах самбар",
     "bottomNavigation": "Доод навигац",
+    "mainNavigation": "Үндсэн навигац",
     "language": "Хэл"
   },
   "customerDashboard": {
@@ -1092,6 +1093,17 @@
     }
   },
   "admin": {
+    "nav": {
+      "label": "Админ навигаци",
+      "mobileLabel": "Админ навигаци гар утас",
+      "verifications": "Баталгаажуулалт",
+      "disputes": "Маргаан",
+      "users": "Хэрэглэгчид",
+      "categories": "Ангилал",
+      "features": "Тохиргоонууд",
+      "concierge": "Консьерж",
+      "moderation": "Модерац"
+    },
     "categories": {
       "activate": "Идэвхжүүлэх",
       "activated": "Идэвхжүүлсэн",

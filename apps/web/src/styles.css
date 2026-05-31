@@ -64,4 +64,11 @@
 body {
   margin: 0;
   @apply bg-background text-foreground antialiased font-sans;
+  overflow-x: hidden;
+}
+
+.tracking-tight,
+.tracking-tighter,
+.tracking-wider {
+  letter-spacing: var(--letter-spacing-normal);
 }

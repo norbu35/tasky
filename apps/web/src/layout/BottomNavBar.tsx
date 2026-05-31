@@ -28,18 +28,18 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-sticky md:hidden shadow-nav"
+      className="fixed bottom-0 left-0 right-0 z-sticky shadow-nav md:hidden"
       aria-label={t('nav.bottomNavigation')}
     >
-      <div className="bg-background/95 border-t border-border/50">
-        <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 pt-2 pb-2">
+      <div className="border-t border-border/50 bg-background">
+        <div className="mx-auto grid w-full max-w-lg grid-cols-4 items-stretch gap-1 px-2 pb-2 pt-2">
           {tabs.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 [
-                  'flex flex-col items-center gap-1 px-4 py-2 rounded-2xl min-w-0 min-h-touch-target-min justify-center',
+                  'flex min-h-touch-target-min min-w-0 flex-col items-center justify-center gap-1 rounded-[var(--radius-sm)] px-1.5 py-2',
                   'transition-all duration-200 ease-out',
                   isActive
                     ? 'bg-primary/10 text-foreground'
@@ -49,16 +49,20 @@ export function BottomNavBar() {
             >
               {({ isActive }) => (
                 <>
-                  <div className="relative flex items-center justify-center">
+                  <div className="relative flex h-6 w-6 items-center justify-center">
                     <Icon
-                      className={`transition-transform duration-200 ${isActive ? 'w-icon-md h-icon-md scale-105' : 'w-icon-sm h-icon-sm'}`}
+                      className={`h-icon-sm w-icon-sm transition-colors duration-200 ${
+                        isActive ? 'text-primary' : ''
+                      }`}
                     />
                     {isActive && (
                       <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary" />
                     )}
                   </div>
                   <span
-                    className={`text-nav tracking-normal truncate font-sans leading-none transition-all duration-200 ${isActive ? 'font-semibold text-foreground' : 'font-medium'}`}
+                    className={`max-w-full truncate text-[11px] tracking-normal font-sans leading-none transition-colors duration-200 ${
+                      isActive ? 'font-semibold text-foreground' : 'font-medium'
+                    }`}
                   >
                     {t(label)}
                   </span>

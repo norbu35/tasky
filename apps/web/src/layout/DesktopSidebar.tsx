@@ -58,7 +58,7 @@ export function DesktopSidebar() {
           : null;
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-64 md:shrink-0 border-r border-border/40 bg-card sticky top-0 h-screen">
+    <aside className="sticky top-0 hidden h-screen border-r border-border/40 bg-card md:flex md:w-64 md:shrink-0 md:flex-col">
       <div
         className="flex items-center gap-3 px-5 pt-6 pb-5 cursor-pointer"
         onClick={() => navigate('/')}
@@ -79,8 +79,8 @@ export function DesktopSidebar() {
 
       {navLinks && (
         <nav
-          className="flex flex-col gap-0.5 px-3 pt-5 flex-1 overflow-y-auto"
-          aria-label="Main navigation"
+          className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 pt-5"
+          aria-label={t('nav.mainNavigation')}
         >
           {navLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
@@ -88,7 +88,7 @@ export function DesktopSidebar() {
               to={to}
               className={({ isActive }) =>
                 [
-                  'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium font-sans transition-all duration-200',
+                  'group relative flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm font-medium font-sans transition-all duration-200',
                   isActive
                     ? 'bg-primary/[0.08] text-foreground'
                     : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
@@ -103,7 +103,7 @@ export function DesktopSidebar() {
                     }`}
                   />
                   <div
-                    className={`flex items-center justify-center rounded-lg transition-colors duration-200 ${
+                    className={`flex items-center justify-center rounded-[var(--radius-sm)] transition-colors duration-200 ${
                       isActive
                         ? 'bg-primary/10 text-primary'
                         : 'text-muted-foreground group-hover:text-foreground'
@@ -141,7 +141,7 @@ export function DesktopSidebar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 rounded-lg shrink-0 flex items-center justify-center"
+                className="h-8 w-8 shrink-0 rounded-[var(--radius-sm)] p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 flex items-center justify-center"
                 onClick={signOut}
                 aria-label={t('nav.logout')}
                 title={t('nav.logout')}

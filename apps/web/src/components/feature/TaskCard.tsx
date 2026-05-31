@@ -62,7 +62,7 @@ export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
   return (
     <Card
       hoverable
-      className="group flex flex-col cursor-pointer overflow-hidden ring-border/20"
+      className="group flex cursor-pointer flex-col overflow-hidden ring-border/25"
       role="button"
       aria-label={task.description}
       tabIndex={0}
@@ -70,15 +70,15 @@ export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
       onKeyDown={handleKeyDown}
     >
       <CardHeader className="p-5 pb-3">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-start justify-between gap-3">
           <Badge variant={badgeVariant} size="md">
             {t(`sharedPages.status.${status}`)}
           </Badge>
           {budget != null ? (
-            <div className="flex flex-col items-end">
-              <span className="text-xl font-display font-bold text-primary leading-none">
+            <div className="flex shrink-0 flex-col items-end">
+              <span className="font-display text-xl font-bold leading-none text-primary">
                 {budget.toLocaleString()}
-                <span className="text-nav font-bold text-primary/60 ml-0.5 uppercase tracking-wider">
+                <span className="ml-1 text-[0.68rem] font-bold uppercase tracking-normal text-primary/60">
                   {t('sharedPages.currencyMNT')}
                 </span>
               </span>
@@ -87,14 +87,14 @@ export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
             <span className="text-body-sm font-medium text-muted-foreground">&mdash;</span>
           )}
         </div>
-        <h2 className="mt-3 line-clamp-2 text-lg font-bold font-display leading-tight text-foreground transition-colors group-hover:text-primary">
+        <h2 className="mt-3 line-clamp-2 font-display text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
           {task.description}
         </h2>
       </CardHeader>
 
       <CardContent className="flex-1 p-5 pt-0">
         {location && (
-          <div className="flex items-center gap-2 text-body-sm text-muted-foreground bg-muted/20 px-3 py-1.5 rounded-xl ring-1 ring-inset ring-border/10">
+          <div className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-muted/20 px-3 py-1.5 text-body-sm text-muted-foreground ring-1 ring-inset ring-border/10">
             <MapPin className="h-4 w-4 shrink-0 text-primary/50" />
             <span className="truncate font-medium">{location}</span>
           </div>
@@ -102,10 +102,10 @@ export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
       </CardContent>
 
       {(actionLabel || scheduledAt) && (
-        <CardFooter className="px-5 py-4 bg-muted/5 border-t border-border/10 flex justify-between items-center gap-3">
+        <CardFooter className="flex items-center justify-between gap-3 border-t border-border/10 bg-muted/5 px-5 py-4">
           {scheduledAt ? (
             <div className="flex items-center gap-2 text-caption font-medium text-muted-foreground">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background shadow-card ring-1 ring-inset ring-border/20">
+              <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-background shadow-card ring-1 ring-inset ring-border/20">
                 <CalendarDays className="h-3.5 w-3.5 text-primary/70" />
               </div>
               <span>{formatDate(scheduledAt)}</span>
@@ -114,7 +114,7 @@ export function TaskCard({ task, onOpen, actionLabel }: TaskCardProps) {
             <div />
           )}
           {actionLabel && (
-            <span className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 px-3.5 py-2 text-badge-text font-bold text-primary transition-all duration-card-expand group-hover:bg-primary group-hover:text-primary-foreground shadow-sm">
+            <span className="inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-primary/10 px-3.5 py-2 text-badge-text font-bold text-primary shadow-sm transition-all duration-card-expand group-hover:bg-primary group-hover:text-primary-foreground">
               {actionLabel}
               <ArrowRight className="w-3.5 h-3.5 transition-transform duration-sheet-close group-hover:translate-x-0.5" />
             </span>

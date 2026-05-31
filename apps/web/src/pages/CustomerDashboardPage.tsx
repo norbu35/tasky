@@ -70,36 +70,60 @@ export function CustomerDashboardPage() {
     <ScreenFrame maxWidth="wide">
       <div className="flex flex-col gap-8">
         {/* Greeting header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-caption font-sans font-medium uppercase tracking-caps text-muted-foreground">
-              {formatFullDate(new Date())}
-            </p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight">
-              {t('customerDashboard.greeting')},{' '}
-              <span className="text-primary">
-                {profile?.full_name?.split(' ')[0] ?? t('customerDashboard.friend')}
-              </span>
-              {'!'}
-            </h1>
-            <p className="text-body text-text-secondary">
-              {isLoading
-                ? t('customerDashboard.loadingTasks')
-                : t('customerDashboard.activeTasksToday', {
-                    count: openTasks.length + activeTasks.length,
-                  })}
-            </p>
+        <div className="border-b border-border/40 pb-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-2">
+              <p className="text-caption font-sans font-medium uppercase tracking-caps text-muted-foreground">
+                {formatFullDate(new Date())}
+              </p>
+              <h1 className="font-display text-2xl font-semibold tracking-normal sm:text-3xl">
+                {t('customerDashboard.greeting')},{' '}
+                <span className="text-primary">
+                  {profile?.full_name?.split(' ')[0] ?? t('customerDashboard.friend')}
+                </span>
+                {'!'}
+              </h1>
+              <p className="text-body text-text-secondary">
+                {isLoading
+                  ? t('customerDashboard.loadingTasks')
+                  : t('customerDashboard.activeTasksToday', {
+                      count: openTasks.length + activeTasks.length,
+                    })}
+              </p>
+            </div>
+            {tasksPage?.data && tasksPage.data.length > 0 && (
+              <Button
+                aria-label={t('customerDashboard.postNewTask')}
+                onClick={() => navigate('/customer/tasks/new')}
+                className="w-full flex-shrink-0 gap-2 shadow-fab sm:w-auto"
+              >
+                <Plus className="h-icon-sm w-icon-sm" />
+                <span>{t('customerDashboard.postNewTask')}</span>
+              </Button>
+            )}
           </div>
-          {tasksPage?.data && tasksPage.data.length > 0 && (
-            <Button
-              aria-label={t('customerDashboard.postNewTask')}
-              onClick={() => navigate('/customer/tasks/new')}
-              className="gap-2 flex-shrink-0 shadow-fab"
-            >
-              <Plus className="w-icon-sm h-icon-sm" />
-              <span className="hidden sm:inline">{t('customerDashboard.postNewTask')}</span>
-            </Button>
-          )}
+
+          {!isLoading && tasksPage?.data && tasksPage.data.length > 0 ? (
+            <dl className="mt-6 grid grid-cols-1 gap-2 sm:max-w-xl sm:grid-cols-3 sm:gap-3">
+              {[
+                { label: t('customerDashboard.tabOpen'), value: openTasks.length },
+                { label: t('customerDashboard.tabActive'), value: activeTasks.length },
+                { label: t('customerDashboard.tabPast'), value: pastTasks.length },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-[var(--radius-sm)] bg-card/80 px-3 py-3 shadow-card ring-1 ring-inset ring-border/35"
+                >
+                  <dt className="truncate text-caption font-medium text-muted-foreground">
+                    {item.label}
+                  </dt>
+                  <dd className="mt-1 font-display text-2xl font-semibold text-foreground">
+                    {item.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
 
         {error ? (
@@ -114,7 +138,7 @@ export function CustomerDashboardPage() {
           <DashboardSkeleton />
         ) : !tasksPage?.data || tasksPage.data.length === 0 ? (
           <Card className="flex flex-col items-center justify-center p-16 text-center border-dashed bg-muted/20">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 mb-5">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[var(--radius-sm)] bg-primary/10">
               <Plus className="w-icon-sm h-icon-sm text-primary" />
             </div>
             <p className="text-section-heading font-display font-semibold text-foreground mb-2">
