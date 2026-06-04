@@ -43,7 +43,7 @@ jest.mock('lucide-react-native', () => {
 
 const mockAcceptApplication = jest.fn();
 const mockMutate = jest.fn();
-const mockConfirmBookingIntent = jest.fn();
+const mockCreateBookingIntent = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useAcceptApplication', () => ({
   useAcceptApplication: () => ({
     mutateAsync: mockAcceptApplication,
@@ -51,9 +51,9 @@ jest.mock('../../../../src/features/bookings/hooks/useAcceptApplication', () => 
     isPending: false,
   }),
 }));
-jest.mock('../../../../src/features/bookings/hooks/useConfirmBookingIntent', () => ({
-  useConfirmBookingIntent: () => ({
-    mutateAsync: mockConfirmBookingIntent,
+jest.mock('../../../../src/features/bookings/hooks/useCreateBookingIntent', () => ({
+  useCreateBookingIntent: () => ({
+    mutateAsync: mockCreateBookingIntent,
     isPending: false,
   }),
 }));
@@ -157,12 +157,12 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
     ).toBeTruthy();
   });
 
-  it('confirm uses booking intent flow when source is rebook', async () => {
+  it('confirm creates a pending rebook intent when source is rebook', async () => {
     mockLocalSearchParams = {
       taskId: 'task-1',
       applicationId: '',
       source: 'rebook',
-      bookingIntentId: 'intent-1',
+      originalBookingId: 'booking-1',
       taskerId: 'tasker-1',
       taskTitle: 'Fix my sink',
       taskBudget: '50000',
@@ -171,18 +171,35 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
       taskerAvatar: 'https://example.com/avatar.jpg',
       taskerRating: '4.7',
     };
-    mockConfirmBookingIntent.mockResolvedValue({ id: 'booking-2' });
+    mockCreateBookingIntent.mockResolvedValue({
+      id: 'intent-1',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'REBOOK',
+      status: 'PENDING',
+      original_booking_id: 'booking-1',
+      expires_at: null,
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-04-01T10:00:00Z',
+      updated_at: '2026-04-01T10:00:00Z',
+    });
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
     fireEvent.press(screen.getByTestId('SCR-CUST-014-cta'));
     await waitFor(() => {
-      expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
+      expect(mockCreateBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({
-          bookingIntentId: 'intent-1',
+          taskId: 'task-1',
+          source: 'REBOOK',
+          taskerId: 'tasker-1',
+          originalBookingId: 'booking-1',
           idempotencyKey: expect.any(String),
         }),
       );
       expect(mockAcceptApplication).not.toHaveBeenCalled();
     });
+    expect(await screen.findByText('Selection request sent')).toBeTruthy();
   });
 });

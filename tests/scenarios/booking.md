@@ -392,3 +392,16 @@ Then the locked booking price and intake scope are presented as the baseline agr
 And the copy explains that material, supply, or scope changes after confirmation must be agreed between the parties
 And the copy instructs participants to keep those agreements in platform-mediated chat or support evidence
 And the copy does not promise automatic price adjustment, payment hold, or payment protection
+
+## SCN-BOOK-033
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-30, REQ-P1-BOOK-31, REQ-P1-BOOK-32
+**Title:** Completed booking rebook creates one-time repeat task without recurring or payment promises
+
+Given a customer owns a completed booking with no unresolved review-debt blocker
+When the customer starts a rebook for the same tasker
+Then the platform creates a new open task or booking-intent flow using the prior booking context as prefill
+And the customer must choose a new schedule before confirmation
+And ordinary task creation, review-debt, and booking confirmation rules still apply
+And the rebook surface does not promise recurring scheduling, saved household preferences, automatic assignment, platform payment, escrow, or payment protection

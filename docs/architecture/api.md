@@ -460,19 +460,25 @@ controller contract.
    - Every reviewable terminal booking outcome creates bilateral review debt.
    - Customer posting and tasker application actions remain blocked until the owed review is submitted.
    - Disputes remain evidence-backed moderation flows, not escrow or payout flows.
-5. **Assistance and rescue**
+5. **One-time rebook**
+   - A completed booking can seed a one-time rebook flow for the same customer and tasker.
+   - Rebook creates a new open task or booking-intent flow from the previous booking context and then returns to the
+     ordinary booking confirmation path.
+   - Rebook remains a repeat-demand learning surface only; recurring schedules, saved household preferences, automatic
+     assignment, paid memberships, platform payment, wallet, payout, and escrow stay out of the Phase 1 launch runtime.
+6. **Assistance and rescue**
    - Phase 1 prefers native self-serve matching.
    - If a task receives no qualified application within the allowed window, the backend may record assisted distribution or manual rescue in `task_rescue_events`.
    - Any such intervention remains measurable and must not be counted as self-serve.
-6. **Messaging and contact control**
+7. **Messaging and contact control**
    - Open-ended pre-booking chat is not part of the Phase 1 launch contract.
    - Post-confirmation in-app chat is the launch contact channel after the booking price is locked; it remains platform-mediated and available for admin review.
    - Exact address and any direct contact surface remain policy-controlled and unavailable before booking confirmation.
-7. **Identity, verification, and outage posture**
+8. **Identity, verification, and outage posture**
    - Facebook OAuth is the only launch login path for new sessions.
    - If the provider is down, new authentication fails closed while valid sessions remain usable until expiry.
    - Tasker verification requires recorded consent and auditable state transitions.
-8. **Category and admin governance**
+9. **Category and admin governance**
    - Category activation, deactivation, linting, preview, canary, and rollback are admin-governed.
    - Verification queues, disputes, moderation actions, and rescue actions remain auditable operator surfaces.
 

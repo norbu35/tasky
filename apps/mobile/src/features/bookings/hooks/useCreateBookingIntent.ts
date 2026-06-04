@@ -6,10 +6,10 @@ import { createBookingIntent } from '../api';
 
 interface CreateBookingIntentParams {
   taskId: string;
-  source: 'REBOOK' | 'INSTANT_MATCH';
+  source: 'REBOOK';
   originalBookingId?: string;
-  offerId?: string;
   taskerId: string;
+  idempotencyKey: string;
 }
 
 export function useCreateBookingIntent() {
@@ -24,8 +24,8 @@ export function useCreateBookingIntent() {
         params.taskId,
         params.source,
         params.taskerId,
+        params.idempotencyKey,
         params.originalBookingId,
-        params.offerId,
       ),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });

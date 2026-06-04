@@ -15,6 +15,9 @@ traceability:
     - REQ-P1-BOOK-25
     - REQ-P1-BOOK-26
     - REQ-P1-BOOK-29
+    - REQ-P1-BOOK-30
+    - REQ-P1-BOOK-31
+    - REQ-P1-BOOK-32
     - REQ-P1-MSG-02
   journey_refs:
     - JRN-CUST-02-A5
@@ -22,6 +25,8 @@ traceability:
     - JRN-CUST-04:step-3
     - JRN-CUST-04-A5
     - JRN-CUST-04-A6
+    - JRN-CUST-05:step-1
+    - JRN-CUST-05-A1
     - JRN-CUST-06:step-1
   scenario_refs:
     - SCN-SEC-007
@@ -30,6 +35,7 @@ traceability:
     - SCN-BOOK-026
     - SCN-BOOK-027
     - SCN-BOOK-032
+    - SCN-BOOK-033
     - SCN-NOTIF-009
 template: detail
 figma_page: 'Customer/Booking Detail Customer'
@@ -139,7 +145,7 @@ states:
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: completed_reviewed
-    description: 'Booking is COMPLETED and review is submitted; timeline and booking summary remain available'
+    description: 'Booking is COMPLETED and review is submitted; timeline, booking summary, and one-time Rebook action remain available'
     components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -230,6 +236,11 @@ copy:
     en: 'Leave Review'
     max_chars: 20
 
+  - key: cta_rebook
+    mn: 'Дахин захиалах'
+    en: 'Rebook'
+    max_chars: 20
+
   - key: status_assigned
     mn: 'Баталгаажсан'
     en: 'Assigned'
@@ -317,6 +328,8 @@ analytics_events:
     trigger: "User taps 'View Timeline'"
   - event: 'booking_detail_tasker_profile_tapped'
     trigger: 'User taps tasker avatar/name to view profile'
+  - event: 'booking_detail_rebook_tapped'
+    trigger: "User taps 'Rebook' from a completed booking after required review is submitted"
 acceptance_criteria:
   - 'Initial load shows detail skeleton matching content layout'
   - 'Assigned state shows tasker avatar with verification badge, task title, schedule, location, and pricing summary'
@@ -329,6 +342,9 @@ acceptance_criteria:
   - 'Customer silence path uses a push notification completion reminder where the customer has a registered device token before timeout auto-complete'
   - 'Auto-completed state records that timeout, not direct customer confirmation, completed the booking and still creates review debt'
   - 'Completed state remains focused on review completion, timeline, and dispute-safe record keeping'
+  - "Completed_reviewed state shows 'Rebook' only after customer review debt is resolved and the booking belongs to the current customer"
+  - "Tapping 'Rebook' navigates to Rebook Tasker (SCR-CUST-023) with original booking, tasker, category, task, schedule, budget, and location context"
+  - 'Rebook entry does not promise recurring scheduling, saved household preferences, automatic assignment, platform payment, escrow, or payment protection'
   - 'Cancelled state shows cancelled status badge with no modify actions; only Timeline and Report Issue available'
   - 'No-show state shows no-show status badge with Timeline and Report Issue available'
   - 'Payment settlement note is always visible for the launch settlement model'

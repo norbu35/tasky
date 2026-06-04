@@ -195,14 +195,14 @@ class BookingIntentServiceTest {
 
     @Test
     void createIntent_missingSource_returnsInvalidRequest() {
-        CreateResult result = service.createIntent("c1", "t1", "", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.INVALID_REQUEST);
     }
 
     @Test
     void createIntent_missingTaskerId_returnsInvalidRequest() {
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.INVALID_REQUEST);
     }
@@ -210,7 +210,7 @@ class BookingIntentServiceTest {
     @Test
     void createIntent_taskNotFound_returnsNotFound() {
         when(taskDao.findById("t1")).thenReturn(Optional.empty());
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.NOT_FOUND);
     }
@@ -218,7 +218,7 @@ class BookingIntentServiceTest {
     @Test
     void createIntent_wrongCustomer_returnsForbidden() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "other")));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.FORBIDDEN);
     }
@@ -244,7 +244,7 @@ class BookingIntentServiceTest {
                 now,
                 now);
         when(taskDao.findById("t1")).thenReturn(Optional.of(assigned));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.TASK_NOT_OPEN);
     }
@@ -252,7 +252,7 @@ class BookingIntentServiceTest {
     @Test
     void createIntent_instantMatchSource_returnsDeferred() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
-        CreateResult result = service.createIntent("c1", "t1", "INSTANT_MATCH", "tk1", null, null);
+        CreateResult result = service.createIntent("c1", "t1", "INSTANT_MATCH", "tk1", null);
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.DEFERRED);
     }
@@ -260,7 +260,7 @@ class BookingIntentServiceTest {
     @Test
     void createIntent_invalidSource_returnsInvalidSource() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
-        CreateResult result = service.createIntent("c1", "t1", "UNKNOWN", "tk1", null, null);
+        CreateResult result = service.createIntent("c1", "t1", "UNKNOWN", "tk1", null);
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.INVALID_SOURCE);
     }
@@ -268,7 +268,7 @@ class BookingIntentServiceTest {
     @Test
     void createIntent_rebookMissingOriginalBookingId_returnsInvalidRequest() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", null, null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", null);
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.INVALID_REQUEST);
     }
@@ -277,7 +277,7 @@ class BookingIntentServiceTest {
     void createIntent_originalBookingNotFound_returnsNotFound() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
         when(bookingService.getBooking("b1")).thenReturn(Optional.empty());
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.NOT_FOUND);
     }
@@ -286,7 +286,7 @@ class BookingIntentServiceTest {
     void createIntent_originalBookingWrongOwner_returnsForbidden() {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
         when(bookingService.getBooking("b1")).thenReturn(Optional.of(completedBooking("b1", "other", "tk1", "t1")));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.FORBIDDEN);
     }
@@ -297,7 +297,7 @@ class BookingIntentServiceTest {
                 "b1", "t1", "tk1", "c1", 5000, "ASSIGNED", null, true, now, "DIRECT", false, now, 0, null, now, now);
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
         when(bookingService.getBooking("b1")).thenReturn(Optional.of(assignedBooking));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.NOT_COMPLETED);
     }
@@ -307,7 +307,7 @@ class BookingIntentServiceTest {
         when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
         when(bookingService.getBooking("b1"))
                 .thenReturn(Optional.of(completedBooking("b1", "c1", "otherTasker", "t1")));
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.CONFLICT);
     }
@@ -320,7 +320,7 @@ class BookingIntentServiceTest {
         BookingIntentState persisted = pendingIntent("newIntent", "t1", "tk1", "c1", "REBOOK", "b1");
         when(bookingIntentDao.findById(anyString())).thenReturn(Optional.of(persisted));
 
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", "offer1");
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.intent()).isNotNull();
         assertThat(result.intent().status()).isEqualTo("PENDING");
@@ -333,7 +333,7 @@ class BookingIntentServiceTest {
                         eq("REBOOK"),
                         eq("PENDING"),
                         eq("b1"),
-                        eq("offer1"),
+                        eq((String) null),
                         eq((Instant) null),
                         any(Instant.class),
                         any(Instant.class));
@@ -345,7 +345,7 @@ class BookingIntentServiceTest {
         when(bookingService.getBooking("b1")).thenReturn(Optional.of(completedBooking("b1", "c1", "tk1", "t1")));
         when(bookingIntentDao.findById(anyString())).thenReturn(Optional.empty());
 
-        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1", null);
+        CreateResult result = service.createIntent("c1", "t1", "REBOOK", "tk1", "b1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(CreateResult.NOT_FOUND);
     }

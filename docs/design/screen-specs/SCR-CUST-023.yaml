@@ -1,0 +1,173 @@
+# Screen Spec: Rebook Tasker
+screen_id: SCR-CUST-023
+name: 'Rebook Tasker'
+route: '/(customer)/rebook'
+role: [customer]
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-023
+  prd_refs:
+    - REQ-P1-BOOK-30
+    - REQ-P1-BOOK-31
+    - REQ-P1-BOOK-32
+    - REQ-P1-BOOK-29
+    - NFR-LEGAL-01
+  journey_refs:
+    - JRN-CUST-05:step-2
+    - JRN-CUST-05-A2
+  scenario_refs:
+    - SCN-BOOK-033
+template: form_wizard
+figma_page: 'Customer/Rebook Tasker'
+feature: 'booking'
+
+layout:
+  template: form_wizard
+  density: default
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(previous_tasker + prior_task_context + new_schedule_picker + budget_input + one_time_notice) -> bottom_nav(back + continue)'
+
+components:
+  - id: COMP-PROFILEAVATAR
+    usage: 'Original Tasker avatar with verification badge in the previous-tasker summary'
+    props:
+      imageUrl: '{tasker_avatar}'
+      size: lg
+      isVerified: true
+    variant: lg
+
+  - id: COMP-CARD
+    usage: 'Summary card for prior category, task description, location, schedule, and budget context'
+    props:
+      onPress: null
+    variant: outlined
+
+  - id: COMP-DATEPICKER
+    usage: 'Date and time selector for the new one-time job schedule'
+    props:
+      value: '{new_schedule}'
+      minDate: 'tomorrow'
+      mode: date_time
+    variant: date_time
+
+  - id: COMP-INPUT
+    usage: 'Editable budget input carried forward from the prior booking'
+    props:
+      keyboardType: numeric
+      maxLength: 10
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: 'Continue button that creates the one-time task context and moves to booking request confirmation'
+    props:
+      label: 'Захиалга руу үргэлжлүүлэх'
+      variant: primary
+      size: lg
+      loading: false
+    variant: primary
+
+  - id: COMP-TOAST
+    usage: 'Error toast when task creation or rebook validation fails'
+    props:
+      message: 'Дахин захиалах боломжгүй байна'
+      variant: error
+    variant: error
+
+states:
+  - id: prefilled_form
+    description: 'Prior completed booking context is prefilled; customer may choose a new schedule and edit budget before continuing'
+    components_visible: [COMP-PROFILEAVATAR, COMP-CARD, COMP-DATEPICKER, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: invalid_budget
+    description: 'Budget is missing or below the launch minimum; continue button is disabled and inline error is visible'
+    components_visible: [COMP-PROFILEAVATAR, COMP-CARD, COMP-DATEPICKER, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: submitting
+    description: 'One-time task context is being created from the prior booking; continue button shows loading state'
+    components_visible: [COMP-PROFILEAVATAR, COMP-CARD, COMP-DATEPICKER, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: error_validation
+    description: 'Customer, tasker, category, location, schedule, budget, or original booking fails launch validation'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-CARD, COMP-DATEPICKER, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+    components_hidden: []
+
+copy:
+  - key: page_title
+    mn: 'Дахин захиалах'
+    en: 'Rebook'
+    max_chars: 25
+
+  - key: prefilled_note
+    mn: 'Өмнөх захиалгаас бөглөсөн. Та засаж болно.'
+    en: 'Prefilled from previous booking. You can edit.'
+    max_chars: 70
+
+  - key: section_previous_tasker
+    mn: 'Өмнөх гүйцэтгэгч'
+    en: 'Previous Tasker'
+    max_chars: 30
+
+  - key: section_task_details
+    mn: 'Ажлын мэдээлэл'
+    en: 'Task Details'
+    max_chars: 30
+
+  - key: label_new_schedule
+    mn: 'Шинэ товлосон цаг'
+    en: 'New Schedule'
+    max_chars: 30
+
+  - key: label_budget
+    mn: 'Төсөв'
+    en: 'Budget'
+    max_chars: 20
+
+  - key: one_time_notice
+    mn: 'Энэ нь нэг удаагийн шинэ ажил. Давтамж, хадгалсан тохиргоо, автомат оноолт эсвэл төлбөр хамгаалалт амлахгүй.'
+    en: 'This is a one-time new job. It does not create a recurring schedule, saved preferences, automatic assignment, or payment protection.'
+    max_chars: 160
+
+  - key: cta_continue
+    mn: 'Захиалга руу үргэлжлүүлэх'
+    en: 'Continue to Booking'
+    max_chars: 35
+
+  - key: budget_error
+    mn: 'Төсөв ₮1,001-ээс дээш байх ёстой'
+    en: 'Budget must be above ₮1,001'
+    max_chars: 50
+
+api_endpoints:
+  - method: POST
+    path: '/tasks'
+    purpose: 'Create the one-time task from prior booking context, with customer-selected schedule and budget'
+  - method: POST
+    path: '/tasks/:id/booking-intents'
+    purpose: 'Create the pending REBOOK intent after liability disclaimer acknowledgment on SCR-CUST-014'
+  - method: POST
+    path: '/bookings/:id/rebook'
+    purpose: 'Server-side task snapshot alternative for completed-booking rebook contexts'
+
+analytics_events:
+  - event: 'rebook_form_viewed'
+    trigger: 'Screen becomes visible from completed booking detail; includes original_booking_id and tasker_id'
+  - event: 'rebook_continue_tapped'
+    trigger: "User taps 'Continue to Booking' with valid schedule and budget"
+  - event: 'rebook_validation_failed'
+    trigger: 'Inline or API validation blocks the rebook flow'
+
+acceptance_criteria:
+  - 'Screen is reachable only from a completed booking owned by the customer after required review debt is resolved'
+  - 'Previous Tasker summary shows avatar, name, and verification status from the completed booking'
+  - 'Prior task category, description, approximate location, previous schedule, and prior budget are visible as editable or reviewable context'
+  - 'Customer must choose or confirm a new schedule before the one-time task can proceed'
+  - 'Budget input enforces the launch minimum and disables continue while invalid'
+  - 'Continue creates a new one-time task context and routes to Booking Request Confirmation (SCR-CUST-014)'
+  - 'The selected Tasker receives only a pending request after SCR-CUST-014 disclaimer acknowledgment; the customer never confirms the tasker-only intent endpoint'
+  - 'No recurring schedule, saved household preference, automatic assignment, platform payment, escrow, or payment-protection promise appears on the screen'
+  - 'Back button pops to Booking Detail (SCR-CUST-017) without creating a booking intent'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

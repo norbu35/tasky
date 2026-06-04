@@ -180,6 +180,8 @@ class: mn.tasky.common.outbox.OutboxRelayService
   - Category is the primary slice; district is drilldown.
   - Native self-serve reporting and native confirmation success must exclude outcomes after system-assisted or
     manual-assisted intervention.
+  - One-time rebook events may feed repeat-demand learning metrics, but they do not replace launch liquidity and trust
+    gates or activate recurring, payment, or membership surfaces.
 - **Operational Alerts**:
   - Alert on the four hard-gate KPI families defined in `docs/METRICS.md`.
   - Alert on verification SLA breaches and OAuth outage active windows.

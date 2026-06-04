@@ -826,10 +826,11 @@ export interface paths {
         put?: never;
         /**
          * Rebook a completed booking
-         * @description Deferred Phase 2 repeat-booking surface. Current runtime creates a new OPEN task snapshot copied from a completed booking,
-         *     with schedule intentionally unset so the customer must choose a new time before normal launch posting behavior applies.
-         *     The original booking must be in COMPLETED status. Launch UX must not expose this surface until repeat-booking activation
-         *     is approved by the PRD, strategy, maintenance policy, UX/copy, verification, monitoring, and rollback workflow.
+         * @description Phase 1 one-time repeat-demand learning surface. Creates a new OPEN task snapshot copied from a completed booking,
+         *     with schedule intentionally unset so the customer must choose a new time before normal booking confirmation applies.
+         *     The original booking must be in COMPLETED status and must belong to the requesting customer. This does not activate
+         *     recurring scheduling, saved household preferences, automatic assignment, paid membership, platform payment, escrow,
+         *     or payment protection.
          */
         post: operations["rebookBooking"];
         delete?: never;
@@ -850,7 +851,7 @@ export interface paths {
         /**
          * Create booking intent for a task
          * @description Customer creates a booking intent for a task, selecting a tasker.
-         *     Supports REBOOK source (from a previous booking) and INSTANT_MATCH source.
+         *     Supports the active REBOOK source from a previous completed booking.
          *     The task must be in a state that allows booking intent creation.
          *     Requires Idempotency-Key header.
          */
@@ -2541,14 +2542,17 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
+            source: "APPLICATION_SELECTION" | "REBOOK";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
             /** Format: uuid */
             selected_application_id?: string | null;
             /** Format: uuid */
             original_booking_id?: string | null;
-            /** Format: uuid */
+            /**
+             * Format: uuid
+             * @description Reserved for deferred matching sources; null for Phase 1 application-selection and rebook intents.
+             */
             offer_id?: string | null;
             /** Format: date-time */
             expires_at?: string | null;
@@ -4566,10 +4570,10 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * @description Booking intent source type.
+                     * @description Active Phase 1 booking intent source type for this endpoint.
                      * @enum {string}
                      */
-                    source: "REBOOK" | "INSTANT_MATCH";
+                    source: "REBOOK";
                     /**
                      * Format: uuid
                      * @description Selected tasker ID.
@@ -4580,11 +4584,6 @@ export interface operations {
                      * @description Original booking ID (required for REBOOK source).
                      */
                     original_booking_id?: string;
-                    /**
-                     * Format: uuid
-                     * @description Associated offer ID (for INSTANT_MATCH source).
-                     */
-                    offer_id?: string;
                 };
             };
         };

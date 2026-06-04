@@ -8,7 +8,7 @@ import { PriceTag } from '@/components/ui/PriceTag';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { useAcceptApplication } from '@/features/bookings/hooks/useAcceptApplication';
-import { useConfirmBookingIntent } from '@/features/bookings/hooks/useConfirmBookingIntent';
+import { useCreateBookingIntent } from '@/features/bookings/hooks/useCreateBookingIntent';
 import type { BookingIntent } from '@/lib/api/types';
 import { formatDate, formatDateTime } from '@/utils/formatDate';
 
@@ -25,41 +25,38 @@ export default function BookingConfirmScreen() {
     taskerName: string;
     taskerAvatar: string;
     taskerRating: string;
-    source?: 'application' | 'rebook' | 'instant_match';
-    bookingIntentId?: string;
+    source?: 'application' | 'rebook';
+    originalBookingId?: string;
   }>();
 
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<BookingIntent | null>(null);
   const { mutateAsync: acceptApplication, isPending } = useAcceptApplication();
-  const { mutateAsync: confirmBookingIntent, isPending: isConfirmingIntent } =
-    useConfirmBookingIntent();
+  const { mutateAsync: createBookingIntent, isPending: isCreatingBookingIntent } =
+    useCreateBookingIntent();
 
   const handleConfirm = useCallback(async () => {
     const source = params.source ?? 'application';
-    const usesBookingIntent = source === 'rebook' || source === 'instant_match';
-    const idempotencyKey = usesBookingIntent
-      ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
-      : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
-    if (!usesBookingIntent) {
-      const intent = await acceptApplication({
+    if (source === 'rebook') {
+      const intent = await createBookingIntent({
         taskId: params.taskId,
-        applicationId: params.applicationId,
-        liabilityDisclaimerAccepted: true,
-        idempotencyKey,
+        source: 'REBOOK',
+        taskerId: params.taskerId,
+        originalBookingId: params.originalBookingId,
+        idempotencyKey: `create-rebook-intent-${params.taskId}-${Date.now()}`,
       });
       setPendingIntent(intent);
       return;
     }
-    const booking = await confirmBookingIntent({
-      bookingIntentId: params.bookingIntentId!,
+    const idempotencyKey = `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
+    const intent = await acceptApplication({
+      taskId: params.taskId,
+      applicationId: params.applicationId,
+      liabilityDisclaimerAccepted: true,
       idempotencyKey,
     });
-    router.replace({
-      pathname: '/(customer)/bookings/confirmed',
-      params: { bookingId: booking.id, taskerName: params.taskerName },
-    });
-  }, [params, acceptApplication, confirmBookingIntent, router]);
+    setPendingIntent(intent);
+  }, [params, acceptApplication, createBookingIntent]);
 
   if (pendingIntent) {
     return (
@@ -126,7 +123,7 @@ export default function BookingConfirmScreen() {
       testID="SCR-CUST-014"
       ctaLabel={t('customer.bookings.ctaConfirm')}
       ctaOnPress={handleConfirm}
-      ctaLoading={isPending || isConfirmingIntent}
+      ctaLoading={isPending || isCreatingBookingIntent}
       ctaDisabled={!disclaimerChecked}
     >
       {/* Tasker Info */}

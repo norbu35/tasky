@@ -428,12 +428,19 @@ nodes:
       - to: SCR-CUST-015
         type: replace
         guard: booking request sent
+      - to: SCR-CUST-014
+        type: replace
+        guard: rebook request sent, pending request state remains on confirmation surface
       - to: SCR-CUST-011
         type: pop
         guard: back
+      - to: SCR-CUST-023
+        type: pop
+        guard: back, source == rebook
     data_deps:
       - task_id
       - applicant_id
+      - booking_intent_id
       - liability_disclaimer
   SCR-CUST-015:
     label: Selection Sent Success
@@ -483,6 +490,9 @@ nodes:
       - to: SCR-CUST-013
         type: push
         guard: tap Tasker profile
+      - to: SCR-CUST-023
+        type: push
+        guard: tap 'Rebook', booking completed, review debt resolved
       - to: SCR-CUST-016
         type: pop
         guard: back
@@ -541,6 +551,21 @@ nodes:
     data_deps:
       - booking_id
       - hours_to_schedule
+  SCR-CUST-023:
+    label: Rebook Tasker
+    edges:
+      - to: SCR-CUST-014
+        type: push
+        guard: task and rebook booking intent created
+      - to: SCR-CUST-017
+        type: pop
+        guard: back
+    data_deps:
+      - original_booking_id
+      - tasker_profile
+      - prior_task_context
+      - new_schedule
+      - budget
   SCR-CUST-024:
     label: Dispute — Raise
     edges:

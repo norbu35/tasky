@@ -66,6 +66,11 @@ categories while preserving direct settlement for the underlying job amount. Esc
 lead credits, promoted listings, broad subscriptions, and self-serve B2B remain deferred until their rollout phase has
 updated product, legal, operational, contract, UX, monitoring, and rollback coverage.
 
+Phase 1 includes a narrow repeat-demand learning surface: after a completed booking, a customer may start a one-time
+rebook flow for the same tasker. This is not recurring scheduling, saved household preferences, automatic matching, paid
+membership, or a payment feature. It exists to measure whether completed trust creates repeat intent before later
+commerce pilots.
+
 ## 3. Problem statement and value proposition
 
 ### 3.1 Problem statement
@@ -203,7 +208,7 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 - escrow, wallet, and payout flows
 - subscriptions
 - referrals
-- recurring scheduling and paid household memberships
+- recurring scheduling, saved household preferences, and paid household memberships
 - self-serve B2B flows
 - instant match
 - runtime LLM-led posting path
@@ -291,6 +296,8 @@ The following events support KPI computation:
 9. The tasker marks the job complete.
 10. The customer confirms or disputes completion. If silent, push notification nudges where available and timeout handling apply.
 11. After review debt is created, the customer must submit a structured review before posting another task.
+12. If the customer wants the same tasker again, the customer may start a one-time rebook from the completed booking and
+    return through the ordinary confirmation flow.
 
 ### 9.2 Tasker journey
 
@@ -438,6 +445,13 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-BOOK-26**: Customer silence after tasker-marked completion MUST not block the product indefinitely; the platform MUST support timeout-based auto-complete after reminder attempts.
 - **REQ-P1-BOOK-27**: Ops MUST be able to review and resolve edge cases before finalization when the normal completion flow stalls or becomes contested.
 - **REQ-P1-BOOK-28**: Completion proof MAY remain optional for most launch categories, but the product MUST support attaching evidence artifacts where disputes or complaints require them.
+- **REQ-P1-BOOK-30**: A customer MAY start a one-time rebook from a completed booking they own. Rebook MUST NOT bypass
+  ordinary review-debt enforcement, task-creation eligibility, category policy, or booking confirmation rules.
+- **REQ-P1-BOOK-31**: A rebook MUST create a new open task or booking-intent flow from the prior completed booking's
+  category, scope, pricing context, tasker, and location details, while requiring a new schedule before confirmation.
+- **REQ-P1-BOOK-32**: Phase 1 rebook MUST remain a repeat-demand learning surface only. It MUST NOT imply recurring
+  scheduling, saved household preferences, automatic assignment, paid household membership, platform payment, payment
+  hold, or escrow.
 
 ### 11.12 Reviews, reputation, complaints, and disputes
 
@@ -614,6 +628,8 @@ Operator rescue is allowed in Phase 1, but only if it remains:
 - no open-ended pre-booking chat
 - no launch dependency on OTP auth, DAN, subscriptions, credits, referrals, B2B, instant match, or escrow activation
 - no claim that assisted distribution counts as native marketplace health
+- no recurring scheduling, saved household preference, paid membership, or automatic rebook cadence; Phase 1 supports
+  only one-time rebook from a completed booking
 
 ## 16. Launch baseline clarifications for derived artifacts
 
@@ -634,6 +650,8 @@ The following clarifications should be reflected consistently across code, tests
 13. Completion silence nudges are push-notification first where a device token exists.
 14. Phase 1 KPI formulas, thresholds, and denominator rules live in `docs/METRICS.md`.
 15. Material, supply, and post-confirmation scope changes must be communicated as participant agreements in platform-mediated chat or support evidence, not as Tasky payment protection.
+16. One-time rebook from a completed booking is allowed as a repeat-demand learning surface, but recurring schedules,
+    saved household preferences, paid memberships, automatic assignment, and payment protection remain outside launch.
 
 ## 17. Requirements governance
 
@@ -677,7 +695,7 @@ The following surfaces may remain documented elsewhere as future or deferred des
 - subscriptions
 - escrow and payout operations
 - referrals
-- recurring cleaning schedules and paid household memberships
+- recurring cleaning schedules, saved household preferences, and paid household memberships
 - B2B Lite / managed flows
 - instant match
 - runtime AI posting rewrite
@@ -688,12 +706,12 @@ They must not enter the launch baseline without an explicit PRD change.
 
 The current rollout shape is:
 
-| Phase       | Purpose                                              | Capabilities intended for that phase                                                                                                                                                                                                                                                                                                                                                                    | Still out of scope in that phase                                                                                                                                 |
-| ----------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Launch baseline                                      | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance                                                                                                                                                                                        | OTP-primary auth, DAN, lead fees, platform fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting    |
-| **Phase 2** | Repeat liquidity and commerce pilots                 | Better ranking and application assistance, OTP migration, DAN fast-path, rebook/saved-preference improvements, recurring cleaning V1, manual B2B account support, transparent platform-fee pilot in proven standardized categories, direct settlement for job amount still standard                                                                                                                     | Escrow, wallet, payouts, full-job payment collection, paid household membership by default, tasker subscriptions, instant match by default, geographic expansion |
-| **Phase 3** | Payment-adjacent trust rails and supply monetization | Tasker subscription if supply value is proven, optional lead credits only in quote-heavy categories with strong lead quality, optional promoted listings in dense markets, opt-in escrow only after operations and legal posture are ready, wallet and payout operations if escrow is activated, tighter anti-leakage enforcement tied to real platform value, instant match only after liquidity proof | Geographic expansion, broad consumer subscription expansion, managed B2B as a default product line                                                               |
-| **Phase 4** | Expansion and broader revenue mix                    | Broader payment rails, paid household memberships after recurring behavior is proven, geographic expansion, partner/API or managed B2B only if earlier validation exists                                                                                                                                                                                                                                | None by default; every addition still needs explicit scope approval                                                                                              |
+| Phase       | Purpose                                              | Capabilities intended for that phase                                                                                                                                                                                                                                                                                                                                                                    | Still out of scope in that phase                                                                                                                                                    |
+| ----------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                                      | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance, one-time completed-booking rebook for repeat-demand learning                                                                                                                          | OTP-primary auth, DAN, lead fees, platform fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, recurring scheduling, runtime AI posting |
+| **Phase 2** | Repeat liquidity and commerce pilots                 | Better ranking and application assistance, OTP migration, DAN fast-path, rebook UX improvements, saved-preference improvements, recurring cleaning V1, manual B2B account support, transparent platform-fee pilot in proven standardized categories, direct settlement for job amount still standard                                                                                                    | Escrow, wallet, payouts, full-job payment collection, paid household membership by default, tasker subscriptions, instant match by default, geographic expansion                    |
+| **Phase 3** | Payment-adjacent trust rails and supply monetization | Tasker subscription if supply value is proven, optional lead credits only in quote-heavy categories with strong lead quality, optional promoted listings in dense markets, opt-in escrow only after operations and legal posture are ready, wallet and payout operations if escrow is activated, tighter anti-leakage enforcement tied to real platform value, instant match only after liquidity proof | Geographic expansion, broad consumer subscription expansion, managed B2B as a default product line                                                                                  |
+| **Phase 4** | Expansion and broader revenue mix                    | Broader payment rails, paid household memberships after recurring behavior is proven, geographic expansion, partner/API or managed B2B only if earlier validation exists                                                                                                                                                                                                                                | None by default; every addition still needs explicit scope approval                                                                                                                 |
 
 ### 18.3 Rollout rules
 

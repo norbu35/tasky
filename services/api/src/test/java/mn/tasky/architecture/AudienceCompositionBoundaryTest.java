@@ -180,6 +180,9 @@ class AudienceCompositionBoundaryTest {
         assertControllerDependsOn(
                 mn.tasky.booking.api.BookingIntentController.class,
                 "mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationService");
+        assertControllerDependsOn(
+                mn.tasky.booking.api.BookingIntentController.class,
+                "mn.tasky.runtime.publicapi.composition.BookingIntentCreationService");
         assertControllerDoesNotDependOn(
                 mn.tasky.booking.api.BookingIntentController.class, "mn.tasky.booking.publicapi.BookingQueryPort");
         assertControllerDoesNotDependOn(

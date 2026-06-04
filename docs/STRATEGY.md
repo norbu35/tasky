@@ -9,6 +9,7 @@ Tasky is a launch-first marketplace for domestic services in Ulaanbaatar. Phase 
 - zero dependency on monetization for launch viability
 - explicit preparation for narrow, evidence-gated commerce pilots after liquidity proof
 - a founder-operated backstop for the cases the product cannot yet resolve on its own
+- a narrow one-time rebook path after completed bookings so repeat intent can be measured before paid retention products
 
 Later phases stay conditional. A draft screen, dormant toggle, or placeholder contract does not move a feature into the launch scope.
 The strategy is not "free forever"; it is "liquidity first, then transparent value capture where the product has proven
@@ -28,6 +29,7 @@ it improves matching, completion, and repeat convenience."
 2. Structured tasks turn into confirmed bookings at a usable rate.
 3. Jobs complete without heavy manual intervention.
 4. Trust outcomes are strong enough to support expansion.
+5. Completed trust creates enough repeat intent to justify later saved preferences, recurring cleaning, or fee pilots.
 
 ### 2.3 Launch category set
 
@@ -76,7 +78,8 @@ Rules:
 2. Acquire customer demand across Ulaanbaatar.
 3. Use fixed templates and structured pricing to reduce negotiation friction.
 4. Measure native liquidity before leaning on assisted distribution.
-5. Invest first in repeat behavior: rebook, saved preferences, and recurring cleaning once completion is reliable.
+5. Use one-time rebook as the launch repeat signal, then invest in saved preferences and recurring cleaning once
+   completion is reliable.
 6. Pilot transparent platform-fee collection only in categories with proven liquidity, while keeping the underlying job
    amount settled directly between customer and tasker.
 7. Start B2B as founder-led account discovery and manual invoicing support before building a self-serve B2B product.
@@ -92,9 +95,10 @@ The first monetization move should be narrow and visible:
 - no escrow, wallet, payout, or payment-protection promise
 - no broad tasker commission or paid lead-unlock model while verified supply is still scarce
 
-Recurring cleaning is the first repeat-use priority. Paid household membership should wait until weekly or biweekly
-cleaning behavior is visible in real usage. Tasker Pro, promoted listings, and lead credits are later tools and must
-follow evidence that they improve marketplace quality without damaging supply trust.
+One-time rebook is the launch repeat-use signal. Recurring cleaning is the first deeper retention priority after basic
+completion is reliable. Paid household membership should wait until weekly or biweekly cleaning behavior is visible in
+real usage. Tasker Pro, promoted listings, and lead credits are later tools and must follow evidence that they improve
+marketplace quality without damaging supply trust.
 
 Founder-led B2B can start early as discovery and manual account handling for landlords, office admins, property
 managers, and similar repeat buyers. Self-serve B2B portals, partner APIs, and white-label products are not near-term
@@ -112,12 +116,12 @@ scope.
 
 The rollout sequence beyond launch is recorded in `docs/ROLLOUT_PHASES.md`. The strategy view is:
 
-| Phase       | Strategic job                                                                                           | Notes                                                                                                                                |
-| ----------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the initial launch categories and direct settlement | This is the current product. Monetization must not be required for launch viability.                                                 |
-| **Phase 2** | Improve repeat liquidity and run narrow commerce pilots without changing job settlement                 | Rebook, saved preferences, recurring cleaning V1, manual B2B support, and platform-fee pilots belong here if evidence supports them. |
-| **Phase 3** | Add payment-adjacent trust rails and supply-side monetization                                           | Escrow, wallet, payouts, Tasker Pro, lead credits, and promoted listings remain conditional and evidence-gated.                      |
-| **Phase 4** | Expand geography and revenue mix                                                                        | Broader payment rails, paid household memberships, partner APIs, and managed B2B belong here after earlier validation.               |
+| Phase       | Strategic job                                                                                           | Notes                                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the initial launch categories and direct settlement | This is the current product. One-time rebook may measure repeat intent, but monetization must not be required for launch viability.                  |
+| **Phase 2** | Improve repeat liquidity and run narrow commerce pilots without changing job settlement                 | Rebook UX improvements, saved preferences, recurring cleaning V1, manual B2B support, and platform-fee pilots belong here if evidence supports them. |
+| **Phase 3** | Add payment-adjacent trust rails and supply-side monetization                                           | Escrow, wallet, payouts, Tasker Pro, lead credits, and promoted listings remain conditional and evidence-gated.                                      |
+| **Phase 4** | Expand geography and revenue mix                                                                        | Broader payment rails, paid household memberships, partner APIs, and managed B2B belong here after earlier validation.                               |
 
 ### 7.1 Conditional tracks
 

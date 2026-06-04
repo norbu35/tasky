@@ -480,6 +480,54 @@ journeys:
           - SCR-TASK-013
         outcome: Booking auto-completes via timeout, both parties are notified, and review debt is created
         lifecycle: BOOK-T11 (completion_timeout_auto_completes) and TASK-T12 (completion_timeout_auto_completes)
+  - id: JRN-CUST-05
+    name: Rebook Completed Tasker
+    actor:
+      - customer
+    phase: 0-1
+    goal: Start a one-time repeat job with the same tasker after a completed booking
+    entry: SCR-CUST-017
+    exit:
+      - SCR-CUST-014
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-017
+        action: Tap 'Rebook' from a completed booking after review debt is resolved
+        next: SCR-CUST-023
+      - step: 2
+        screen: SCR-CUST-023
+        action: Review prior context, choose a new schedule and budget, then continue
+        next: SCR-CUST-014
+        lifecycle: TASK-T01 (customer_publishes_task)
+      - step: 3
+        screen: SCR-CUST-014
+        action: Accept launch liability and direct-settlement terms, then send the one-time rebook request
+        next: SCR-CUST-014
+    alternate_paths:
+      - id: JRN-CUST-05-A1
+        name: Review debt blocks rebook
+        branch_at: 1
+        condition: Completed booking still has an open required review
+        screens:
+          - SCR-CUST-017
+          - SCR-SHARED-017
+        outcome: Customer must submit the required review before starting another job
+      - id: JRN-CUST-05-A2
+        name: Rebook validation fails
+        branch_at: 2
+        condition: New schedule, budget, category, location, or customer/tasker eligibility fails launch validation
+        screens:
+          - SCR-CUST-023
+        outcome: Inline error keeps the customer on the one-time rebook form
+      - id: JRN-CUST-05-A3
+        name: Tasker declines or times out
+        branch_at: 3
+        condition: Same tasker declines or does not respond within the default four-hour response window
+        screens:
+          - SCR-CUST-014
+          - SCR-CUST-017
+        outcome: Rebook request closes without recurring cadence, saved preferences, automatic assignment, or payment promises
+        lifecycle: APP-T04 (tasker_declines_selection) or APP-T05 (selection_window_expires)
   - id: JRN-CUST-06
     name: Raise & Track Dispute
     actor:

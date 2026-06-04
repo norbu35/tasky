@@ -743,6 +743,18 @@ scenarios:
     test_type: domain-unit
     title: Booking confirmation explains locked price baseline and post-confirmation
       scope changes
+  SCN-BOOK-033:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-30, REQ-P1-BOOK-31, REQ-P1-BOOK-32
+    risk: high
+    status: covered
+    test_type: domain-unit
+    title: Completed booking rebook creates one-time repeat task without recurring
+      or payment promises
   SCN-CATEGORY-001:
     domain: category
     mutation_kill_rate: 0

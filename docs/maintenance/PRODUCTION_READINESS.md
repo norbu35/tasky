@@ -13,10 +13,11 @@ activation evidence and must not be treated as launch readiness requirements.
 | `ready for staging`    | The repo and its staging path can be exercised, but production signoff is still blocked.    |
 | `ready for production` | Launch scope, verification, environments, observability, and rollback posture are ratified. |
 
-Current assessed state on 2026-05-11:
+Current assessed state on 2026-05-31:
 
-- `ready for production` for the Phase 1 Ulaanbaatar launch baseline
-- Production runbook complete, staging rehearsal passed, rollback drill passed
+- `ready for staging` for the Phase 1 Ulaanbaatar launch baseline
+- Private VPS sandbox deploy and rollback evidence exists, but production signoff is still blocked by the release-grade
+  evidence gaps below.
 
 ## 3. Production runbook
 
@@ -25,10 +26,12 @@ Every section must be filled (zero `_TODO` markers) before the readiness state c
 
 ## 4. Current production blockers
 
-1. No release-grade staging environment with real Facebook OAuth callback rehearsal.
-2. No recorded live staging rehearsal evidence on a real host.
-3. Remaining blocker-grade backend scenario gaps listed in the active QA registry flow.
-4. Launch dashboarding and alert routing are not yet verified against a deployed environment.
+1. No release-grade staging environment with production-like auth posture and real Facebook OAuth callback rehearsal.
+2. Private VPS sandbox rehearsal exists, but no release-grade staging rehearsal has been recorded.
+3. Restore drill evidence is still placeholder-only in the production runbook and rehearsal log.
+4. Launch dashboarding and alert routing are not yet verified against a release-grade deployed environment.
+5. Remaining blocker-grade backend scenario gaps, if any, must be closed or explicitly waived through the active QA
+   registry flow before production signoff.
 
 ## 5. Required runtime controls
 
@@ -171,6 +174,7 @@ Production deploy is gated on **zero open P0** items.
 
 ### Assessed state
 
-- **Current state:** `ready for production` (updated 2026-05-11)
-- **Production readiness:** All 17 P0 items resolved. Staging rehearsal and rollback drill passed.
+- **Current state:** `ready for staging` (updated 2026-05-31)
+- **Production readiness:** All 17 audit P0 items are recorded as resolved, and private sandbox deploy/rollback evidence
+  exists. Production readiness remains blocked by the release-grade evidence gaps in section 4.
 - **Re-audit:** Next re-audit after first production deploy or if new P0 items emerge

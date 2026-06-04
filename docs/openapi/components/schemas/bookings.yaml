@@ -97,7 +97,6 @@ BookingIntent:
       enum:
         - APPLICATION_SELECTION
         - REBOOK
-        - INSTANT_MATCH
     status:
       type: string
       enum:
@@ -118,6 +117,7 @@ BookingIntent:
       type: string
       format: uuid
       nullable: true
+      description: Reserved for deferred matching sources; null for Phase 1 application-selection and rebook intents.
     expires_at:
       type: string
       format: date-time
@@ -138,8 +138,6 @@ BookingIntent:
       format: date-time
 RebookedTask:
   type: object
-  x-tasky-status: deferred
-  x-tasky-phase: phase_2
   required:
     - id
     - customer_id

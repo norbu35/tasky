@@ -6,11 +6,52 @@ import { Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Input } from '@/components/ui/Input';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
-import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { useCreateBookingIntent } from '@/features/bookings/hooks/useCreateBookingIntent';
 import { useCreateTask } from '@/features/tasks';
-import { formatDateTime } from '@/utils/formatDate';
+
+function defaultSchedule(): Date {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(10, 0, 0, 0);
+  return tomorrow;
+}
+
+function initialSchedule(value?: string): Date {
+  if (!value) return defaultSchedule();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? defaultSchedule() : parsed;
+}
+
+function formatDateInput(value: Date): string {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  const day = String(value.getDate()).padStart(2, '0');
+  const hours = String(value.getHours()).padStart(2, '0');
+  const minutes = String(value.getMinutes()).padStart(2, '0');
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+}
+
+function parseDateInput(value: string): Date | null {
+  const match = value.trim().match(/^(\d{4})[.-](\d{1,2})[.-](\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?$/);
+  if (!match) return null;
+  const [, yearText, monthText, dayText, hourText = '10', minuteText = '00'] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const parsed = new Date(year, month - 1, day, hour, minute, 0, 0);
+  if (
+    parsed.getFullYear() !== year ||
+    parsed.getMonth() !== month - 1 ||
+    parsed.getDate() !== day ||
+    parsed.getHours() !== hour ||
+    parsed.getMinutes() !== minute
+  ) {
+    return null;
+  }
+  return parsed;
+}
 
 export default function RebookScreen() {
   const { t } = useTranslation();
@@ -31,25 +72,18 @@ export default function RebookScreen() {
   }>();
 
   const { mutateAsync: createTask, isPending } = useCreateTask();
-  const { mutateAsync: createBookingIntent, isPending: isCreatingBookingIntent } =
-    useCreateBookingIntent();
 
   const [budget, setBudget] = useState(params.budget ?? '50000');
-  const [selectedDate] = useState<Date>(() => {
-    if (params.scheduledAt) {
-      return new Date(params.scheduledAt);
-    }
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(10, 0, 0, 0);
-    return tomorrow;
-  });
+  const [dateText, setDateText] = useState(() =>
+    formatDateInput(initialSchedule(params.scheduledAt)),
+  );
 
   const numericBudget = Number(budget);
-  const budgetTooLow = Number.isFinite(numericBudget) && numericBudget <= 1001;
+  const budgetInvalid = !Number.isFinite(numericBudget) || numericBudget <= 1001;
+  const selectedDate = parseDateInput(dateText);
 
   const handleSubmit = useCallback(async () => {
-    if (budgetTooLow) return;
+    if (budgetInvalid || !selectedDate) return;
     const task = await createTask({
       category_id: params.categoryId,
       description: params.description,
@@ -63,18 +97,12 @@ export default function RebookScreen() {
       photo_keys: [],
       scheduled_at: selectedDate.toISOString(),
     });
-    const bookingIntent = await createBookingIntent({
-      taskId: task.id,
-      source: 'REBOOK',
-      taskerId: params.taskerId,
-      originalBookingId: params.bookingId,
-    });
     router.push({
       pathname: '/(customer)/bookings/confirm',
       params: {
         taskId: task.id,
         source: 'rebook',
-        bookingIntentId: bookingIntent.id,
+        originalBookingId: params.bookingId,
         taskerId: params.taskerId,
         taskTitle: params.description,
         taskBudget: budget,
@@ -83,16 +111,7 @@ export default function RebookScreen() {
         taskerAvatar: params.taskerAvatar,
       },
     });
-  }, [
-    params,
-    budget,
-    budgetTooLow,
-    numericBudget,
-    selectedDate,
-    createTask,
-    createBookingIntent,
-    router,
-  ]);
+  }, [params, budget, budgetInvalid, numericBudget, selectedDate, createTask, router]);
 
   return (
     <FormWizardTemplate
@@ -102,8 +121,8 @@ export default function RebookScreen() {
       onNext={handleSubmit}
       onBack={() => router.back()}
       nextLabel={t('customer.bookings.ctaRebookSubmit')}
-      nextDisabled={budgetTooLow}
-      nextLoading={isPending || isCreatingBookingIntent}
+      nextDisabled={budgetInvalid || !selectedDate}
+      nextLoading={isPending}
       showBack
       title={t('customer.bookings.rebook')}
       subtitle={t('customer.bookings.prefilledNote')}
@@ -145,9 +164,14 @@ export default function RebookScreen() {
         <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.labelNewSchedule')}
         </Text>
-        <Touchable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
-          <Text className="text-body text-primary-deep">{formatDateTime(selectedDate)}</Text>
-        </Touchable>
+        <Input
+          className="rounded-md bg-muted"
+          value={dateText}
+          onChangeText={setDateText}
+          keyboardType="numbers-and-punctuation"
+          maxLength={16}
+          testID="rebook-screen-date-picker"
+        />
       </View>
 
       {/* Budget */}
@@ -163,7 +187,7 @@ export default function RebookScreen() {
           maxLength={10}
           testID="rebook-screen-budget"
         />
-        {budgetTooLow ? (
+        {budgetInvalid ? (
           <Text className="text-caption text-danger mt-xs">
             {t('customer.bookings.rebookBudgetLow')}
           </Text>

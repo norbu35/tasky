@@ -31,14 +31,9 @@ public class BookingIntentCommandHandler implements BookingIntentCommandPort {
 
     @Override
     public BookingIntentCreateResult createIntent(
-            String customerId,
-            String taskId,
-            String source,
-            String taskerId,
-            String originalBookingId,
-            String offerId) {
+            String customerId, String taskId, String source, String taskerId, String originalBookingId) {
         BookingIntentService.CreateResult result =
-                bookingIntentService.createIntent(customerId, taskId, source, taskerId, originalBookingId, offerId);
+                bookingIntentService.createIntent(customerId, taskId, source, taskerId, originalBookingId);
         if (result.isSuccess()) {
             return BookingIntentCreateResult.success(result.intent());
         }

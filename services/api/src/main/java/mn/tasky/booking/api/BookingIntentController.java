@@ -6,13 +6,14 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.booking.dto.CreateBookingIntentRequest;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.runtime.publicapi.composition.BookingIntentCompositionService;
 import mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationOutcome;
 import mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationService;
+import mn.tasky.runtime.publicapi.composition.BookingIntentCreationOutcome;
+import mn.tasky.runtime.publicapi.composition.BookingIntentCreationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,14 +33,17 @@ public class BookingIntentController {
 
     private final BookingIntentCommandPort bookingIntentCommandPort;
     private final BookingIntentCompositionService bookingIntentCompositionService;
+    private final BookingIntentCreationService bookingIntentCreationService;
     private final BookingIntentConfirmationService bookingIntentConfirmationService;
 
     public BookingIntentController(
             BookingIntentCommandPort bookingIntentCommandPort,
             BookingIntentCompositionService bookingIntentCompositionService,
+            BookingIntentCreationService bookingIntentCreationService,
             BookingIntentConfirmationService bookingIntentConfirmationService) {
         this.bookingIntentCommandPort = bookingIntentCommandPort;
         this.bookingIntentCompositionService = bookingIntentCompositionService;
+        this.bookingIntentCreationService = bookingIntentCreationService;
         this.bookingIntentConfirmationService = bookingIntentConfirmationService;
     }
 
@@ -48,33 +52,11 @@ public class BookingIntentController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @Valid @RequestBody CreateBookingIntentRequest body,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        BookingIntentCreateResult result = bookingIntentCommandPort.createIntent(
-                principal.userId(), id, body.source(), body.taskerId(), body.originalBookingId(), body.offerId());
-        if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(bookingIntentCompositionService.bookingIntentResponse(
-                            result.intent().orElseThrow()));
-        }
-
-        return switch (result.errorCode()) {
-            case BookingIntentCreateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(errorBody("NOT_FOUND", result.errorMessage(), request));
-            case BookingIntentCreateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(errorBody("FORBIDDEN", result.errorMessage(), request));
-            case BookingIntentCreateResult.NOT_COMPLETED -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(errorBody("NOT_COMPLETED", result.errorMessage(), request));
-            case BookingIntentCreateResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(errorBody("TASK_NOT_OPEN", result.errorMessage(), request));
-            case BookingIntentCreateResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(errorBody("NOT_IMPLEMENTED", result.errorMessage(), request));
-            case BookingIntentCreateResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(errorBody("CONFLICT", result.errorMessage(), request));
-            case BookingIntentCreateResult.INVALID_SOURCE, BookingIntentCreateResult.INVALID_REQUEST -> ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(errorBody("BAD_REQUEST", result.errorMessage(), request));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        };
+        BookingIntentCreationOutcome outcome =
+                bookingIntentCreationService.createIntent(principal.userId(), id, body, idempotencyKey);
+        return bookingIntentCreationResponse(outcome, request);
     }
 
     @GetMapping("/booking-intents/{id}")
@@ -125,6 +107,27 @@ public class BookingIntentController {
             case DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case TASK_NOT_OPEN, CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        };
+    }
+
+    private ResponseEntity<?> bookingIntentCreationResponse(
+            BookingIntentCreationOutcome outcome, HttpServletRequest request) {
+        return switch (outcome.status()) {
+            case IN_PROGRESS -> idempotencyInProgress(request);
+            case REPLAY_MISSING -> idempotencyReplayMissing(request);
+            case SUCCESS -> ResponseEntity.status(HttpStatus.CREATED).body(outcome.body());
+            case NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case NOT_COMPLETED, TASK_NOT_OPEN, CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INVALID_REQUEST, INVALID_SOURCE -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));

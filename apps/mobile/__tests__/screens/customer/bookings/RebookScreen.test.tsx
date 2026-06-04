@@ -10,6 +10,7 @@ const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({
+    bookingId: 'booking-1',
     taskerId: 'tasker-1',
     taskerName: 'Bold',
     taskerAvatar: 'https://example.com/avatar.jpg',
@@ -42,16 +43,9 @@ jest.mock('lucide-react-native', () => {
 });
 
 const mockCreateTask = jest.fn();
-const mockCreateBookingIntent = jest.fn();
 jest.mock('../../../../src/features/tasks/hooks/useCreateTask', () => ({
   useCreateTask: () => ({
     mutateAsync: mockCreateTask,
-    isPending: false,
-  }),
-}));
-jest.mock('../../../../src/features/bookings/hooks/useCreateBookingIntent', () => ({
-  useCreateBookingIntent: () => ({
-    mutateAsync: mockCreateBookingIntent,
     isPending: false,
   }),
 }));
@@ -82,7 +76,7 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('shows the previous booking schedule in Mongolian date format', () => {
     render(<RebookScreen />);
-    expect(screen.getByText(/2026/)).toBeTruthy();
+    expect(screen.getByTestId('rebook-screen-date-picker').props.value).toContain('2026');
   });
 
   it('renders a back button and returns to booking detail', () => {
@@ -102,7 +96,6 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('submit creates new task', async () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
-    mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
     fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
     await waitFor(() => {
@@ -119,24 +112,16 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('success navigates to confirm booking', async () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
-    mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
     fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
     await waitFor(() => {
-      expect(mockCreateBookingIntent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          taskId: 'new-task-1',
-          source: 'REBOOK',
-          originalBookingId: undefined,
-          taskerId: 'tasker-1',
-        }),
-      );
       expect(mockPush).toHaveBeenCalledWith(
         expect.objectContaining({
           pathname: '/(customer)/bookings/confirm',
           params: expect.objectContaining({
             source: 'rebook',
-            bookingIntentId: 'intent-1',
+            taskId: 'new-task-1',
+            originalBookingId: 'booking-1',
           }),
         }),
       );

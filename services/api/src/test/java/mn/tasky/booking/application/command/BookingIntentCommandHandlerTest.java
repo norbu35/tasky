@@ -68,10 +68,10 @@ class BookingIntentCommandHandlerTest {
     void createIntent_success() {
         BookingIntentState intent = intentState();
         CreateResult cr = new CreateResult(intent, null, null);
-        when(bookingIntentService.createIntent("c1", "t1", "DIRECT", "tk1", null, null))
+        when(bookingIntentService.createIntent("c1", "t1", "DIRECT", "tk1", null))
                 .thenReturn(cr);
 
-        BookingIntentCreateResult result = handler.createIntent("c1", "t1", "DIRECT", "tk1", null, null);
+        BookingIntentCreateResult result = handler.createIntent("c1", "t1", "DIRECT", "tk1", null);
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.intent()).containsSame(intent);
@@ -80,10 +80,10 @@ class BookingIntentCommandHandlerTest {
     @Test
     void createIntent_error() {
         CreateResult cr = new CreateResult(null, "TASK_NOT_OPEN", "Task is not open");
-        when(bookingIntentService.createIntent("c1", "t1", "DIRECT", "tk1", null, null))
+        when(bookingIntentService.createIntent("c1", "t1", "DIRECT", "tk1", null))
                 .thenReturn(cr);
 
-        BookingIntentCreateResult result = handler.createIntent("c1", "t1", "DIRECT", "tk1", null, null);
+        BookingIntentCreateResult result = handler.createIntent("c1", "t1", "DIRECT", "tk1", null);
 
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo("TASK_NOT_OPEN");

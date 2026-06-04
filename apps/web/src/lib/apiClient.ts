@@ -84,10 +84,10 @@ export interface ApiClient {
   createBookingIntent(
     accessToken: string,
     taskId: string,
-    source: 'REBOOK' | 'INSTANT_MATCH',
+    source: 'REBOOK',
     taskerId: string,
+    idempotencyKey: string,
     originalBookingId?: string,
-    offerId?: string,
   ): Promise<BookingIntent>;
 
   confirmBookingIntent(
@@ -442,20 +442,22 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
   createBookingIntent(
     accessToken: string,
     taskId: string,
-    source: 'REBOOK' | 'INSTANT_MATCH',
+    source: 'REBOOK',
     taskerId: string,
+    idempotencyKey: string,
     originalBookingId?: string,
-    offerId?: string,
   ): Promise<BookingIntent> {
     return this.requestJson<BookingIntent>(
       `/tasks/${taskId}/booking-intents`,
       {
         method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
         body: JSON.stringify({
           source,
           tasker_id: taskerId,
           original_booking_id: originalBookingId,
-          offer_id: offerId,
         }),
       },
       accessToken,

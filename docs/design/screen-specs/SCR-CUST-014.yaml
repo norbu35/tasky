@@ -13,17 +13,22 @@ traceability:
     - REQ-P1-BOOK-05
     - REQ-P1-BOOK-06
     - REQ-P1-BOOK-29
+    - REQ-P1-BOOK-30
+    - REQ-P1-BOOK-31
+    - REQ-P1-BOOK-32
     - REQ-P1-PRICE-07
     - NFR-LEGAL-01
     - NFR-LEGAL-03
   journey_refs:
     - JRN-CUST-02:step-5
+    - JRN-CUST-05:step-3
   scenario_refs:
     - SCN-BOOK-007
     - SCN-BOOK-008
     - SCN-BOOK-022
     - SCN-BOOK-025
     - SCN-BOOK-032
+    - SCN-BOOK-033
 template: detail
 figma_page: 'Customer/Booking Request Confirmation'
 feature: 'booking'
@@ -94,7 +99,13 @@ states:
     components_hidden: [COMP-TOAST]
 
   - id: confirming
-    description: 'Selection request is being submitted; confirm button shows loading spinner'
+    description: 'Selection or one-time rebook request is being submitted; confirm button shows loading spinner'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: rebook_request
+    description: 'One-time rebook summary displayed from a completed booking; customer acknowledges the same launch liability and direct-settlement terms before the selected tasker receives a pending request'
     components_visible:
       [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
@@ -202,6 +213,9 @@ api_endpoints:
   - method: POST
     path: '/tasks/:id/applications/:applicationId/accept'
     purpose: 'Create a booking-selection intent for the selected applicant after liability disclaimer acceptance'
+  - method: POST
+    path: '/tasks/:id/booking-intents'
+    purpose: 'Create a pending REBOOK booking intent after liability disclaimer acceptance on one-time rebook source'
 
 analytics_events:
   - event: 'booking_confirmation_viewed'
@@ -210,6 +224,8 @@ analytics_events:
     trigger: 'User checks the disclaimer acknowledgment checkbox'
   - event: 'booking_request_sent'
     trigger: 'User taps Select and Send Request and the selection intent is created; includes booking_intent_id'
+  - event: 'rebook_request_sent'
+    trigger: 'User taps Select and Send Request from a one-time rebook source; includes booking_intent_id and original_booking_id'
   - event: 'booking_confirm_failed'
     trigger: 'Selection request submission fails; includes error type'
 
@@ -227,6 +243,9 @@ acceptance_criteria:
   - 'On success, screen replaces to Selection Sent Success SCR-CUST-015'
   - 'On failure, error toast appears with retry action'
   - 'Back button pops to Applicants List SCR-CUST-011'
+  - 'Back button on a rebook source pops to Rebook Tasker SCR-CUST-023'
   - 'Successful submission creates a pending selection request, not a confirmed booking'
   - 'Booking confirmation requires the selected Tasker to accept within the default four-hour SLA'
+  - 'Rebook source creates a pending REBOOK booking intent only after liability disclaimer acknowledgment'
+  - 'Rebook confirmation remains one-time only and does not promise recurring scheduling, saved household preferences, automatic assignment, platform payment, escrow, or payment protection'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

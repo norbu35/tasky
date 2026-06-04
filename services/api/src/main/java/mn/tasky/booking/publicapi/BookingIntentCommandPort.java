@@ -13,7 +13,7 @@ public interface BookingIntentCommandPort {
     BookingIntentDeclineResult declineIntent(String taskerId, String intentId);
 
     BookingIntentCreateResult createIntent(
-            String customerId, String taskId, String source, String taskerId, String originalBookingId, String offerId);
+            String customerId, String taskId, String source, String taskerId, String originalBookingId);
 
     BookingIntentCreateResult createApplicationSelectionIntent(
             String customerId, String taskId, String applicationId, String taskerId, Instant expiresAt);

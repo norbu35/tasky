@@ -123,12 +123,7 @@ public class BookingIntentService {
 
     @Transactional
     public CreateResult createIntent(
-            String customerId,
-            String taskId,
-            String source,
-            String taskerId,
-            String originalBookingId,
-            String offerId) {
+            String customerId, String taskId, String source, String taskerId, String originalBookingId) {
         if (!StringUtils.hasText(source) || !StringUtils.hasText(taskerId)) {
             return CreateResult.error(CreateResult.INVALID_REQUEST, "Missing booking intent request fields.");
         }
@@ -154,7 +149,6 @@ public class BookingIntentService {
         if (!StringUtils.hasText(originalBookingId)) {
             return CreateResult.error(CreateResult.INVALID_REQUEST, "original_booking_id is required for REBOOK.");
         }
-
         Optional<BookingState> originalBookingOpt = bookingService.getBooking(originalBookingId);
         if (originalBookingOpt.isEmpty()) {
             return CreateResult.error(CreateResult.NOT_FOUND, "Original booking not found.");
@@ -180,7 +174,7 @@ public class BookingIntentService {
                 SOURCE_REBOOK,
                 "PENDING",
                 originalBookingId,
-                offerId,
+                null,
                 null,
                 now,
                 now);

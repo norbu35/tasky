@@ -45,11 +45,11 @@ The operating decision lives in:
 
 Current recommendation:
 
-| Decision               | Current status         | Notes                                                                                   |
-| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
-| `not ready`            | Not recommended        | The repo and private sandbox already exceed this state.                                 |
-| `ready for staging`    | Current recommendation | Use the private VPS sandbox next.                                                       |
-| `ready for production` | Not yet                | Blocked on staging rehearsal, dashboarding, alert routing, and remaining evidence gaps. |
+| Decision               | Current status         | Notes                                                                                |
+| ---------------------- | ---------------------- | ------------------------------------------------------------------------------------ |
+| `not ready`            | Not recommended        | The repo and private sandbox already exceed this state.                              |
+| `ready for staging`    | Current recommendation | Continue from private VPS sandbox evidence toward release-grade staging.             |
+| `ready for production` | Not yet                | Blocked on release-grade staging, OAuth, restore, dashboard, alert, and QA evidence. |
 
 ## 5. Boundary to later phases
 

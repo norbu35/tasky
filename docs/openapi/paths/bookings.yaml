@@ -459,18 +459,16 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /bookings/{id}/rebook:
-  x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
   post:
     tags:
       - Bookings
     summary: Rebook a completed booking
     description: |
-      Deferred Phase 2 repeat-booking surface. Current runtime creates a new OPEN task snapshot copied from a completed booking,
-      with schedule intentionally unset so the customer must choose a new time before normal launch posting behavior applies.
-      The original booking must be in COMPLETED status. Launch UX must not expose this surface until repeat-booking activation
-      is approved by the PRD, strategy, maintenance policy, UX/copy, verification, monitoring, and rollback workflow.
+      Phase 1 one-time repeat-demand learning surface. Creates a new OPEN task snapshot copied from a completed booking,
+      with schedule intentionally unset so the customer must choose a new time before normal booking confirmation applies.
+      The original booking must be in COMPLETED status and must belong to the requesting customer. This does not activate
+      recurring scheduling, saved household preferences, automatic assignment, paid membership, platform payment, escrow,
+      or payment protection.
     operationId: rebookBooking
     security:
       - BearerAuth: []
@@ -502,7 +500,7 @@
     summary: Create booking intent for a task
     description: |
       Customer creates a booking intent for a task, selecting a tasker.
-      Supports REBOOK source (from a previous booking) and INSTANT_MATCH source.
+      Supports the active REBOOK source from a previous completed booking.
       The task must be in a state that allows booking intent creation.
       Requires Idempotency-Key header.
     operationId: createBookingIntent
@@ -525,8 +523,7 @@
                 type: string
                 enum:
                   - REBOOK
-                  - INSTANT_MATCH
-                description: Booking intent source type.
+                description: Active Phase 1 booking intent source type for this endpoint.
               tasker_id:
                 type: string
                 format: uuid
@@ -535,10 +532,6 @@
                 type: string
                 format: uuid
                 description: Original booking ID (required for REBOOK source).
-              offer_id:
-                type: string
-                format: uuid
-                description: Associated offer ID (for INSTANT_MATCH source).
     responses:
       '201':
         description: Booking intent created.

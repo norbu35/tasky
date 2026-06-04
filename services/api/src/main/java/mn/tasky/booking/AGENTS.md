@@ -14,6 +14,10 @@ Booking lifecycle transitions and booking-side effects.
 | `POST` | `/api/v1/bookings/{id}/reschedule`                   | Either party requests reschedule; idempotent             |
 | `POST` | `/api/v1/bookings/{id}/reschedule/{eventId}/respond` | Counterparty accepts or declines request                 |
 | `POST` | `/api/v1/bookings/{id}/no-show/flag`                 | Either party flags no-show after rule checks; idempotent |
+| `POST` | `/api/v1/tasks/{id}/booking-intents`                 | Customer creates a one-time REBOOK intent; idempotent    |
+| `GET`  | `/api/v1/booking-intents/{id}`                       | Owner or selected tasker can view intent                 |
+| `POST` | `/api/v1/booking-intents/{id}/confirm`               | Selected tasker confirms intent; idempotent              |
+| `POST` | `/api/v1/booking-intents/{id}/decline`               | Selected tasker declines intent; idempotent              |
 
 ## Booking Statuses in Code
 
@@ -61,6 +65,9 @@ Admin `override-status` accepts only: `ASSIGNED`, `COMPLETED`, `CANCELLED`, `NO_
 | `POST /api/v1/bookings/{id}/reschedule`                   | `booking.reschedule_request` |
 | `POST /api/v1/bookings/{id}/reschedule/{eventId}/respond` | `booking.reschedule_respond` |
 | `POST /api/v1/bookings/{id}/no-show/flag`                 | `booking.no_show_flag`       |
+| `POST /api/v1/tasks/{id}/booking-intents`                 | `booking.create_intent`      |
+| `POST /api/v1/booking-intents/{id}/confirm`               | `booking.confirm_intent`     |
+| `POST /api/v1/booking-intents/{id}/decline`               | `booking.decline_intent`     |
 
 Missing `Idempotency-Key` causes `400 IDEMPOTENCY_KEY_REQUIRED`.
 

@@ -34,6 +34,10 @@ Economic learning metrics support Phase 2 commerce decisions. They do not replac
 trust metrics, and they must not justify monetization in a category whose launch liquidity and trust metrics are still
 red.
 
+One-time rebook events may be recorded during Phase 1 as repeat-demand learning. Rebook and repeat-customer metrics do
+not become monetization approval by themselves; they must be read alongside liquidity, trust, intervention, and
+completion health.
+
 1. Booked GMV
 2. Completed GMV
 3. Platform Fee Revenue
