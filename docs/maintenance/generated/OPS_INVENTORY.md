@@ -98,6 +98,7 @@ This file is generated from `tooling/config/ops-registry.yaml`.
 | `deploy/deploy-private-staging.sh`                | called_by_script |                          |
 | `deploy/performance-smoke.sh`                     | blocking         |                          |
 | `deploy/push-private-staging.sh`                  | manual           |                          |
+| `deploy/push-production.sh`                       | manual           |                          |
 | `deploy/smoke-private-staging.sh`                 | manual           |                          |
 | `gates/check-cleanup-gate.sh`                     | blocking         |                          |
 | `gates/check-gates.sh`                            | blocking         |                          |

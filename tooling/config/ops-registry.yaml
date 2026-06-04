@@ -312,6 +312,8 @@ toolingScripts:
     lifecycle: blocking
   deploy/push-private-staging.sh:
     lifecycle: manual
+  deploy/push-production.sh:
+    lifecycle: manual
   deploy/smoke-private-staging.sh:
     lifecycle: manual
   gates/check-cleanup-gate.sh:
