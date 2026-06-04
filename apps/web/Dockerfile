@@ -8,7 +8,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 # Install turbo globally so prune can run before pnpm install
-RUN pnpm add -g turbo@^2
+RUN npm install -g turbo@^2
 
 COPY . .
 
