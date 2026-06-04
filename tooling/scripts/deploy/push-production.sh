@@ -42,7 +42,9 @@ rsync -az --delete \
   --exclude 'apps/*/test-results/' \
   --exclude 'artifacts/' \
   --exclude '*.log' \
+  --exclude 'docker/backups/' \
   "${ROOT_DIR}/" "${REMOTE_LOGIN}:${REMOTE_DIR}/"
+
 
 echo "Uploading production env file..."
 scp "${ENV_FILE}" "${REMOTE_LOGIN}:${REMOTE_DIR}/.env"

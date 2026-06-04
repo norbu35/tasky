@@ -20,6 +20,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
   BEGIN
       IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '${APP_DB_USER}') THEN
           EXECUTE 'CREATE ROLE ${APP_DB_USER} LOGIN PASSWORD ''${APP_DB_PASSWORD}''';
+      ELSE
+          EXECUTE 'ALTER ROLE ${APP_DB_USER} WITH PASSWORD ''${APP_DB_PASSWORD}''';
       END IF;
   END
   \$\$;

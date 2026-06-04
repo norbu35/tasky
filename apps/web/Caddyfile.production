@@ -1,8 +1,4 @@
-{$TASKY_DOMAIN:localhost} {
-    @backend {
-        path /api/* /actuator /actuator/* /ws /ws/*
-    }
-    reverse_proxy @backend {$TASKY_BACKEND_UPSTREAM:app:8080}
+http://{$TASKY_DOMAIN:localhost} {
     root * /srv
     encode zstd gzip
 
@@ -28,6 +24,21 @@
         Content-Security-Policy "default-src 'self'; script-src 'self' https://connect.facebook.net 'sha256-cYizY3vDbqQt21vuCBaq3by++UJ8kftk0QxU9VQeg9U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://graph.facebook.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
     }
 
-    try_files {path} /index.html
-    file_server
+    @backend {
+        path /api/* /actuator /actuator/* /ws /ws/*
+    }
+
+    handle @backend {
+        reverse_proxy {$TASKY_BACKEND_UPSTREAM:app:8080}
+    }
+
+    handle {
+        try_files {path} /index.html
+        file_server
+    }
 }
+
+http://127.0.0.1:80/healthz, http://localhost:80/healthz {
+    respond "OK" 200
+}
+

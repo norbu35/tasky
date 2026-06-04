@@ -52,7 +52,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> publicPaths = new ArrayList<>(List.of(
                 "/error",
-                "/actuator/health",
+                "/actuator/health/**",
                 "/actuator/info",
                 "/api/v1/system/version",
                 "/api/v1/auth/facebook",
