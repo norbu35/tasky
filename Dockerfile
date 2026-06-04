@@ -11,7 +11,7 @@ COPY tooling tooling
 COPY docs/API.yaml docs/API.yaml
 COPY docs/openapi docs/openapi
 
-RUN chmod +x gradlew && ./gradlew --no-daemon :services:api:bootJar
+RUN rm -f gradle/gradle-daemon-jvm.properties && chmod +x gradlew && ./gradlew --no-daemon :services:api:bootJar
 
 # digest: obtain with docker buildx imagetools inspect eclipse-temurin:21-jre
 FROM eclipse-temurin:21-jre
