@@ -43,6 +43,7 @@ ENV VITE_API_BASE_URL="$VITE_API_BASE_URL"
 ENV VITE_DEV_AUTH_ENABLED="$VITE_DEV_AUTH_ENABLED"
 ENV VITE_FACEBOOK_APP_ID="$VITE_FACEBOOK_APP_ID"
 
+RUN node packages/design-tokens/scripts/generate-tokens-css.mjs --write
 RUN pnpm turbo run build --filter=@tasky/web
 
 # ---- Stage 4: Production image ----
