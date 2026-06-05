@@ -36,6 +36,7 @@ services:
       TASKY_CORS_ALLOWED_ORIGINS: ${TASKY_CORS_ALLOWED_ORIGINS}
       TASKY_WEBSOCKET_ALLOWED_ORIGINS: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS}
       TASKY_DEV_AUTH_ENABLED: 'false'
+      TASKY_RATE_LIMIT_TRUSTED_PROXY_DEPTH: ${TASKY_RATE_LIMIT_TRUSTED_PROXY_DEPTH:-1}
       TASKY_OTP_ENABLED: ${TASKY_OTP_ENABLED:-false}
       TASKY_OTP_TEST_CODE: ''
       TASKY_FEATURE_MONETIZATION_ENABLED: ${TASKY_FEATURE_MONETIZATION_ENABLED:-false}
@@ -243,6 +244,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
       PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
       POSTGRES_CONTAINER: tasky-postgres
       BACKUP_DIR: /backups
       OFFSITE_S3_ENDPOINT: ${OFFSITE_S3_ENDPOINT:-}
@@ -252,6 +254,7 @@ services:
     volumes:
       - ./docker/backups:/backups
       - ./docker/backup.sh:/usr/local/bin/backup.sh:ro
+      - production_wal_archive:/var/lib/postgresql/wal_archive
     depends_on:
       postgres:
         condition: service_healthy

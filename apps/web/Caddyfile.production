@@ -24,8 +24,19 @@ http://{$TASKY_DOMAIN:localhost} {
         Content-Security-Policy "default-src 'self'; script-src 'self' https://connect.facebook.net 'sha256-cYizY3vDbqQt21vuCBaq3by++UJ8kftk0QxU9VQeg9U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://graph.facebook.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
     }
 
+    # Block sensitive actuator endpoints at the proxy layer
+    @blocked_actuator {
+        path /actuator /actuator/*
+        not path /actuator/health /actuator/health/*
+    }
+    handle @blocked_actuator {
+        respond "Forbidden" 403 {
+            close
+        }
+    }
+
     @backend {
-        path /api/* /actuator /actuator/* /ws /ws/*
+        path /api/* /actuator/health /actuator/health/* /ws /ws/*
     }
 
     handle @backend {

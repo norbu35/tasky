@@ -127,3 +127,7 @@ output/
 
 # Screenshot dumps at the root
 /*.png
+
+# Research documentation
+research/
+docs/research/

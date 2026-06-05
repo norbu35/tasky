@@ -39,6 +39,9 @@ server:
     include-binding-errors: never
 
 management:
+  health:
+    rabbit:
+      enabled: ${TASKY_AUTOMATION_BROKER_ENABLED:false}
   endpoint:
     health:
       probes:
