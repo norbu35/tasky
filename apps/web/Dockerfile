@@ -1,6 +1,6 @@
 # ---- Stage 1: Prune monorepo to only what @tasky/web needs ----
 # digest: obtain with docker buildx imagetools inspect node:22-bookworm
-FROM node:22-bookworm AS pruner
+FROM node:26-bookworm AS pruner
 WORKDIR /workspace
 
 ENV PNPM_HOME="/pnpm"
@@ -17,7 +17,7 @@ RUN turbo prune @tasky/web --docker
 
 # ---- Stage 2: Install dependencies from pruned lockfile ----
 # digest: obtain with docker buildx imagetools inspect node:22-bookworm
-FROM node:22-bookworm AS installer
+FROM node:26-bookworm AS installer
 WORKDIR /workspace
 
 ENV PNPM_HOME="/pnpm"
