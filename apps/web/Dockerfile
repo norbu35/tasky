@@ -48,7 +48,7 @@ RUN pnpm turbo run build --filter=@tasky/web
 
 # ---- Stage 4: Production image ----
 # digest: obtain with docker buildx imagetools inspect caddy:2.9-alpine
-FROM caddy:2.11-alpine@sha256:834468128c7696cec0ceea6172f7d692daf645ae51983ca76e39da54a97c570d
+FROM caddy:2.11-alpine@sha256:77c07d5ebfa5be9fd6c820d2094ae662c9e7eeb9bf98346b7f639900263ee2a2
 
 COPY apps/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /workspace/apps/web/dist /srv
