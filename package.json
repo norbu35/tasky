@@ -67,7 +67,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "repomix": "^1.14.1",
+    "repomix": "^1.15.0",
     "turbo": "^2.9.18",
     "yaml": "^2.9.0"
   }
